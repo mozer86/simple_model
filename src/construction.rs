@@ -1,43 +1,93 @@
-use std::rc::Rc;
-use crate::material::*;
+use crate::object_trait::ObjectTrait;
 
-pub struct Construction {
+/// An object representing a multilayer 
+/// Construction; that is to say, an array of 
+/// Materials
+pub struct Construction{
+        
+    /// The name of the Construction object. 
+    /// Must be unique within the model
     name: String,
-    layers: Vec< Rc<Material> >
+
+    /// The index of the Construction object within
+    /// the constructions property in the Building object
+    index: usize,
+
+    /// The indices of the Material objects in the 
+    /// materials property of the Building object
+    layers: Vec< usize >,
+    
+    
 }
+
+impl ObjectTrait for Construction{
+
+    fn name(&self)->&String{
+        &self.name
+    }
+
+    fn class_name(&self)->&str{
+        "Construction"
+    }
+
+    fn index(&self)->usize{
+        self.index
+    }
+
+    fn is_full(&self)->bool{
+        self.layers.len() != 0
+    }
+}
+
     
 impl Construction {
 
-    pub fn new(name: String, layers: Vec<Rc<Material>>)->Rc<Self>{
-        Rc::new(Construction{
-            name: name,
-            layers: layers,
-        })
-    }    
-
-    pub fn name(&self)->String{
-        self.name.clone()
+    /*
+    /// Create a new placeholder construction (e.g. empty and without )
+    pub fn new(name: String, index: usize)-> Self {
+        Construction {            
+            name: name,            
+            index: index,            
+            layers: Vec::new()
+        }
     }
+    */
 
+    
+
+    /// Returns the number of layers in the object
     pub fn n_layers(&self)->usize{
         self.layers.len()
     }
 
-    pub fn layer(&self,i:usize)->Result<Rc<Material>,String>{
-        if i >= self.layers.len(){
-            return Err(format!("Index out of bounds... trying to access layer {} while there are only {}", i, self.layers.len()));
+    /// Returns the number of the 
+    pub fn get_material_index(&self,i:usize)->Result<usize, String>{
+        if self.layers.len() == 0 {
+            return self.error_using_empty();
         }
 
-        Ok(Rc::clone(&self.layers[i]))
-    }
-
-    pub fn r_value(&self)->f64{
-        let mut r = 0.0;
-
-        for layer in &self.layers {
-            r += layer.thickness()/layer.substance().thermal_conductivity();
+        match self.layers.get(i){
+            Some(v) => Ok(*v),
+            None => {
+                return Err(format!("Index out of bounds... trying to access layer {} of {} '{}', but it has only {} layers", i, self.class_name(), self.name, self.layers.len()));
+            }
         }
-
-        return r;
     }
+
+    
+    
+}
+
+
+
+/***********/
+/* TESTING */
+/***********/
+
+
+
+#[cfg(test)]
+mod testing{
+    
+
 }

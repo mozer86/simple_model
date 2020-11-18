@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 geometry3d = {path = "../geometry3d"}
+derive-getters = "0.2.0"
+
