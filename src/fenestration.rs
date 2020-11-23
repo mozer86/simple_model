@@ -50,16 +50,20 @@ impl ObjectTrait for Fenestration {
         &self.name
     }
 
-    fn class_name(&self)->&str{
-        "Fenestration"
+    fn class_name(&self)->String{
+        format!("Fenestration::{}",self.sub_class_name())
     }
 
     fn index(&self)->usize{
         self.index
     }
 
-    fn is_full(&self)->bool{
-        self.polygon.is_some() && self.construction.is_some()
+    fn is_full(&self)->Result<(),String>{
+        if self.polygon.is_some() && self.construction.is_some(){
+            Ok(())
+        }else{
+            self.error_is_not_full()
+        }
     }
 
 

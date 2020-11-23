@@ -24,20 +24,34 @@ impl ObjectTrait for Space{
         &self.name
     }
 
-    fn class_name(&self)->&str {
-        "Space"
+    fn class_name(&self)->String {
+        "Space".to_string()
     }
 
     fn index(&self)->usize{
         self.index
     }
 
-    fn is_full(&self)->bool{
-        self.volume.is_some() && self.surfaces.len() > 0
+    fn is_full(&self)->Result<(),String>{
+        if self.volume.is_some() && self.surfaces.len() > 0 {
+            Ok(())
+        }else{
+            self.error_is_not_full()
+        }
     }
 }
 
 impl Space {
+
+    /// Creates a new Space
+    pub fn new(name: String, index: usize)->Self{
+        Self{
+            name: name,
+            index: index,
+            volume: None,
+            surfaces: Vec::new()
+        }
+    }
 
     /// Returns the volume of the space
     pub fn volume(&self)->Result<f64,String>{
@@ -46,6 +60,11 @@ impl Space {
             None => self.error_using_empty()
         }
     }
+
+    /// Sets the volume of the space
+    pub fn set_volume(&mut self, v: f64){
+        self.volume = Some(v);
+    }
     
 
     /// Adds a surface reference to the Space's 
@@ -53,4 +72,11 @@ impl Space {
     pub fn push_surface(&mut self, s_index: usize) {                
         self.surfaces.push(s_index)
     }
+
+    /// retrieves the surfaces
+    pub fn get_surfaces(&self)->&Vec<usize>{
+        &self.surfaces
+    }
+
+    
 }

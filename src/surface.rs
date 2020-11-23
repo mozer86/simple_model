@@ -42,16 +42,20 @@ impl ObjectTrait for Surface{
         &self.name
     }
 
-    fn class_name(&self)->&str{
-        "Surface"
+    fn class_name(&self)->String{
+        "Surface".to_string()
     }
 
     fn index(&self)->usize{
         self.index
     }
 
-    fn is_full(&self)->bool{
-        self.construction.is_some() && self.polygon.is_some()
+    fn is_full(&self)->Result<(),String>{
+        if self.construction.is_some() && self.polygon.is_some(){
+            Ok(())
+        }else{
+            self.error_is_not_full()
+        }
     }
 
 }
@@ -60,24 +64,22 @@ impl ObjectTrait for Surface{
 /// or a space and the exterior, or exterior and exterior
 impl Surface {
 
-    /*
-    /// Creates a new surface that has no Space boundaries
-    /// (i.e. it faces the exterior on both sides)
-    /// # Arguments
-    /// * name: The name of the surface
-    /// * p: A Polygon3D which becomes the position and shape of the surface
-    /// * c: The Construction which becomes the materiality of it
-    pub fn new(name: String, p: Polygon3D, c: Rc<Construction>)-> Self {
+    
+    /// Creates a new empty Surface; that is, it has no Space boundaries
+    /// (i.e. it faces the exterior on both sides), no construction
+    /// and no polygon    
+    pub fn new(name: String, index: usize)-> Self {
         Self {
-            polygon: p,
-            construction: c,
+            polygon: None,
+            construction: None,
             front_boundary: Boundary::None,
             back_boundary: Boundary::None,
             //fenestrations: Vec::new(),
             name: name,
+            index: index
         }
     }
-    */
+    
 
     /// Returns the area of the surface (calculated
     /// based on the Polygon3D that represents it)
@@ -92,6 +94,11 @@ impl Surface {
     /// with the Surface
     pub fn get_construction_index(&self) -> Option<usize>{
         self.construction
+    }
+
+    /// Sets the construction index
+    pub fn set_construction(&mut self, construction: usize){
+        self.construction = Some(construction)
     }
 
     /// Returns a reference to the front boundary
@@ -134,6 +141,12 @@ impl Surface {
         }        
     }
 
+    pub fn set_polygon(&mut self, p: Polygon3D){
+        self.polygon = Some(p);
+    }
+
+    
+
     /*
     /// Adds a fenestration to the surface.
     pub fn add_fenestration(&mut self, fenestration: Fenestration)->Result<(),String>{
@@ -166,72 +179,54 @@ impl Surface {
 
 #[cfg(test)]
 mod testing{
-    /*
     use super::*;
-    use crate::material::*;
-    use crate::substance::*;
-    
-    use geometry3d::point3d::Point3D;
-    use geometry3d::loop3d::Loop3D;
 
     #[test]
-    fn test_add_fenestration(){
-
-        // Crate a construction
-        let s = Substance::new(
-            "polyurethane".to_string(),
-            0.0252, // W/m.K            
-            2400., // J/kg.K
-            17.5, // kg/m3... reverse engineered from paper            
-        );
-
-        let m = Material::new(s,0.1);        
-        let c = Construction::new("Construction".to_string(),vec![Rc::clone(&m)]);
+    fn test_basic(){
         
-        // Geometry of hole
-        let mut the_loop = Loop3D::new();
-        let l = 1. as f64;
-        the_loop.push( Point3D::new(-l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, l, 0.)).unwrap();
-        the_loop.push( Point3D::new(-l, l, 0.)).unwrap();
-        the_loop.close().unwrap();
+        // new
+        let index = 12312;
+        let name = "Some surface".to_string();
+        let mut s0 = Surface::new(name.to_string(),index);
+        assert!(s0.polygon.is_none());
+        assert!(s0.construction.is_none());
+        match s0.front_boundary(){
+            Boundary::None =>{},
+            _ => assert!(false)
+        };
+        match s0.back_boundary(){
+            Boundary::None =>{},
+            _ => assert!(false)
+        }        
+        assert!(s0.is_full().is_err());
+        assert!(s0.area().is_err());
 
-        // Geometry of surface
-        let mut s_loop = Loop3D::new();
-        let l = 1. as f64;
-        s_loop.push( Point3D::new(-2.0*l, -2.0*l, 0.)).unwrap();
-        s_loop.push( Point3D::new(2.0*l, -2.0*l, 0.)).unwrap();
-        s_loop.push( Point3D::new(2.0*l, 2.0*l, 0.)).unwrap();
-        s_loop.push( Point3D::new(-2.0*l, 2.0*l, 0.)).unwrap();
-        s_loop.close().unwrap();
-        
-        
-        
-        // FixedClosed
-        
-        let p = Polygon3D::new(s_loop.clone()).unwrap();
-        let mut surface = Surface::new("Surface".to_string(),p ,Rc::clone(&c));
-        let fen = Fenestration::FixedClosed(
-            SubSurface::new(
-                "FixedClosed".to_string(),
-                the_loop.clone(),
-                Rc::clone(&c)
-            ).unwrap()
-        );
+        // set, get construction
+        let construction_index = 9872;
+        s0.set_construction(construction_index);
+        if let Some(i) = s0.get_construction_index(){
+            assert_eq!(i,construction_index);
+        }else{
+            assert!(false);
+        }
 
-        assert_eq!(surface.area(),4.0*2.0*l*2.0*l);
-        assert_eq!(surface.fenestrations.len(),0);
+        // set,get front boundary
+        s0.set_front_boundary(Boundary::Ground).unwrap();
+        match s0.front_boundary(){
+            Boundary::Ground =>{},
+            _ => assert!(false)
+        };
+        s0.set_back_boundary(Boundary::Ground).unwrap();
+        match s0.back_boundary(){
+            Boundary::Ground =>{},
+            _ => assert!(false)
+        };
 
-        assert!(surface.add_fenestration(fen).is_ok());
+        // polygon still missing
+        assert!(s0.is_full().is_err());
 
-        assert_eq!(surface.area(),4.0*2.0*l*2.0*l - 4.0*l*l);
-
-        assert_eq!(surface.fenestrations.len(),1);
-        assert_eq!(surface.fenestrations[0].area(),4.0*l*l);
 
     }
-    */
 }
 
 

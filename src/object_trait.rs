@@ -5,7 +5,7 @@ pub trait ObjectTrait {
     fn name(&self)->&String;
 
     /// Classname
-    fn class_name(&self)->&str;
+    fn class_name(&self)->String;
 
     /// Returns the index of the object in its 
     /// containing array
@@ -13,7 +13,7 @@ pub trait ObjectTrait {
 
     /// Checks whether the object contains
     /// all the information required
-    fn is_full(&self)->bool;
+    fn is_full(&self)->Result<(),String>;
 
     /// Returns an error stating that the object is not 
     /// valid

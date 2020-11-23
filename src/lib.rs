@@ -3,7 +3,7 @@ pub mod building;
 pub mod material;
 pub mod substance;
 pub mod construction;
-mod object_trait;
+pub mod object_trait;
 
 pub mod surface;
 pub mod space;

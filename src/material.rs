@@ -25,7 +25,7 @@ pub struct Material {
 pub struct MaterialProperties{
 
     /// The physical thickness of this material, in meters
-    thickness: f64,
+    pub thickness: f64,
 }
 
 impl ObjectTrait for Material{
@@ -34,20 +34,47 @@ impl ObjectTrait for Material{
         &self.name
     }
 
-    fn class_name(&self)->&str{
-        "Material"
+    fn class_name(&self)->String{
+        "Material".to_string()
     }
 
     fn index(&self)->usize{
         self.index
     }
 
-    fn is_full(&self)->bool{
-        self.properties.is_some() && self.substance.is_some()
+    fn is_full(&self)->Result<(),String>{
+        if self.properties.is_some() && self.substance.is_some(){
+            Ok(())
+        }else{
+            self.error_is_not_full()
+        }
     }
 }
 
 impl Material {
+
+    /// Creates an empty Material. The index is irrelevant
+    /// if the Material is not within an array. The Index
+    /// value is chosen by the Building object when creating a new
+    /// Material.
+    pub fn new(name:String, index: usize)->Self{
+        Self{
+            name: name,
+            index: index,
+            properties: None,
+            substance: None,
+        }
+    }
+
+    /// Sets the substance to the Material
+    pub fn set_substance(&mut self, i: usize){
+        self.substance = Some(i);        
+    }
+
+    /// Sets the substance to the Material
+    pub fn set_properties(&mut self, properties: MaterialProperties){
+        self.properties = Some(properties);        
+    }
 
     /// Returns the thicnkess of this Material
     pub fn thickness(&self)->Result<f64,String>{
@@ -62,6 +89,7 @@ impl Material {
         self.substance
     }    
     
+    
 }
 
 
@@ -74,53 +102,35 @@ impl Material {
 #[cfg(test)]
 mod testing{
     use super::*;
-    use crate::substance::{Substance,SubstanceProperties};
-
-
+    
     #[test]
-    fn test_new_ok(){
-                
-        let mut substances : Vec<Substance> = Vec::new();
-        substances.push(Substance{            
-            name: "A Substance".to_string(),
-            index: substances.len(),
-            properties: Some(SubstanceProperties{
-                thermal_conductivity: 1.2,
-                specific_heat_capacity: 1.0,
-                density: 1.2,
-            })
-        });
-
-        // Create the material
-        let name = "The Material".to_string();
-        let thickness = 1.123123;
-        let index = 23;        
-        let material = Material{
-            name: name,
-            index: index,
-            substance: Some(0),
-            properties: Some(MaterialProperties{
-                thickness: thickness
-            })
-        };
+    fn test_basic(){
         
-        assert_eq!(material.name(),&"The Material".to_string());
+        let index = 123;
+        let name = "The material".to_string();
 
-        // Modify the substances vector        
-        substances.push(Substance{            
-            name: "A Substance".to_string(),
-            index: substances.len(),
-            properties:Some(SubstanceProperties{
-                thermal_conductivity: 1.2*2.0,
-                specific_heat_capacity: 1.0*2.0,
-                density: 1.2*2.0,
-            })
+        let mut s = Material::new(name.clone(),index);            
+        assert_eq!(&name, s.name());
+        assert_eq!(s.index(),index);
+        assert!(s.is_full().is_err());
+        assert!(s.get_substance_index().is_none());
+
+        // Fill with properties
+        let thickness = 123123.123;
+        s.set_properties(MaterialProperties{
+            thickness: thickness
         });
+        assert!(s.is_full().is_err());// substance missing.
+        let substance : usize = 5124;
+        s.set_substance(substance);
+        assert!(s.is_full().is_ok());// now it works.
 
-        // Test material thickness
-        assert_eq!(material.thickness(),thickness);
+        assert_eq!(s.get_substance_index().unwrap(), substance);
+        assert_eq!(s.thickness().unwrap(),thickness);
+        
+    }
 
-        }
+    
 
 
 }

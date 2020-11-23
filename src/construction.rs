@@ -26,24 +26,32 @@ impl ObjectTrait for Construction{
         &self.name
     }
 
-    fn class_name(&self)->&str{
-        "Construction"
+    fn class_name(&self)->String{
+        "Construction".to_string()
     }
 
     fn index(&self)->usize{
         self.index
     }
 
-    fn is_full(&self)->bool{
-        self.layers.len() != 0
+    fn is_full(&self)->Result<(),String>{
+        if self.layers.len() != 0{
+            Ok(())
+        }else{
+            self.error_is_not_full()
+        }
     }
 }
 
     
 impl Construction {
 
-    /*
-    /// Create a new placeholder construction (e.g. empty and without )
+    
+    /// Create a new empty Construction ...
+    /// The index does not have any meaning if the Construction is 
+    /// self-contained; but it becomes meaningful when it is part of an
+    /// Array. For instance, when inserting a new Construction to the     
+    /// Building object, the latter chooses the appropriate index
     pub fn new(name: String, index: usize)-> Self {
         Construction {            
             name: name,            
@@ -51,9 +59,11 @@ impl Construction {
             layers: Vec::new()
         }
     }
-    */
 
-    
+    /// Borrows the Layers vector
+    pub fn layers(&self)->&Vec<usize>{
+        &self.layers
+    }
 
     /// Returns the number of layers in the object
     pub fn n_layers(&self)->usize{
@@ -61,7 +71,7 @@ impl Construction {
     }
 
     /// Returns the number of the 
-    pub fn get_material_index(&self,i:usize)->Result<usize, String>{
+    pub fn get_layer_index(&self,i:usize)->Result<usize, String>{
         if self.layers.len() == 0 {
             return self.error_using_empty();
         }
@@ -74,6 +84,10 @@ impl Construction {
         }
     }
 
+    /// adds another layer to the Construction.
+    pub fn push_layer(&mut self, layer_index: usize){
+        self.layers.push(layer_index)
+    }
     
     
 }
@@ -88,6 +102,31 @@ impl Construction {
 
 #[cfg(test)]
 mod testing{
-    
+    use super::*;
+
+    #[test]
+    fn test_basic(){
+        let name = "The construction".to_string();
+        let index = 12312;
+        let mut c = Construction::new(name.clone(),index);
+        assert_eq!(&name, c.name());
+        assert_eq!(index, c.index());
+        assert_eq!(0, c.n_layers());
+        assert!(c.is_full().is_err());
+
+        let layer0 = 23;
+        c.push_layer(layer0);
+        assert_eq!(1, c.n_layers());
+        assert_eq!(layer0, c.get_layer_index(0).unwrap());
+        assert!(c.get_layer_index(1).is_err());
+
+        let layer1 = 412;
+        c.push_layer(layer1);
+        assert_eq!(2, c.n_layers());
+        assert_eq!(layer1, c.get_layer_index(1).unwrap());
+        assert!(c.get_layer_index(1).is_ok());
+        assert!(c.get_layer_index(2).is_err());
+
+    }
 
 }
