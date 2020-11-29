@@ -1,11 +1,12 @@
-use crate::object_trait::ObjectTrait;
-
-use geometry3d::loop3d::Loop3D;
 use geometry3d::polygon3d::Polygon3D;
+use geometry3d::loop3d::Loop3D;
 
-use crate::construction::*;
+use crate::boundary::Boundary;
+use crate::object_trait::ObjectTrait;
+use crate::building_state::{BuildingState, BuildingStateElement};
 
-pub enum FenestrationOperationType{
+#[derive(Copy,Clone, Eq, PartialEq)]
+pub enum FenestrationType{
     FixedClosed,
     FixedOpen,
     Continuous,
@@ -13,35 +14,44 @@ pub enum FenestrationOperationType{
 }
 
 
-/// A surface that can potentially be opened and closed
-/// that should be a hole within a Surface 
-/// Can be of any Construction
+/// A surface that can potentially be opened and closed.
+/// It can be of any Construction and it does not need to be
+/// a hole in another surface.
 pub struct Fenestration {
 
     /// The name of the sub surface
     name: String,    
 
-    /// The position of the SubSurface in its
+    /// The position of the Fenestration in its
     /// containing Array
     index: usize,
 
     /// The Polygon3D that represents
-    /// the dimensions and size of the Surface
+    /// the dimensions and size of the Fenestration
     polygon: Option<Polygon3D>,    
 
     /// The index of the Construction object in the 
     /// constructions property of the Building object    
     construction: Option<usize>,
 
-    /// How much of the area is open
-    open_fraction: f64,
+    /// Index of the BuildingStateElement representing 
+    /// the fraction open in the BuildingState
+    open_fraction_index: usize,
 
-    /// The index of the Shading device attached to the Fenestration
-    /// in the shading property of the Building object
-    shading: Option<usize>,
+    // The index of the Shading device attached to the Fenestration
+    // in the shading property of the Building object
+    // shading: Option<usize>,
 
     /// The opportunity for operating the Fenestration
-    operation_type: FenestrationOperationType
+    operation_type: FenestrationType,
+
+    /// A reference to the Boundary in front of the Fenestration 
+    front_boundary: Boundary,
+
+    /// A reference to the Boundary in back of the Fenestration
+    back_boundary: Boundary,
+
+
 }
 
 impl ObjectTrait for Fenestration {
@@ -66,39 +76,54 @@ impl ObjectTrait for Fenestration {
         }
     }
 
-
 }
 
 impl Fenestration {
 
-    /*
-    pub fn new(name: String, l: Loop3D, construction: &Construction)-> Result<Self,String> {
-        
-        // Close loop if not closed
-        if !l.is_closed(){
-            return Err(format!("When creating SubSurface {} - Loop is not closed",name))
-        }
+    /// Create a new empty Fenestration ...
+    /// The index does not have any meaning if the Construction is 
+    /// self-contained; but it becomes meaningful when it is part of an
+    /// Array. For instance, when inserting a new Construction to the     
+    /// Building object, the latter chooses the appropriate index
+    pub fn new(state: &mut BuildingState, name: String, index: usize, class: FenestrationType )->Self{
 
-        // Check if the polygon makes sense
-        let p = match Polygon3D::new(l){
-            Ok(v)=>v,
-            Err(msg)=>{
-                return Err(format!("When creating SubSurface {} - {}",name,msg))
-            }
-        };
-        
-        Ok(SubSurface{
+        // Push this to state.
+        let open_index = state.len();
+        state.push(
+            // closed by default,
+            BuildingStateElement::FenestrationOpenFraction(index,0.0)
+        );
+
+
+        Self {
             name: name,
-            open_fraction: 0.0,
-            construction:construction.index,
-            polygon: p,
-            shading: None::<usize>,
-        })
+            index: index,
+            operation_type: class,
+            open_fraction_index: open_index, 
+            polygon: None,
+            construction: None,
+            front_boundary: Boundary::None,
+            back_boundary: Boundary::None,
+        }
     }
-    */
+    
 
-    pub fn open_fraction(&self)->f64{
-        self.open_fraction
+    pub fn open_fraction(&self, state: &BuildingState)->f64{
+        let i = self.open_fraction_index;
+
+        if let BuildingStateElement::FenestrationOpenFraction(fen_index,open_fraction) = state[i]{
+            if fen_index != self.index {
+                panic!("Incorrect index allocated for OpenFraction of {} '{}'", self.class_name(), self.index);
+            }
+            
+            // all Good here
+            return open_fraction
+
+        }else{
+            panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
+        } 
+
+        
     }
 
     pub fn get_construction_index(&self)->Result<usize,String>{
@@ -108,12 +133,14 @@ impl Fenestration {
         }
     }
 
-    /*
-    pub fn clone_loop(&self)->Loop3D{
-        self.polygon.clone_outer()
-        
+    
+    pub fn clone_loop(&self)->Result<Loop3D,String>{
+        match &self.polygon{
+            Some(p)=>Ok(p.clone_outer()),
+            None =>self.error_using_empty()
+        }                
     }
-    */
+    
 
     pub fn area(&self)->Result<f64,String>{
         match &self.polygon {
@@ -122,46 +149,131 @@ impl Fenestration {
         }        
     }
 
+    pub fn operation_type(&self)->FenestrationType{
+        self.operation_type
+    }
 
 
     fn sub_class_name(&self)->&str{
         match self.operation_type {
-            FenestrationOperationType::FixedClosed => "FixedClosed",
-            FenestrationOperationType::FixedOpen => "FixedOpen",
-            FenestrationOperationType::Continuous => "ContinuousOperation",
-            FenestrationOperationType::Binary => "BinaryOperation",
+            FenestrationType::FixedClosed => "FixedClosed",
+            FenestrationType::FixedOpen => "FixedOpen",
+            FenestrationType::Continuous => "ContinuousOperation",
+            FenestrationType::Binary => "BinaryOperation",
         }
     }
 
     pub fn is_operable(&self) -> bool{
         match self.operation_type {
-            FenestrationOperationType::FixedClosed => false,
-            FenestrationOperationType::FixedOpen => false,
-            FenestrationOperationType::Continuous => true,
-            FenestrationOperationType::Binary => true,
+            FenestrationType::FixedClosed => false,
+            FenestrationType::FixedOpen => false,
+            FenestrationType::Continuous => true,
+            FenestrationType::Binary => true,
         }
     }
 
-    pub fn set_open_fraction(&mut self, new_open: f64) -> Result<(),String>{
+    pub fn set_polygon(&mut self, p: Polygon3D){
+        self.polygon = Some(p);
+    }
+
+    pub fn set_construction(&mut self, construction: usize){
+        self.construction = Some(construction)
+    }
+
+    pub fn set_open_fraction(&mut self, state: &mut BuildingState, new_open: f64) -> Result<(),String>{
                 
         match self.operation_type {
-            FenestrationOperationType::FixedClosed |
-            FenestrationOperationType::FixedOpen => {
+            FenestrationType::FixedClosed |
+            FenestrationType::FixedOpen => {
                 Err(format!("Trying to operate a {}::{}: '{}'", self.class_name(),self.sub_class_name(), self.name))
             },
-            FenestrationOperationType::Continuous => {
-                self.open_fraction = new_open; 
+            FenestrationType::Continuous => {
+                let i = self.open_fraction_index;
+
+                if let BuildingStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
+                    if fen_index != self.index {
+                        panic!("Incorrect index allocated for OpenFraction of {} '{}'", self.class_name(), self.index);
+                    }
+                    
+                    // all Good here
+                    state[i] = BuildingStateElement::FenestrationOpenFraction(fen_index,new_open);
+
+                }else{
+                    panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
+                } 
+                
                 Ok(())
             },
-            FenestrationOperationType::Binary => {
+            FenestrationType::Binary => {
                 if new_open != 0.0 && new_open != 1.0 {
                     return Err(format!("Trying leave '{}',  a {} {}, half-opened",self.name,self.sub_class_name(), self.class_name()));
                 }else{
-                    self.open_fraction = new_open;
+                    let i = self.open_fraction_index;
+
+                    if let BuildingStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
+                        if fen_index != self.index {
+                            panic!("Incorrect index allocated for OpenFraction of {} '{}'", self.class_name(), self.index);
+                        }
+                        
+                        // all Good here
+                        state[i] = BuildingStateElement::FenestrationOpenFraction(fen_index,new_open);
+
+                    }else{
+                        panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
+                    } 
                     return Ok(());
                 }
             },
         }
+    }
+
+
+    /// Returns a reference to the front boundary
+    pub fn front_boundary(&self) -> &Boundary {
+        &self.front_boundary
+    }
+
+    /// Sets the front boundary... does not let the Boundary know
+    /// about this operation. The Building object handles that.
+    pub fn set_front_boundary(&mut self, bound: Boundary) -> Result<(),String> {
+        match self.front_boundary {            
+            Boundary::None => {
+                if let Boundary::Ground = bound{
+                    return Err(format!("Cannot set front boundary of {} '{}' to Ground",self.class_name(), self.name))
+                }else{
+                    self.front_boundary = bound;
+                    return Ok(())
+                }
+            },
+            _ => {
+                Err(format!("Trying to replace front boundary of {} '{}'",self.class_name(), self.name))
+            }
+        }        
+    }
+
+    /// Returns a reference to the back boundary
+    pub fn back_boundary(&self) -> &Boundary {
+        &self.back_boundary 
+    }
+
+    /// Sets the back boundary... does not let the Boundary know
+    /// about this operation. The Building object handles that.
+    pub fn set_back_boundary(&mut self, bound: Boundary) -> Result<(),String> {                
+        match self.back_boundary{            
+            // This should only work if there is no boundary already there            
+            Boundary::None => {
+                if let Boundary::Ground = bound{
+                    return Err(format!("Cannot set back boundary of {} '{}' to Ground",self.class_name(), self.name))
+                }else{
+                    // Set the boundary
+                    self.back_boundary = bound;
+                    return Ok(())
+                }
+            },
+            _ => {
+                Err(format!("Trying to replace back boundary of {} '{}'",self.class_name(), self.name))
+            }
+        }        
     }
 
     
@@ -177,170 +289,22 @@ impl Fenestration {
 
 #[cfg(test)]
 mod testing{
-    /*
-    use super::*;
-    use crate::material::*;
-    use crate::substance::*;
     
-    use geometry3d::point3d::Point3D;
-    use geometry3d::loop3d::Loop3D;
+    use super::*;
 
     #[test]
-    fn test_fixed_closed(){
-
-        // Crate a construction
-        let s = Substance::new(
-            "polyurethane".to_string(),
-            0.0252, // W/m.K            
-            2400., // J/kg.K
-            17.5, // kg/m3... reverse engineered from paper            
-        );
-
-        let m = Material::new(s,0.1);        
-        let c = Construction::new("Construction".to_string(),vec![Rc::clone(&m)]);
-
-        // Test for closed
-        // Geometry
-        let mut the_loop = Loop3D::new();
-        let l = 1. as f64;
-        the_loop.push( Point3D::new(-l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, l, 0.)).unwrap();
-        the_loop.push( Point3D::new(-l, l, 0.)).unwrap();
-        the_loop.close().unwrap();
-                
-
-        let mut fen = Fenestration::FixedClosed(
-            SubSurface::new("FixedClosed".to_string(),the_loop,c).unwrap()
-        );
-          
-
-        assert!(!fen.is_operable());
-        assert!(fen.set_open_fraction(0.5).is_err());
-        assert_eq!(fen.get_open_fraction(),0.0);
-        
+    #[should_panic]
+    fn test_ground_boundary_front(){
+        let mut state : BuildingState = Vec::new();
+        let mut f = Fenestration::new(&mut state, format!("A"), 12,FenestrationType::FixedOpen);
+        f.set_front_boundary(Boundary::Ground).unwrap();
     }
 
     #[test]
-    fn test_fixed_open(){
-
-        // Crate a construction
-        let s = Substance::new(
-            "polyurethane".to_string(),
-            0.0252, // W/m.K            
-            2400., // J/kg.K
-            17.5, // kg/m3... reverse engineered from paper            
-        );
-
-        let m = Material::new(s,0.1);        
-        let c = Construction::new("Construction".to_string(),vec![Rc::clone(&m)]);
-
-        // Test for closed
-        // Geometry
-        let mut the_loop = Loop3D::new();
-        let l = 1. as f64;
-        the_loop.push( Point3D::new(-l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, l, 0.)).unwrap();
-        the_loop.push( Point3D::new(-l, l, 0.)).unwrap();
-        the_loop.close().unwrap();
-            
-        let mut fen = Fenestration::FixedOpen(
-            SubSurface::new("FixedOpen".to_string(),the_loop,c).unwrap()
-        );
-
-
-        assert!(!fen.is_operable());
-        assert!(fen.set_open_fraction(0.5).is_err());
-        assert_eq!(fen.get_open_fraction(),1.0);
-        
+    #[should_panic]
+    fn test_ground_boundary_back(){
+        let mut state : BuildingState = Vec::new();
+        let mut f = Fenestration::new(&mut state, format!("A"), 12,FenestrationType::FixedOpen);
+        f.set_back_boundary(Boundary::Ground).unwrap();
     }
-
-    #[test]
-    fn test_continuous(){
-
-        // Crate a construction
-        let s = Substance::new(
-            "polyurethane".to_string(),
-            0.0252, // W/m.K            
-            2400., // J/kg.K
-            17.5, // kg/m3... reverse engineered from paper            
-        );
-
-        let m = Material::new(s,0.1);        
-        let c = Construction::new("Construction".to_string(),vec![Rc::clone(&m)]);
-
-        // Test for closed
-        // Geometry
-        let mut the_loop = Loop3D::new();
-        let l = 1. as f64;
-        the_loop.push( Point3D::new(-l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, l, 0.)).unwrap();
-        the_loop.push( Point3D::new(-l, l, 0.)).unwrap();
-        the_loop.close().unwrap();
-        
-
-        let mut fen = Fenestration::Continuous(
-            SubSurface::new("Continuous".to_string(),the_loop,c).unwrap()
-        );
-
-        assert!(fen.is_operable());
-        assert_eq!(fen.get_open_fraction(),0.0);
-        
-        assert!(fen.set_open_fraction(0.5).is_ok());
-        assert_eq!(fen.get_open_fraction(),0.5);
-        assert!(fen.set_open_fraction(0.1).is_ok());
-        assert_eq!(fen.get_open_fraction(),0.1);
-        assert!(fen.set_open_fraction(1.0).is_ok());
-        assert_eq!(fen.get_open_fraction(),1.0);
-    }
-
-    #[test]
-    fn test_binary(){
-
-        // Crate a construction
-        let s = Substance::new(
-            "polyurethane".to_string(),
-            0.0252, // W/m.K            
-            2400., // J/kg.K
-            17.5, // kg/m3... reverse engineered from paper            
-        );
-
-        let m = Material::new(s,0.1);        
-        let c = Construction::new("Construction".to_string(),vec![Rc::clone(&m)]);
-
-        // Test for closed
-        // Geometry
-        let mut the_loop = Loop3D::new();
-        let l = 1. as f64;
-        the_loop.push( Point3D::new(-l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, -l, 0.)).unwrap();
-        the_loop.push( Point3D::new(l, l, 0.)).unwrap();
-        the_loop.push( Point3D::new(-l, l, 0.)).unwrap();
-        the_loop.close().unwrap();
-        
-
-        let mut fen = Fenestration::Binary(
-            SubSurface::new("Binary".to_string(),the_loop,c).unwrap()
-        );
-
-
-        assert!(fen.is_operable());
-        assert_eq!(fen.get_open_fraction(),0.0);
-
-        assert!(fen.set_open_fraction(0.5).is_err());
-        assert_eq!(fen.get_open_fraction(),0.0);
-
-        assert!(fen.set_open_fraction(0.1).is_err());
-        assert_eq!(fen.get_open_fraction(),0.0);
-
-        assert!(fen.set_open_fraction(1.0).is_ok());
-        assert_eq!(fen.get_open_fraction(),1.0);
-
-        assert!(fen.set_open_fraction(0.0).is_ok());
-        assert_eq!(fen.get_open_fraction(),0.0);
-    }
-
-*/
 }

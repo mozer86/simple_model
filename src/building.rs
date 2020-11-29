@@ -1,13 +1,18 @@
 use geometry3d::polygon3d::Polygon3D;
 
+use crate::building_state::BuildingState;
+
+
 use crate::substance::{Substance, SubstanceProperties};
 use crate::material::{Material, MaterialProperties};
 use crate::boundary::Boundary;
 use crate::construction::Construction;
 use crate::object_trait::ObjectTrait;
 use crate::surface::Surface;
+use crate::fenestration::{Fenestration,FenestrationType};
 use crate::space::Space;
-//use crate::boundary::Boundary;
+
+use crate::heating_cooling::{HeaterCooler,HeatingCoolingKind};
 
 pub struct Building {
 
@@ -26,6 +31,9 @@ pub struct Building {
     surfaces: Vec<Surface>,
     spaces: Vec<Space>,
 
+    /// The windows and doors in the surface    
+    fenestrations: Vec<Fenestration>,
+    
 }
 
 impl ObjectTrait for Building {
@@ -111,6 +119,7 @@ impl Building {
             materials: Vec::new(),
             constructions: Vec::new(),
             surfaces: Vec::new(),
+            fenestrations: Vec::new(),
             spaces: Vec::new(),
         }
     }
@@ -135,9 +144,14 @@ impl Building {
         &self.surfaces
     }
 
+    pub fn get_genestrations(&self)->&Vec<Fenestration>{
+        &self.fenestrations
+    }
+
     pub fn get_spaces(&self)->&Vec<Space>{
         &self.spaces
     }
+    
 
 
     /* SUBSTANCE */
@@ -257,14 +271,17 @@ impl Building {
 
     /* SURFACE */
 
-    /// Creates a new construction
+    /// Creates a new Surface
     pub fn add_surface(&mut self, name: String) -> usize {
         let i = self.surfaces.len();
         self.surfaces.push(Surface::new(name,i));
+
+        // Node temperatures will be added within the Thermal model
+
         i
     }
 
-    /// Retrieves a construction
+    /// Retrieves a Surface
     pub fn get_surface(&self, index: usize)->Result<&Surface, String>{
         if index >= self.surfaces.len(){
             return self.error_out_of_bounds("Surface", index)            
@@ -338,6 +355,99 @@ impl Building {
         Ok(())
     }
 
+    /* FENESTRATION */
+
+    /// Creates a new Fenestration object
+    pub fn add_fenestration(&mut self, state: &mut BuildingState, name: String, class: FenestrationType)->usize{
+        let i = self.fenestrations.len();
+        self.fenestrations.push(Fenestration::new(state, name, i, class));
+
+        // State is modified when creating Fenestration
+        i
+    }
+
+    /// Retrieves a Fenestration
+    pub fn get_fenestration(&self, index: usize)->Result<&Fenestration, String>{
+        if index >= self.fenestrations.len(){
+            return self.error_out_of_bounds("Fenestration", index)            
+        }        
+        Ok(&self.fenestrations[index])
+    }
+
+    /// Sets the polygon for a Fenestration
+    pub fn set_fenestration_polygon(&mut self, fen_index: usize, p: Polygon3D)->Result<(),String>{
+        if fen_index >= self.fenestrations.len(){
+            return self.error_out_of_bounds("Fenestration", fen_index)
+        }
+
+        self.fenestrations[fen_index].set_polygon(p);
+
+        Ok(())
+    }
+
+    /// Sets the construction of a Fenestration
+    pub fn set_fenestration_construction(&mut self, fen_index: usize, construction_index: usize)->Result<(),String>{
+        if fen_index >= self.fenestrations.len(){
+            return self.error_out_of_bounds("Fenestration", fen_index)
+        }
+
+        if construction_index >= self.constructions.len(){
+            return self.error_out_of_bounds("Construction", construction_index)
+        }
+        
+        self.fenestrations[fen_index].set_construction(construction_index);
+
+        Ok(())
+    }
+
+    /// Sets the Open Fraction for a Fenestration
+    pub fn set_fenestration_open_fraction(&mut self, fen_index: usize, state: &mut BuildingState, fraction: f64)->Result<(),String>{
+        if fen_index >= self.fenestrations.len(){
+            return self.error_out_of_bounds("Fenestration", fen_index)
+        }
+
+        self.fenestrations[fen_index].set_open_fraction(state, fraction)
+        
+    }
+
+    /// Sets the front boundary of a Fenestration
+    pub fn set_fenestration_front_boundary(&mut self, fenestration_index: usize, boundary: Boundary)->Result<(),String>{
+        if fenestration_index >= self.fenestrations.len(){
+            return self.error_out_of_bounds("Fenestration", fenestration_index)
+        }
+        match boundary {
+            Boundary::Ground | Boundary:: None => self.fenestrations[fenestration_index].set_front_boundary(boundary),
+            Boundary::Space(s) => {
+                if s >= self.spaces.len(){
+                    return self.error_out_of_bounds("Space", s)
+                }else{
+                    self.spaces[s].push_fenestration(fenestration_index);                    
+                    self.fenestrations[fenestration_index].set_front_boundary(boundary)
+                }
+            }
+        }        
+    }
+
+    /// Sets the back boundary of a Fenestration
+    pub fn set_fenestration_back_boundary(&mut self, fenestration_index: usize, boundary: Boundary)->Result<(),String>{
+        if fenestration_index >= self.fenestrations.len(){
+            return self.error_out_of_bounds("Fenestration", fenestration_index)
+        }
+
+        match boundary {
+            Boundary::Ground | Boundary:: None => self.fenestrations[fenestration_index].set_back_boundary(boundary),
+            Boundary::Space(s) => {
+                if s >= self.spaces.len(){
+                    return self.error_out_of_bounds("Space", s)
+                }else{
+                    self.spaces[s].push_fenestration(fenestration_index);
+                    self.fenestrations[fenestration_index].set_back_boundary(boundary)
+                }
+            }
+        }
+    }
+
+
 
     /* SPACES */
 
@@ -345,6 +455,9 @@ impl Building {
     pub fn add_space(&mut self, name: String) -> usize {
         let i = self.spaces.len();
         self.spaces.push(Space::new(name,i));
+
+        // State is added within the Thermal model
+
         i
     }
 
@@ -365,6 +478,40 @@ impl Building {
         Ok(())
     }
     
+    /* HEATER AND COOLER */
+    pub fn add_heating_cooling_to_space(&mut self, state: &mut BuildingState, space_index: usize, kind: HeatingCoolingKind)->Result<(),String>{
+        if space_index >= self.spaces.len(){
+            return self.error_out_of_bounds("Space", space_index)            
+        }       
+
+        self.spaces[space_index].set_heating_cooling(
+            HeaterCooler::new(
+                state, 
+                format!("Space {} Heater/Cooler", space_index),// name
+                space_index,
+                kind
+            ));
+
+        Ok(())
+    }
+
+    pub fn set_space_max_heating_power(&mut self, space_index: usize, power: f64)-> Result<(),String> {
+        if space_index >= self.spaces.len(){
+            return self.error_out_of_bounds("Space", space_index)            
+        }       
+
+        self.spaces[space_index].set_max_heating_power(power)
+    }
+
+    pub fn set_space_max_cooling_power(&mut self, space_index: usize, power: f64)-> Result<(),String> {
+        if space_index >= self.spaces.len(){
+            return self.error_out_of_bounds("Space", space_index)            
+        }       
+
+        self.spaces[space_index].set_max_cooling_power(power)
+    }
+
+
 
 }
 
@@ -534,7 +681,7 @@ mod testing{
             assert!(s.is_full().is_err());
         }
 
-
+        // Surface
         let s_name = "Surface 0".to_string();
         let s0 = building.add_surface(s_name.clone());
         {
@@ -599,6 +746,130 @@ mod testing{
             
             if let Boundary::Ground = s.front_boundary(){
                 assert!(true);
+            }else{
+                assert!(false);
+            }
+
+            assert_eq!(2, s.index());
+            assert!(s.is_full().is_err());
+        }
+
+
+    }
+
+    use crate::building_state::BuildingStateElement;
+
+    #[test]
+    fn fenestration_space (){
+        let mut building = Building::new("Test Building".to_string());
+        let mut state: BuildingState = Vec::new();
+
+        let space_name_0 = "Space 0".to_string();
+        let space_index_0 = building.add_space(space_name_0.clone());
+        {
+            let s = building.get_space(space_index_0).unwrap();
+            assert_eq!(&space_name_0, s.name());
+            assert_eq!(s.get_fenestrations().len(),0);
+            assert_eq!(0, s.index());
+            assert!(s.is_full().is_err());
+        }
+
+        let space_name_1 = "Space 1".to_string();
+        let space_index_1 = building.add_space(space_name_1.clone());
+        {
+            let s = building.get_space(space_index_1).unwrap();
+            assert_eq!(&space_name_1, s.name());
+            assert_eq!(s.get_fenestrations().len(),0);
+            assert_eq!(1, s.index());
+            assert!(s.is_full().is_err());
+        }
+
+        // Fenestration
+        let s_name = "Fen 0".to_string();
+        let f0 = building.add_fenestration(&mut state, s_name.clone(), FenestrationType::FixedOpen);
+        {
+            let f = building.get_fenestration(f0).unwrap();
+            assert_eq!(&s_name, f.name());
+            assert_eq!(0, f.index());
+            assert!(f.is_full().is_err());
+            
+            assert!(f.operation_type() == FenestrationType::FixedOpen);
+
+            assert_eq!(1,state.len());
+            assert!(state[0] == BuildingStateElement::FenestrationOpenFraction(f0,0.0));
+        }
+        
+        building.set_fenestration_front_boundary(f0, Boundary::Space(space_index_0)).unwrap();
+        building.set_fenestration_back_boundary(f0, Boundary::Space(space_index_1)).unwrap();
+        {
+            let space_0 = building.get_space(space_index_0).unwrap();
+            let space_surfaces = space_0.get_fenestrations();
+            assert_eq!(space_surfaces.len(),1);
+            assert_eq!(space_surfaces[0], f0);
+
+            let space_1 = building.get_space(space_index_1).unwrap();
+            let space_surfaces = space_1.get_fenestrations();
+            assert_eq!(space_surfaces.len(),1);
+            assert_eq!(space_surfaces[0], f0);
+            
+            let s = building.get_fenestration(f0).unwrap();
+            if let Boundary::Space(i) = s.front_boundary(){
+                assert_eq!(*i,space_index_0);
+            }else{
+                assert!(false);
+            }
+            
+            if let Boundary::Space(i) = s.back_boundary(){
+                assert_eq!(*i,space_index_1);
+            }else{
+                assert!(false);
+            }
+
+            assert_eq!(0, s.index());
+            assert!(s.is_full().is_err());
+        }
+
+        let s_name = "Fen 1".to_string();
+        let f1 = building.add_fenestration(&mut state, s_name.clone(), FenestrationType::Continuous);
+        assert_eq!(2,state.len());
+        assert!(state[1] == BuildingStateElement::FenestrationOpenFraction(f1,0.0));
+
+        let s_name = "Fen 2".to_string();
+        let f2 = building.add_fenestration(&mut state, s_name.clone(), FenestrationType::Continuous);
+        {
+            let f = building.get_fenestration(f2).unwrap();
+            assert_eq!(&s_name, f.name());
+            assert_eq!(2, f.index());
+            assert!(f.is_full().is_err());
+
+            assert_eq!(3,state.len());
+            assert!(state[2] == BuildingStateElement::FenestrationOpenFraction(f2,0.0));
+        }
+        
+        building.set_fenestration_front_boundary(f2, Boundary::Space(space_index_1)).unwrap();
+        building.set_fenestration_back_boundary(f2, Boundary::Space(space_index_0)).unwrap();
+        {
+            let space = building.get_space(space_index_0).unwrap();
+            let space_surfaces = space.get_fenestrations();
+            assert_eq!(space_surfaces.len(),2);
+            assert_eq!(space_surfaces[0],f0);
+            assert_eq!(space_surfaces[1],f2);
+
+            let space = building.get_space(space_index_1).unwrap();
+            let space_surfaces = space.get_fenestrations();
+            assert_eq!(space_surfaces.len(),2);
+            assert_eq!(space_surfaces[0],f0);
+            assert_eq!(space_surfaces[1],f2);
+
+            let s = building.get_fenestration(f2).unwrap();
+            if let Boundary::Space(i) = s.back_boundary(){
+                assert_eq!(*i,space_index_0);
+            }else{
+                assert!(false);
+            }
+            
+            if let Boundary::Space(i) = s.front_boundary(){
+                assert_eq!(*i,space_index_1);
             }else{
                 assert!(false);
             }

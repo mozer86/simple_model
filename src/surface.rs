@@ -1,5 +1,6 @@
 use crate::object_trait::ObjectTrait;
 
+
 use geometry3d::polygon3d::Polygon3D;
 
 
@@ -31,10 +32,7 @@ pub struct Surface {
 
     /// A reference to the Boundary in back of the Surface
     back_boundary: Boundary,
-
-    // The windows and doors in the surface
-    //fenestrations: Vec<Fenestration>,
-    
+        
 }
 
 impl ObjectTrait for Surface{
@@ -73,8 +71,7 @@ impl Surface {
             polygon: None,
             construction: None,
             front_boundary: Boundary::None,
-            back_boundary: Boundary::None,
-            //fenestrations: Vec::new(),
+            back_boundary: Boundary::None,            
             name: name,
             index: index
         }
@@ -144,30 +141,8 @@ impl Surface {
     pub fn set_polygon(&mut self, p: Polygon3D){
         self.polygon = Some(p);
     }
-
     
-
-    /*
-    /// Adds a fenestration to the surface.
-    pub fn add_fenestration(&mut self, fenestration: Fenestration)->Result<(),String>{
-        
-        // Cut the hole
-        match self.polygon.cut_hole(fenestration.clone_loop()){
-            Err(msg)=>{
-                return Err(format!("When trying to add fenestration {} to surface {} - {}",self.name, fenestration.name(), msg))
-            },
-            Ok(_) =>{}
-        };
-            
-        
-        // Add the fenestration
-        self.fenestrations.push(fenestration);
-
-        Ok(())
-    }
-    */
-
-
+    
 }
 
 
@@ -224,8 +199,6 @@ mod testing{
 
         // polygon still missing
         assert!(s0.is_full().is_err());
-
-
     }
 }
 
