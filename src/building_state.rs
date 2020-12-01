@@ -11,6 +11,8 @@ pub fn find_in_state(state: &BuildingState, element: BuildingStateElement )->Opt
     None
 }
 
+
+
 // The idea is to have a cheap-to-clone (or copy?) structure
 #[derive(Copy,Clone, PartialEq)]
 pub enum BuildingStateElement{
@@ -24,7 +26,11 @@ pub enum BuildingStateElement{
     /// Represents the heating/cooling state on a space
     /// One heater is allowed per space. So, it contains
     /// the Space index and the fraction of power
-    SpaceHeatingCooling(usize, HeatingCoolingState),
+    SpaceHeatingCoolingPowerConsumption(usize, HeatingCoolingState),
+
+    /// Represents the power being consumed by 
+    /// a Luminaire object. (space_index, power)
+    SpaceLightingPowerConsumption(usize, f64),
 
     /* SOLAR */
     
@@ -73,8 +79,11 @@ impl BuildingStateElement {
             BuildingStateElement::FenestrationOpenFraction(fenestration_index,_)=>{
                 format!("Fenestration {} - OpenFraction []", fenestration_index)
             },
-            BuildingStateElement::SpaceHeatingCooling(space_index,_)=>{
-                format!("Space {} - Heating/Cooling Power Fraction", space_index)
+            BuildingStateElement::SpaceHeatingCoolingPowerConsumption(space_index,_)=>{
+                format!("Space {} - Heating/Cooling Power Consumption", space_index)
+            },
+            BuildingStateElement::SpaceLightingPowerConsumption(space_index,_)=>{
+                format!("Space {} - Lighting Power Consumption", space_index)
             }
         }
     }

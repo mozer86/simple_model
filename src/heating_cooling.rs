@@ -27,11 +27,13 @@ pub enum HeatingCoolingKind {
 }
 
 pub struct HeaterCooler{
-    /// The name of the sub surface
+    
+    /// The name of the system
     name: String,    
 
-    /// The position of the Fenestration in its
-    /// containing Array
+    /// The position of the system in its
+    /// containing Array (this is not used for now, as 
+    /// only one HeaterCooler is allowed per space)
     index: usize,
 
     /// The kind of heater utilized
@@ -43,7 +45,7 @@ pub struct HeaterCooler{
     /// Max cooling power
     max_cooling_power : Option<f64>,
 
-    /// The indicator of the state of the heater in the 
+    /// The index of the state of the heater in the 
     /// State array
     state_index: usize
 }
@@ -83,7 +85,7 @@ impl HeaterCooler {
         let state_index = state.len();
         state.push(
             // off by default,
-            BuildingStateElement::SpaceHeatingCooling(space_index,HeatingCoolingState::Off)
+            BuildingStateElement::SpaceHeatingCoolingPowerConsumption(space_index,HeatingCoolingState::Off)
         );
 
 
@@ -97,6 +99,9 @@ impl HeaterCooler {
         }
     }
     
+    pub fn state_index(&self)->usize{
+        self.state_index
+    }
     
     pub fn set_max_heating_power(&mut self, p: f64){
         self.max_heating_power = Some(p);

@@ -1,5 +1,7 @@
 use crate::heating_cooling::HeaterCooler;
+use crate::luminaire::Luminaire;
 use crate::object_trait::ObjectTrait;
+
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
@@ -22,7 +24,10 @@ pub struct Space {
     fenestrations: Vec<usize>,
 
     /// The Heating/Cooling devices in the space
-    heating_cooling: Option<HeaterCooler>
+    heating_cooling: Option<HeaterCooler>,
+
+    /// The luminaire in the space
+    luminaire: Option<Luminaire>,
 }
 
 impl ObjectTrait for Space{
@@ -59,6 +64,7 @@ impl Space {
             surfaces: Vec::new(),            
             fenestrations: Vec::new(),            
             heating_cooling: None,
+            luminaire: None,
         }
     }
 
@@ -75,9 +81,54 @@ impl Space {
         self.volume = Some(v);
     }
 
-    /// Sets the volume of the space
-    pub fn set_heating_cooling(&mut self, system: HeaterCooler){
+    /// Adds a Luminaire to the Space. Returns an error if there
+    /// was a Luminaire already there.
+    pub fn add_luminaire(&mut self, luminaire: Luminaire)->Result<(),String>{
+        if self.luminaire.is_some(){
+            return Err(format!("Trying to replace {} of {} '{}'", luminaire.class_name(), self.class_name(), self.name))
+        }
+        self.luminaire = Some(luminaire);
+        Ok(())
+    }
+
+    /// Sets the power for the luminaires in the Space.
+    /// Returns an error if there are no luminaires in the Space.
+    pub fn set_luminaire_max_power(&mut self, power: f64)->Result<(),String>{
+        match &mut self.luminaire{
+            Some(h) => {
+                h.set_max_power(power);
+                Ok(())
+            },
+            None => Err(format!("There are no Luminaires in {} '{}'", self.class_name(), self.name()))
+        }
+    }
+
+    /// Retrieves the state index of the Luminaires in the Space,
+    /// if any
+    pub fn get_luminaires_state_index(&self)->Option<usize>{
+        match &self.luminaire{
+            Some(h) => Some(h.state_index()),
+            None => None
+        }
+    }
+
+    /// Retrieves the state index of the heating/cooling system
+    pub fn get_heating_cooling_state_index(&self)->Option<usize>{
+        match &self.heating_cooling{
+            Some(h) => Some(h.state_index()),
+            None => None
+        }
+    }
+
+    
+    /// Adds a Heating/Cooling of the space. Returns an error if there was
+    /// a system already there.
+    pub fn add_heating_cooling(&mut self, system: HeaterCooler)->Result<(),String>{
+        if self.heating_cooling.is_some(){
+            return Err(format!("Trying to replace {} of {} '{}'", system.class_name(), self.class_name(), self.name))
+        }
         self.heating_cooling = Some(system);
+        Ok(())
     }
 
     /// Sets the maximum heating power.
@@ -87,7 +138,7 @@ impl Space {
                 v.set_max_heating_power(power);
                 Ok(())
             },
-            None => Err(format!("{} '{}' has no heating/cooling system... cannot set maximum heating power", self.class_name(), self.name()))
+            None => Err(format!("{} '{}' has no Heating/Cooling system... cannot set maximum heating power", self.class_name(), self.name()))
         }
     }
 

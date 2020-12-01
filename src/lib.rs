@@ -11,4 +11,5 @@ pub mod space;
 pub mod boundary;
 pub mod fenestration;
 pub mod heating_cooling;
+pub mod luminaire;
 //pub mod shading;

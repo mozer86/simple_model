@@ -13,6 +13,7 @@ use crate::fenestration::{Fenestration,FenestrationType};
 use crate::space::Space;
 
 use crate::heating_cooling::{HeaterCooler,HeatingCoolingKind};
+use crate::luminaire::Luminaire;
 
 pub struct Building {
 
@@ -484,15 +485,14 @@ impl Building {
             return self.error_out_of_bounds("Space", space_index)            
         }       
 
-        self.spaces[space_index].set_heating_cooling(
+        self.spaces[space_index].add_heating_cooling(
             HeaterCooler::new(
                 state, 
                 format!("Space {} Heater/Cooler", space_index),// name
                 space_index,
                 kind
-            ));
+            ))
 
-        Ok(())
     }
 
     pub fn set_space_max_heating_power(&mut self, space_index: usize, power: f64)-> Result<(),String> {
@@ -510,6 +510,31 @@ impl Building {
 
         self.spaces[space_index].set_max_cooling_power(power)
     }
+
+    /* LUMINAIRE */
+    pub fn add_luminaire_to_space(&mut self, state: &mut BuildingState, space_index: usize)->Result<(),String>{
+        if space_index >= self.spaces.len(){
+            return self.error_out_of_bounds("Space", space_index)            
+        }       
+
+        self.spaces[space_index].add_luminaire(
+            Luminaire::new(
+                state, 
+                format!("Space {} Luminaire", space_index),// name
+                space_index,                
+            ))
+
+        
+    }
+
+    pub fn set_space_max_lighting_power(&mut self, space_index: usize, power: f64)-> Result<(),String> {
+        if space_index >= self.spaces.len(){
+            return self.error_out_of_bounds("Space", space_index)            
+        }       
+
+        self.spaces[space_index].set_luminaire_max_power(power)
+    }
+
 
 
 
