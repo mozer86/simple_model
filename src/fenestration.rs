@@ -3,7 +3,8 @@ use geometry3d::loop3d::Loop3D;
 
 use crate::boundary::Boundary;
 use crate::object_trait::ObjectTrait;
-use crate::building_state::{BuildingState, BuildingStateElement};
+use crate::building_state::BuildingState;
+use crate::building_state_element::BuildingStateElement;
 
 #[derive(Copy,Clone, Eq, PartialEq)]
 pub enum OperationType{
@@ -118,6 +119,10 @@ impl Fenestration {
             back_boundary: Boundary::None,
         }
     }
+
+    pub fn fenestration_type(&self)->FenestrationType{
+        self.fenestration_type
+    }
     
 
     pub fn open_fraction(&self, state: &BuildingState)->f64{
@@ -192,7 +197,7 @@ impl Fenestration {
         self.construction = Some(construction)
     }
 
-    pub fn set_open_fraction(&mut self, state: &mut BuildingState, new_open: f64) -> Result<(),String>{
+    pub fn set_open_fraction(&self, state: &mut BuildingState, new_open: f64) -> Result<(),String>{
                 
         match self.operation_type {
             OperationType::FixedClosed |
@@ -307,7 +312,7 @@ mod testing{
     #[test]
     #[should_panic]
     fn test_ground_boundary_front(){
-        let mut state : BuildingState = Vec::new();
+        let mut state : BuildingState = BuildingState::new();
         let mut f = Fenestration::new(&mut state, format!("A"), 12,OperationType::FixedOpen, FenestrationType::Window);
         f.set_front_boundary(Boundary::Ground).unwrap();
     }
@@ -315,7 +320,7 @@ mod testing{
     #[test]
     #[should_panic]
     fn test_ground_boundary_back(){
-        let mut state : BuildingState = Vec::new();
+        let mut state : BuildingState = BuildingState::new();
         let mut f = Fenestration::new(&mut state, format!("A"), 12,OperationType::FixedOpen, FenestrationType::Window);
         f.set_back_boundary(Boundary::Ground).unwrap();
     }

@@ -782,12 +782,12 @@ mod testing{
 
     }
 
-    use crate::building_state::BuildingStateElement;
+    use crate::building_state_element::BuildingStateElement;
 
     #[test]
     fn fenestration_space (){
         let mut building = Building::new("Test Building".to_string());
-        let mut state: BuildingState = Vec::new();
+        let mut state: BuildingState = BuildingState::new();
 
         let space_name_0 = "Space 0".to_string();
         let space_index_0 = building.add_space(space_name_0.clone());

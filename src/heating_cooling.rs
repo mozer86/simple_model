@@ -1,4 +1,5 @@
-use crate::building_state::{BuildingState, BuildingStateElement};
+use crate::building_state::BuildingState;
+use crate::building_state_element::BuildingStateElement;
 use crate::object_trait::ObjectTrait;
 
 #[derive(Copy,Clone,PartialEq)]
