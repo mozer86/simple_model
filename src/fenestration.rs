@@ -6,11 +6,19 @@ use crate::object_trait::ObjectTrait;
 use crate::building_state::{BuildingState, BuildingStateElement};
 
 #[derive(Copy,Clone, Eq, PartialEq)]
-pub enum FenestrationType{
+pub enum OperationType{
     FixedClosed,
     FixedOpen,
     Continuous,
     Binary,
+}
+
+
+
+#[derive(Copy,Clone, Eq, PartialEq)]
+pub enum FenestrationType{
+    Window,
+    Door
 }
 
 
@@ -43,7 +51,10 @@ pub struct Fenestration {
     // shading: Option<usize>,
 
     /// The opportunity for operating the Fenestration
-    operation_type: FenestrationType,
+    operation_type: OperationType,
+
+    /// It it a window or a door, or...?
+    fenestration_type : FenestrationType,
 
     /// A reference to the Boundary in front of the Fenestration 
     front_boundary: Boundary,
@@ -85,7 +96,7 @@ impl Fenestration {
     /// self-contained; but it becomes meaningful when it is part of an
     /// Array. For instance, when inserting a new Construction to the     
     /// Building object, the latter chooses the appropriate index
-    pub fn new(state: &mut BuildingState, name: String, index: usize, class: FenestrationType )->Self{
+    pub fn new(state: &mut BuildingState, name: String, index: usize, operation_type: OperationType, fenestration_type : FenestrationType )->Self{
 
         // Push this to state.
         let open_index = state.len();
@@ -98,7 +109,8 @@ impl Fenestration {
         Self {
             name: name,
             index: index,
-            operation_type: class,
+            operation_type: operation_type,
+            fenestration_type: fenestration_type,
             open_fraction_index: open_index, 
             polygon: None,
             construction: None,
@@ -149,26 +161,26 @@ impl Fenestration {
         }        
     }
 
-    pub fn operation_type(&self)->FenestrationType{
+    pub fn operation_type(&self)->OperationType{
         self.operation_type
     }
 
 
     fn sub_class_name(&self)->&str{
         match self.operation_type {
-            FenestrationType::FixedClosed => "FixedClosed",
-            FenestrationType::FixedOpen => "FixedOpen",
-            FenestrationType::Continuous => "ContinuousOperation",
-            FenestrationType::Binary => "BinaryOperation",
+            OperationType::FixedClosed => "FixedClosed",
+            OperationType::FixedOpen => "FixedOpen",
+            OperationType::Continuous => "ContinuousOperation",
+            OperationType::Binary => "BinaryOperation",
         }
     }
 
     pub fn is_operable(&self) -> bool{
         match self.operation_type {
-            FenestrationType::FixedClosed => false,
-            FenestrationType::FixedOpen => false,
-            FenestrationType::Continuous => true,
-            FenestrationType::Binary => true,
+            OperationType::FixedClosed => false,
+            OperationType::FixedOpen => false,
+            OperationType::Continuous => true,
+            OperationType::Binary => true,
         }
     }
 
@@ -183,11 +195,11 @@ impl Fenestration {
     pub fn set_open_fraction(&mut self, state: &mut BuildingState, new_open: f64) -> Result<(),String>{
                 
         match self.operation_type {
-            FenestrationType::FixedClosed |
-            FenestrationType::FixedOpen => {
+            OperationType::FixedClosed |
+            OperationType::FixedOpen => {
                 Err(format!("Trying to operate a {}::{}: '{}'", self.class_name(),self.sub_class_name(), self.name))
             },
-            FenestrationType::Continuous => {
+            OperationType::Continuous => {
                 let i = self.open_fraction_index;
 
                 if let BuildingStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
@@ -204,7 +216,7 @@ impl Fenestration {
                 
                 Ok(())
             },
-            FenestrationType::Binary => {
+            OperationType::Binary => {
                 if new_open != 0.0 && new_open != 1.0 {
                     return Err(format!("Trying leave '{}',  a {} {}, half-opened",self.name,self.sub_class_name(), self.class_name()));
                 }else{
@@ -296,7 +308,7 @@ mod testing{
     #[should_panic]
     fn test_ground_boundary_front(){
         let mut state : BuildingState = Vec::new();
-        let mut f = Fenestration::new(&mut state, format!("A"), 12,FenestrationType::FixedOpen);
+        let mut f = Fenestration::new(&mut state, format!("A"), 12,OperationType::FixedOpen, FenestrationType::Window);
         f.set_front_boundary(Boundary::Ground).unwrap();
     }
 
@@ -304,7 +316,7 @@ mod testing{
     #[should_panic]
     fn test_ground_boundary_back(){
         let mut state : BuildingState = Vec::new();
-        let mut f = Fenestration::new(&mut state, format!("A"), 12,FenestrationType::FixedOpen);
+        let mut f = Fenestration::new(&mut state, format!("A"), 12,OperationType::FixedOpen, FenestrationType::Window);
         f.set_back_boundary(Boundary::Ground).unwrap();
     }
 }

@@ -1,7 +1,30 @@
 use crate::heating_cooling::HeatingCoolingState;
 
+
+/// The BuildingState is a Vector of BuildingStateElement objects.
+/// It is intended to be a quick-to-clone structure.
+/// 
+/// To make it quicker to operate, the following conventions (never really checked)
+/// are intended:
+/// * Operational BuildingStateElement objects are all grouped at first. This is not a problem because they are added while creating the building.
+/// * Elements cannot be repeated.
 pub type BuildingState = Vec<BuildingStateElement>;
 
+/// Copies the Physical BuildingStateElements objects from origin to destination.
+pub fn copy_physical_state(origin: &BuildingState, destination: &mut BuildingState){
+    
+    if origin.len() != destination.len(){
+        panic!("When copying physical BuildingStateElements. Origin and Destination have different lengths")
+    }
+
+    for i in 0..origin.len(){
+        if origin[i].is_physical(){
+            destination[i] = origin[i]
+        }
+    }
+}
+
+/*
 pub fn find_in_state(state: &BuildingState, element: BuildingStateElement )->Option<usize>{
     for i in 0..state.len(){
         if state[i] == element{
@@ -10,6 +33,7 @@ pub fn find_in_state(state: &BuildingState, element: BuildingStateElement )->Opt
     }
     None
 }
+*/
 
 
 
@@ -68,6 +92,7 @@ pub enum BuildingStateElement{
 
 impl BuildingStateElement {
     
+    /// Transforms a StateElement into a String
     pub fn to_string(&self)->String{
         match self{
             BuildingStateElement::SpaceDryBulbTemperature(space_index,_) => {
@@ -87,6 +112,31 @@ impl BuildingStateElement {
             }
         }
     }
+
+    /// The building state has Operational and Physical
+    /// variables. Operational variables are those that people
+    /// can handle. The physical ones are those that happen because
+    /// of the laws of physics.
+    pub fn is_operational(&self)->bool{
+        match self{
+            BuildingStateElement::SpaceDryBulbTemperature(_,_)  |
+            BuildingStateElement::SurfaceNodeTemperature(_,_,_) 
+            => false,
+
+            BuildingStateElement::FenestrationOpenFraction(_,_) |
+            BuildingStateElement::SpaceHeatingCoolingPowerConsumption(_,_) |
+            BuildingStateElement::SpaceLightingPowerConsumption(_,_) 
+            => true
+        }
+    }
+    
+    /// The building state has Operational and Physical
+    /// variables. So, if it is not operational, it is physical
+    pub fn is_physical(&self)-> bool {
+        !self.is_operational()
+    }
+
+
 }
 
 
@@ -111,6 +161,7 @@ mod testing{
 
     }
 
+    /*
     #[test]
     fn test_find(){
 
@@ -136,5 +187,6 @@ mod testing{
         }
 
     }
+    */
 
 }

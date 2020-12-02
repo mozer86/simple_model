@@ -14,7 +14,7 @@ pub enum HeatingCoolingState{
     Off
 }
 
-
+#[derive(Copy,Clone)]
 pub enum HeatingCoolingKind {
     /// An ideal heating/cooling device.
     /// Heats and Cools with an efficiency of 
@@ -118,5 +118,9 @@ impl HeaterCooler {
             HeatingCoolingKind::ElectricHeating => "ElectricHeater",
 
         }
+    }
+
+    pub fn get_kind(&self)->HeatingCoolingKind{
+        self.kind
     }
 }

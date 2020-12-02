@@ -81,6 +81,32 @@ impl Space {
         self.volume = Some(v);
     }
 
+    /// Adds a surface reference to the Space's 
+    /// surfaces array
+    pub fn push_surface(&mut self, s_index: usize) {                
+        self.surfaces.push(s_index)
+    }
+
+    /// retrieves the surfaces
+    pub fn get_surfaces(&self)->&Vec<usize>{
+        &self.surfaces
+    }
+
+    /// Adds a fenestration reference to the Space's 
+    /// surfaces array
+    pub fn push_fenestration(&mut self, s_index: usize) {                
+        self.fenestrations.push(s_index)
+    }
+
+    /// retrieves the fenestrations
+    pub fn get_fenestrations(&self)->&Vec<usize>{
+        &self.fenestrations
+    }
+    
+    /* ********** */
+    /* LUMINAIRES */
+    /* ********** */
+
     /// Adds a Luminaire to the Space. Returns an error if there
     /// was a Luminaire already there.
     pub fn add_luminaire(&mut self, luminaire: Luminaire)->Result<(),String>{
@@ -103,11 +129,28 @@ impl Space {
         }
     }
 
+    /// Retrieves the Luminaire
+    pub fn get_luminaire(&self)->&Option<Luminaire>{
+        &self.luminaire
+    }
+
     /// Retrieves the state index of the Luminaires in the Space,
     /// if any
     pub fn get_luminaires_state_index(&self)->Option<usize>{
         match &self.luminaire{
             Some(h) => Some(h.state_index()),
+            None => None
+        }
+    }
+
+    /* *************** */
+    /* HEATING/COOLING */
+    /* *************** */
+
+    /// Retrieves the HeatingCooling
+    pub fn get_heating_cooling(&self)->Option<&HeaterCooler>{
+        match &self.heating_cooling{
+            Some(v)=>Some(v),
             None => None
         }
     }
@@ -151,29 +194,6 @@ impl Space {
             },
             None => Err(format!("{} '{}' has no heating/cooling system... cannot set maximum cooling power", self.class_name(), self.name()))
         }
-    }
-    
-
-    /// Adds a surface reference to the Space's 
-    /// surfaces array
-    pub fn push_surface(&mut self, s_index: usize) {                
-        self.surfaces.push(s_index)
-    }
-
-    /// retrieves the surfaces
-    pub fn get_surfaces(&self)->&Vec<usize>{
-        &self.surfaces
-    }
-
-    /// Adds a fenestration reference to the Space's 
-    /// surfaces array
-    pub fn push_fenestration(&mut self, s_index: usize) {                
-        self.fenestrations.push(s_index)
-    }
-
-    /// retrieves the fenestrations
-    pub fn get_fenestrations(&self)->&Vec<usize>{
-        &self.fenestrations
     }
 
     

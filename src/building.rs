@@ -9,7 +9,7 @@ use crate::boundary::Boundary;
 use crate::construction::Construction;
 use crate::object_trait::ObjectTrait;
 use crate::surface::Surface;
-use crate::fenestration::{Fenestration,FenestrationType};
+use crate::fenestration::{Fenestration,OperationType, FenestrationType};
 use crate::space::Space;
 
 use crate::heating_cooling::{HeaterCooler,HeatingCoolingKind};
@@ -359,9 +359,9 @@ impl Building {
     /* FENESTRATION */
 
     /// Creates a new Fenestration object
-    pub fn add_fenestration(&mut self, state: &mut BuildingState, name: String, class: FenestrationType)->usize{
+    pub fn add_fenestration(&mut self, state: &mut BuildingState, name: String, operation_type: OperationType, fenestration_type: FenestrationType)->usize{
         let i = self.fenestrations.len();
-        self.fenestrations.push(Fenestration::new(state, name, i, class));
+        self.fenestrations.push(Fenestration::new(state, name, i, operation_type, fenestration_type));
 
         // State is modified when creating Fenestration
         i
@@ -462,7 +462,7 @@ impl Building {
         i
     }
 
-    /// Retrieves a construction
+    /// Retrieves a pace
     pub fn get_space(&self, index: usize)->Result<&Space, String>{
         if index >= self.spaces.len(){
             return self.error_out_of_bounds("Space", index)            
@@ -811,14 +811,14 @@ mod testing{
 
         // Fenestration
         let s_name = "Fen 0".to_string();
-        let f0 = building.add_fenestration(&mut state, s_name.clone(), FenestrationType::FixedOpen);
+        let f0 = building.add_fenestration(&mut state, s_name.clone(), OperationType::FixedOpen, FenestrationType::Window);
         {
             let f = building.get_fenestration(f0).unwrap();
             assert_eq!(&s_name, f.name());
             assert_eq!(0, f.index());
             assert!(f.is_full().is_err());
             
-            assert!(f.operation_type() == FenestrationType::FixedOpen);
+            assert!(f.operation_type() == OperationType::FixedOpen);
 
             assert_eq!(1,state.len());
             assert!(state[0] == BuildingStateElement::FenestrationOpenFraction(f0,0.0));
@@ -855,12 +855,12 @@ mod testing{
         }
 
         let s_name = "Fen 1".to_string();
-        let f1 = building.add_fenestration(&mut state, s_name.clone(), FenestrationType::Continuous);
+        let f1 = building.add_fenestration(&mut state, s_name.clone(), OperationType::Continuous, FenestrationType::Window);
         assert_eq!(2,state.len());
         assert!(state[1] == BuildingStateElement::FenestrationOpenFraction(f1,0.0));
 
         let s_name = "Fen 2".to_string();
-        let f2 = building.add_fenestration(&mut state, s_name.clone(), FenestrationType::Continuous);
+        let f2 = building.add_fenestration(&mut state, s_name.clone(), OperationType::Continuous, FenestrationType::Window);
         {
             let f = building.get_fenestration(f2).unwrap();
             assert_eq!(&s_name, f.name());
