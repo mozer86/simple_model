@@ -3,11 +3,11 @@ use geometry3d::loop3d::Loop3D;
 
 use crate::boundary::Boundary;
 use crate::object_trait::ObjectTrait;
-use crate::building_state::BuildingState;
-use crate::building_state_element::BuildingStateElement;
+use simulation_state::simulation_state::SimulationState;
+use simulation_state::simulation_state_element::SimulationStateElement;
 
 #[derive(Copy,Clone, Eq, PartialEq)]
-pub enum OperationType{
+pub enum FenestrationPositions{
     FixedClosed,
     FixedOpen,
     Continuous,
@@ -43,8 +43,8 @@ pub struct Fenestration {
     /// constructions property of the Building object    
     construction: Option<usize>,
 
-    /// Index of the BuildingStateElement representing 
-    /// the fraction open in the BuildingState
+    /// Index of the SimulationStateElement representing 
+    /// the fraction open in the SimulationState
     open_fraction_index: usize,
 
     // The index of the Shading device attached to the Fenestration
@@ -52,7 +52,7 @@ pub struct Fenestration {
     // shading: Option<usize>,
 
     /// The opportunity for operating the Fenestration
-    operation_type: OperationType,
+    operation_type: FenestrationPositions,
 
     /// It it a window or a door, or...?
     fenestration_type : FenestrationType,
@@ -97,13 +97,13 @@ impl Fenestration {
     /// self-contained; but it becomes meaningful when it is part of an
     /// Array. For instance, when inserting a new Construction to the     
     /// Building object, the latter chooses the appropriate index
-    pub fn new(state: &mut BuildingState, name: String, index: usize, operation_type: OperationType, fenestration_type : FenestrationType )->Self{
+    pub fn new(state: &mut SimulationState, name: String, index: usize, operation_type: FenestrationPositions, fenestration_type : FenestrationType )->Self{
 
         // Push this to state.
         let open_index = state.len();
         state.push(
             // closed by default,
-            BuildingStateElement::FenestrationOpenFraction(index,0.0)
+            SimulationStateElement::FenestrationOpenFraction(index,0.0)
         );
 
 
@@ -125,10 +125,10 @@ impl Fenestration {
     }
     
 
-    pub fn open_fraction(&self, state: &BuildingState)->f64{
+    pub fn open_fraction(&self, state: &SimulationState)->f64{
         let i = self.open_fraction_index;
 
-        if let BuildingStateElement::FenestrationOpenFraction(fen_index,open_fraction) = state[i]{
+        if let SimulationStateElement::FenestrationOpenFraction(fen_index,open_fraction) = state[i]{
             if fen_index != self.index {
                 panic!("Incorrect index allocated for OpenFraction of {} '{}'", self.class_name(), self.index);
             }
@@ -166,26 +166,26 @@ impl Fenestration {
         }        
     }
 
-    pub fn operation_type(&self)->OperationType{
+    pub fn operation_type(&self)->FenestrationPositions{
         self.operation_type
     }
 
 
     fn sub_class_name(&self)->&str{
         match self.operation_type {
-            OperationType::FixedClosed => "FixedClosed",
-            OperationType::FixedOpen => "FixedOpen",
-            OperationType::Continuous => "ContinuousOperation",
-            OperationType::Binary => "BinaryOperation",
+            FenestrationPositions::FixedClosed => "FixedClosed",
+            FenestrationPositions::FixedOpen => "FixedOpen",
+            FenestrationPositions::Continuous => "ContinuousOperation",
+            FenestrationPositions::Binary => "BinaryOperation",
         }
     }
 
     pub fn is_operable(&self) -> bool{
         match self.operation_type {
-            OperationType::FixedClosed => false,
-            OperationType::FixedOpen => false,
-            OperationType::Continuous => true,
-            OperationType::Binary => true,
+            FenestrationPositions::FixedClosed => false,
+            FenestrationPositions::FixedOpen => false,
+            FenestrationPositions::Continuous => true,
+            FenestrationPositions::Binary => true,
         }
     }
 
@@ -197,23 +197,23 @@ impl Fenestration {
         self.construction = Some(construction)
     }
 
-    pub fn set_open_fraction(&self, state: &mut BuildingState, new_open: f64) -> Result<(),String>{
+    pub fn set_open_fraction(&self, state: &mut SimulationState, new_open: f64) -> Result<(),String>{
                 
         match self.operation_type {
-            OperationType::FixedClosed |
-            OperationType::FixedOpen => {
+            FenestrationPositions::FixedClosed |
+            FenestrationPositions::FixedOpen => {
                 Err(format!("Trying to operate a {}::{}: '{}'", self.class_name(),self.sub_class_name(), self.name))
             },
-            OperationType::Continuous => {
+            FenestrationPositions::Continuous => {
                 let i = self.open_fraction_index;
 
-                if let BuildingStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
+                if let SimulationStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
                     if fen_index != self.index {
                         panic!("Incorrect index allocated for OpenFraction of {} '{}'", self.class_name(), self.index);
                     }
                     
                     // all Good here
-                    state[i] = BuildingStateElement::FenestrationOpenFraction(fen_index,new_open);
+                    state[i] = SimulationStateElement::FenestrationOpenFraction(fen_index,new_open);
 
                 }else{
                     panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
@@ -221,19 +221,19 @@ impl Fenestration {
                 
                 Ok(())
             },
-            OperationType::Binary => {
+            FenestrationPositions::Binary => {
                 if new_open != 0.0 && new_open != 1.0 {
                     return Err(format!("Trying leave '{}',  a {} {}, half-opened",self.name,self.sub_class_name(), self.class_name()));
                 }else{
                     let i = self.open_fraction_index;
 
-                    if let BuildingStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
+                    if let SimulationStateElement::FenestrationOpenFraction(fen_index,_) = state[i]{
                         if fen_index != self.index {
                             panic!("Incorrect index allocated for OpenFraction of {} '{}'", self.class_name(), self.index);
                         }
                         
                         // all Good here
-                        state[i] = BuildingStateElement::FenestrationOpenFraction(fen_index,new_open);
+                        state[i] = SimulationStateElement::FenestrationOpenFraction(fen_index,new_open);
 
                     }else{
                         panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
@@ -312,16 +312,16 @@ mod testing{
     #[test]
     #[should_panic]
     fn test_ground_boundary_front(){
-        let mut state : BuildingState = BuildingState::new();
-        let mut f = Fenestration::new(&mut state, format!("A"), 12,OperationType::FixedOpen, FenestrationType::Window);
+        let mut state : SimulationState = SimulationState::new();
+        let mut f = Fenestration::new(&mut state, format!("A"), 12,FenestrationPositions::FixedOpen, FenestrationType::Window);
         f.set_front_boundary(Boundary::Ground).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn test_ground_boundary_back(){
-        let mut state : BuildingState = BuildingState::new();
-        let mut f = Fenestration::new(&mut state, format!("A"), 12,OperationType::FixedOpen, FenestrationType::Window);
+        let mut state : SimulationState = SimulationState::new();
+        let mut f = Fenestration::new(&mut state, format!("A"), 12,FenestrationPositions::FixedOpen, FenestrationType::Window);
         f.set_back_boundary(Boundary::Ground).unwrap();
     }
 }

@@ -1,5 +1,6 @@
-use crate::building_state::BuildingState;
-use crate::building_state_element::BuildingStateElement;
+use simulation_state::simulation_state::SimulationState;
+use simulation_state::simulation_state_element::SimulationStateElement;
+
 use crate::object_trait::ObjectTrait;
 
 
@@ -52,12 +53,12 @@ impl ObjectTrait for Luminaire {
 
 impl Luminaire {
 
-    pub fn new(state: &mut BuildingState, name: String, space_index: usize ) -> Self {
+    pub fn new(state: &mut SimulationState, name: String, space_index: usize ) -> Self {
         // Push this to state.
         let state_index = state.len();
         state.push(
             // off by default,
-            BuildingStateElement::SpaceLightingPowerConsumption(space_index,0.0)
+            SimulationStateElement::SpaceLightingPowerConsumption(space_index,0.0)
         );
 
         Self {
@@ -74,6 +75,10 @@ impl Luminaire {
     
     pub fn set_max_power(&mut self, p: f64){
         self.max_power = Some(p);
+    }
+
+    pub fn get_max_power(&self)->Option<f64>{
+        self.max_power
     }
     
 }

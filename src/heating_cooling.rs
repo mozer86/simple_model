@@ -1,19 +1,9 @@
-use crate::building_state::BuildingState;
-use crate::building_state_element::BuildingStateElement;
+use simulation_state::simulation_state::SimulationState;
+use simulation_state::simulation_state_element::SimulationStateElement;
+use simulation_state::simulation_state_element::HeatingCoolingState;
+
 use crate::object_trait::ObjectTrait;
 
-#[derive(Copy,Clone,PartialEq)]
-pub enum HeatingCoolingState{
-    
-    /// The power being consumed for cooling (in W)
-    Heating(f64),
-
-    /// The power being consumed for heating (in W)
-    Cooling(f64),
-
-    /// Off
-    Off
-}
 
 #[derive(Copy,Clone)]
 pub enum HeatingCoolingKind {
@@ -81,12 +71,11 @@ impl ObjectTrait for HeaterCooler {
 
 impl HeaterCooler {
 
-    pub fn new(state: &mut BuildingState, name: String, space_index: usize, kind: HeatingCoolingKind) -> Self {
-        // Push this to state.
-        let state_index = state.len();
-        state.push(
+    pub fn new(state: &mut SimulationState, name: String, space_index: usize, kind: HeatingCoolingKind) -> Self {
+        // Push this to state.        
+        let state_index = state.push(
             // off by default,
-            BuildingStateElement::SpaceHeatingCoolingPowerConsumption(space_index,HeatingCoolingState::Off)
+            SimulationStateElement::SpaceHeatingCoolingPowerConsumption(space_index,HeatingCoolingState::Off)
         );
 
 
@@ -107,9 +96,17 @@ impl HeaterCooler {
     pub fn set_max_heating_power(&mut self, p: f64){
         self.max_heating_power = Some(p);
     }
+
+    pub fn max_heating_power(&self)->Option<f64>{
+        self.max_heating_power
+    }
     
     pub fn set_max_cooling_power(&mut self, p: f64){
         self.max_cooling_power = Some(p);
+    }
+
+    pub fn max_cooling_power(&self)->Option<f64>{
+        self.max_cooling_power
     }
 
 

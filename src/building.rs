@@ -1,7 +1,6 @@
 use geometry3d::polygon3d::Polygon3D;
 
-use crate::building_state::BuildingState;
-
+use simulation_state::simulation_state::SimulationState;
 
 use crate::substance::{Substance, SubstanceProperties};
 use crate::material::{Material, MaterialProperties};
@@ -9,7 +8,7 @@ use crate::boundary::Boundary;
 use crate::construction::Construction;
 use crate::object_trait::ObjectTrait;
 use crate::surface::Surface;
-use crate::fenestration::{Fenestration,OperationType, FenestrationType};
+use crate::fenestration::{Fenestration,FenestrationPositions, FenestrationType};
 use crate::space::Space;
 
 use crate::heating_cooling::{HeaterCooler,HeatingCoolingKind};
@@ -119,6 +118,7 @@ impl Building {
             substances: Vec::new(),
             materials: Vec::new(),
             constructions: Vec::new(),
+            
             surfaces: Vec::new(),
             fenestrations: Vec::new(),
             spaces: Vec::new(),
@@ -144,6 +144,7 @@ impl Building {
     pub fn get_surfaces(&self)->&Vec<Surface>{
         &self.surfaces
     }
+    
 
     pub fn get_genestrations(&self)->&Vec<Fenestration>{
         &self.fenestrations
@@ -359,7 +360,7 @@ impl Building {
     /* FENESTRATION */
 
     /// Creates a new Fenestration object
-    pub fn add_fenestration(&mut self, state: &mut BuildingState, name: String, operation_type: OperationType, fenestration_type: FenestrationType)->usize{
+    pub fn add_fenestration(&mut self, state: &mut SimulationState, name: String, operation_type: FenestrationPositions, fenestration_type: FenestrationType)->usize{
         let i = self.fenestrations.len();
         self.fenestrations.push(Fenestration::new(state, name, i, operation_type, fenestration_type));
 
@@ -402,7 +403,7 @@ impl Building {
     }
 
     /// Sets the Open Fraction for a Fenestration
-    pub fn set_fenestration_open_fraction(&mut self, fen_index: usize, state: &mut BuildingState, fraction: f64)->Result<(),String>{
+    pub fn set_fenestration_open_fraction(&mut self, fen_index: usize, state: &mut SimulationState, fraction: f64)->Result<(),String>{
         if fen_index >= self.fenestrations.len(){
             return self.error_out_of_bounds("Fenestration", fen_index)
         }
@@ -480,18 +481,20 @@ impl Building {
     }
     
     /* HEATER AND COOLER */
-    pub fn add_heating_cooling_to_space(&mut self, state: &mut BuildingState, space_index: usize, kind: HeatingCoolingKind)->Result<(),String>{
+    pub fn add_heating_cooling_to_space(&mut self, state: &mut SimulationState, space_index: usize, kind: HeatingCoolingKind)->Result<(),String>{
         if space_index >= self.spaces.len(){
             return self.error_out_of_bounds("Space", space_index)            
         }       
 
+        // State is modified when creating Heating Cooling
+
         self.spaces[space_index].add_heating_cooling(
-            HeaterCooler::new(
-                state, 
-                format!("Space {} Heater/Cooler", space_index),// name
-                space_index,
-                kind
-            ))
+        HeaterCooler::new(
+            state, 
+            format!("Space {} Heater/Cooler", space_index),// name
+            space_index,
+            kind
+        ))
 
     }
 
@@ -512,7 +515,7 @@ impl Building {
     }
 
     /* LUMINAIRE */
-    pub fn add_luminaire_to_space(&mut self, state: &mut BuildingState, space_index: usize)->Result<(),String>{
+    pub fn add_luminaire_to_space(&mut self, state: &mut SimulationState, space_index: usize)->Result<(),String>{
         if space_index >= self.spaces.len(){
             return self.error_out_of_bounds("Space", space_index)            
         }       
@@ -782,12 +785,12 @@ mod testing{
 
     }
 
-    use crate::building_state_element::BuildingStateElement;
+    use simulation_state::simulation_state_element::SimulationStateElement;
 
     #[test]
     fn fenestration_space (){
         let mut building = Building::new("Test Building".to_string());
-        let mut state: BuildingState = BuildingState::new();
+        let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
         let space_index_0 = building.add_space(space_name_0.clone());
@@ -811,17 +814,17 @@ mod testing{
 
         // Fenestration
         let s_name = "Fen 0".to_string();
-        let f0 = building.add_fenestration(&mut state, s_name.clone(), OperationType::FixedOpen, FenestrationType::Window);
+        let f0 = building.add_fenestration(&mut state, s_name.clone(), FenestrationPositions::FixedOpen, FenestrationType::Window);
         {
             let f = building.get_fenestration(f0).unwrap();
             assert_eq!(&s_name, f.name());
             assert_eq!(0, f.index());
             assert!(f.is_full().is_err());
             
-            assert!(f.operation_type() == OperationType::FixedOpen);
+            assert!(f.operation_type() == FenestrationPositions::FixedOpen);
 
             assert_eq!(1,state.len());
-            assert!(state[0] == BuildingStateElement::FenestrationOpenFraction(f0,0.0));
+            assert!(state[0] == SimulationStateElement::FenestrationOpenFraction(f0,0.0));
         }
         
         building.set_fenestration_front_boundary(f0, Boundary::Space(space_index_0)).unwrap();
@@ -855,12 +858,12 @@ mod testing{
         }
 
         let s_name = "Fen 1".to_string();
-        let f1 = building.add_fenestration(&mut state, s_name.clone(), OperationType::Continuous, FenestrationType::Window);
+        let f1 = building.add_fenestration(&mut state, s_name.clone(), FenestrationPositions::Continuous, FenestrationType::Window);
         assert_eq!(2,state.len());
-        assert!(state[1] == BuildingStateElement::FenestrationOpenFraction(f1,0.0));
+        assert!(state[1] == SimulationStateElement::FenestrationOpenFraction(f1,0.0));
 
         let s_name = "Fen 2".to_string();
-        let f2 = building.add_fenestration(&mut state, s_name.clone(), OperationType::Continuous, FenestrationType::Window);
+        let f2 = building.add_fenestration(&mut state, s_name.clone(), FenestrationPositions::Continuous, FenestrationType::Window);
         {
             let f = building.get_fenestration(f2).unwrap();
             assert_eq!(&s_name, f.name());
@@ -868,7 +871,7 @@ mod testing{
             assert!(f.is_full().is_err());
 
             assert_eq!(3,state.len());
-            assert!(state[2] == BuildingStateElement::FenestrationOpenFraction(f2,0.0));
+            assert!(state[2] == SimulationStateElement::FenestrationOpenFraction(f2,0.0));
         }
         
         building.set_fenestration_front_boundary(f2, Boundary::Space(space_index_1)).unwrap();
@@ -904,6 +907,99 @@ mod testing{
         }
 
 
+    }
+
+    use simulation_state::simulation_state_element::HeatingCoolingState;
+
+    #[test]
+    fn test_heater_cooler(){
+        let mut building = Building::new("Test Building".to_string());
+        let mut state: SimulationState = SimulationState::new();
+
+        let space_name_0 = "Space 0".to_string();
+        let _ = building.add_space(space_name_0.clone());
+        
+
+        let space_name_1 = "Space 1".to_string();
+        let space_index_1 = building.add_space(space_name_1.clone());
+
+        assert_eq!(state.len(), 0);
+        {
+            let space_1 = building.get_space(space_index_1).unwrap();
+            assert!(space_1.get_heating_cooling().is_none());
+        }
+        building.add_heating_cooling_to_space(&mut state, space_index_1, HeatingCoolingKind::IdealHeaterCooler).unwrap();
+        assert_eq!(state.len(), 1);        
+        if let SimulationStateElement::SpaceHeatingCoolingPowerConsumption(space_index, hc_state) = state[0] {
+            assert_eq!(space_index_1,space_index);
+            match hc_state{
+                HeatingCoolingState::Off => assert!(true),
+                _ => assert!(false)
+            }
+        }
+
+        {
+            let space_1 = building.get_space(space_index_1).unwrap();
+            assert!(space_1.get_heating_cooling().is_some());
+        }
+        building.set_space_max_heating_power(space_index_1, 1500.).unwrap();
+        building.set_space_max_cooling_power(space_index_1, 2500.).unwrap();
+
+        {
+            let space_1 = building.get_space(space_index_1).unwrap();
+            let hc = space_1.get_heating_cooling().unwrap();
+            assert_eq!(hc.max_cooling_power().unwrap(), 2500.);
+            assert_eq!(hc.max_heating_power().unwrap(), 1500.);
+        }
+
+
+        
+    }
+
+    
+    #[test]
+    fn test_luminaire(){
+        let mut building = Building::new("Test Building".to_string());
+        let mut state: SimulationState = SimulationState::new();
+
+        let space_name_0 = "Space 0".to_string();
+        let _ = building.add_space(space_name_0.clone());
+        
+
+        let space_name_1 = "Space 1".to_string();
+        let space_index_1 = building.add_space(space_name_1.clone());
+
+
+        assert_eq!(state.len(), 0);
+        {
+            let space_1 = building.get_space(space_index_1).unwrap();
+            assert!(space_1.get_heating_cooling().is_none());
+        }
+
+        building.add_luminaire_to_space(&mut state, space_index_1).unwrap();
+        assert_eq!(state.len(), 1);        
+        if let SimulationStateElement::SpaceLightingPowerConsumption(space_index, light_power) = state[0] {
+            assert_eq!(space_index_1,space_index);
+            assert_eq!(light_power, 0.0);
+        }
+
+        {
+            let space_1 = building.get_space(space_index_1).unwrap();
+            assert!(space_1.get_luminaire().is_some());
+            assert!(space_1.get_luminaire().unwrap().get_max_power().is_none());
+        }
+        
+        building.set_space_max_lighting_power(space_index_1, 1500.).unwrap();        
+
+        {
+            let space_1 = building.get_space(space_index_1).unwrap();            
+            let lum = space_1.get_luminaire().unwrap();
+            assert!(lum.get_max_power().is_some());
+            assert_eq!(lum.get_max_power().unwrap(), 1500.);
+
+        }
+        
+        
     }
 
     

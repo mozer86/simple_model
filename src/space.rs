@@ -30,7 +30,7 @@ pub struct Space {
     luminaire: Option<Luminaire>,
 }
 
-impl ObjectTrait for Space{
+impl ObjectTrait for Space {
 
     fn name(&self)->&String{
         &self.name
@@ -128,10 +128,13 @@ impl Space {
             None => Err(format!("There are no Luminaires in {} '{}'", self.class_name(), self.name()))
         }
     }
-
+    
     /// Retrieves the Luminaire
-    pub fn get_luminaire(&self)->&Option<Luminaire>{
-        &self.luminaire
+    pub fn get_luminaire(&self)->Option<&Luminaire>{
+        match &self.luminaire{
+            Some(v)=>Some(v),
+            None => None
+        }
     }
 
     /// Retrieves the state index of the Luminaires in the Space,
