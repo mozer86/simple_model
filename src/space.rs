@@ -1,7 +1,7 @@
 use crate::heating_cooling::HeaterCooler;
 use crate::luminaire::Luminaire;
 use crate::object_trait::ObjectTrait;
-
+use calendar::date::Date;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
@@ -101,6 +101,10 @@ impl Space {
     /// retrieves the fenestrations
     pub fn get_fenestrations(&self)->&Vec<usize>{
         &self.fenestrations
+    }
+
+    pub fn get_importance(&self, _time: Date)->f64{
+        return 1.0
     }
     
     /* ********** */
