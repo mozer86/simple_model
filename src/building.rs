@@ -454,9 +454,10 @@ impl Building {
     /* SPACES */
 
     /// Creates a new construction
-    pub fn add_space(&mut self, name: String) -> usize {
+    pub fn add_space(&mut self, name: String, state: &mut SimulationState) -> usize {
         let i = self.spaces.len();
-        self.spaces.push(Space::new(name,i));
+        let space = Space::new(name, i, state);        
+        self.spaces.push(space);
 
         // State is added within the Thermal model
 
@@ -698,14 +699,16 @@ mod testing{
     #[test]
     fn surface_space (){
         let mut building = Building::new("Test Building".to_string());
+        let mut state = SimulationState::new();
 
         let space_name = "Space 0".to_string();
-        let space_index = building.add_space(space_name.clone());
+        let space_index = building.add_space(space_name.clone(), &mut state);
         {
             let s = building.get_space(space_index).unwrap();
             assert_eq!(&space_name, s.name());
             assert_eq!(s.get_surfaces().len(),0);
             assert_eq!(0, s.index());
+            assert!(s.get_dry_bulb_temperature_state_index().is_none());
             assert!(s.is_full().is_err());
         }
 
@@ -793,7 +796,7 @@ mod testing{
         let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
-        let space_index_0 = building.add_space(space_name_0.clone());
+        let space_index_0 = building.add_space(space_name_0.clone(), &mut state);
         {
             let s = building.get_space(space_index_0).unwrap();
             assert_eq!(&space_name_0, s.name());
@@ -803,7 +806,7 @@ mod testing{
         }
 
         let space_name_1 = "Space 1".to_string();
-        let space_index_1 = building.add_space(space_name_1.clone());
+        let space_index_1 = building.add_space(space_name_1.clone(), &mut state);
         {
             let s = building.get_space(space_index_1).unwrap();
             assert_eq!(&space_name_1, s.name());
@@ -909,7 +912,7 @@ mod testing{
 
     }
 
-    use simulation_state::simulation_state_element::HeatingCoolingState;
+    
 
     #[test]
     fn test_heater_cooler(){
@@ -917,11 +920,11 @@ mod testing{
         let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
-        let _ = building.add_space(space_name_0.clone());
+        let _ = building.add_space(space_name_0.clone(), &mut state);
         
 
         let space_name_1 = "Space 1".to_string();
-        let space_index_1 = building.add_space(space_name_1.clone());
+        let space_index_1 = building.add_space(space_name_1.clone(), &mut state);
 
         assert_eq!(state.len(), 0);
         {
@@ -930,12 +933,10 @@ mod testing{
         }
         building.add_heating_cooling_to_space(&mut state, space_index_1, HeatingCoolingKind::IdealHeaterCooler).unwrap();
         assert_eq!(state.len(), 1);        
-        if let SimulationStateElement::SpaceHeatingCoolingPowerConsumption(space_index, hc_state) = state[0] {
+        if let SimulationStateElement::SpaceHeatingCoolingPowerConsumption(space_index, power) = state[0] {
             assert_eq!(space_index_1,space_index);
-            match hc_state{
-                HeatingCoolingState::Off => assert!(true),
-                _ => assert!(false)
-            }
+            assert_eq!(0.0, power);
+            
         }
 
         {
@@ -963,11 +964,11 @@ mod testing{
         let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
-        let _ = building.add_space(space_name_0.clone());
+        let _ = building.add_space(space_name_0.clone(), &mut state);
         
 
         let space_name_1 = "Space 1".to_string();
-        let space_index_1 = building.add_space(space_name_1.clone());
+        let space_index_1 = building.add_space(space_name_1.clone(), &mut state);
 
 
         assert_eq!(state.len(), 0);

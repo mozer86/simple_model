@@ -1,6 +1,8 @@
 use crate::heating_cooling::HeaterCooler;
 use crate::luminaire::Luminaire;
 use crate::object_trait::ObjectTrait;
+use simulation_state::simulation_state::SimulationState;
+use simulation_state::simulation_state_element::SimulationStateElement;
 use calendar::date::Date;
 
 /// Represents a space within a building. This will
@@ -28,6 +30,14 @@ pub struct Space {
 
     /// The luminaire in the space
     luminaire: Option<Luminaire>,
+
+    /* STATE */
+
+    /// The index of the DryBulb temperature of the space
+    /// in the SimulationState array
+    /// 
+    /// This will be filled by the Thermal Simulation module
+    dry_bulb_temperature_state_index: Option<usize>,
 }
 
 impl ObjectTrait for Space {
@@ -41,7 +51,7 @@ impl ObjectTrait for Space {
     }
 
     fn index(&self)->usize{
-        self.index
+        self.index 
     }
 
     fn is_full(&self)->Result<(),String>{
@@ -56,17 +66,23 @@ impl ObjectTrait for Space {
 impl Space {
 
     /// Creates a new Space
-    pub fn new(name: String, index: usize)->Self{
+    pub fn new(name: String, index: usize, state: &mut SimulationState)->Self{        
+        
+        
+        // Add the zone to the State
         Self{
-            name: name,
-            index: index,
+            index,
+            name,
+
             volume: None,
             surfaces: Vec::new(),            
             fenestrations: Vec::new(),            
             heating_cooling: None,
             luminaire: None,
+            dry_bulb_temperature_state_index: None,
         }
     }
+    
 
     /// Returns the volume of the space
     pub fn volume(&self)->Result<f64,String>{
@@ -107,6 +123,10 @@ impl Space {
         return 1.0
     }
     
+    pub fn get_dry_bulb_temperature_state_index(&self)-> Option<usize> {
+        self.dry_bulb_temperature_state_index
+    }
+
     /* ********** */
     /* LUMINAIRES */
     /* ********** */
@@ -204,4 +224,33 @@ impl Space {
     }
 
     
+}
+
+
+
+/***********/
+/* TESTING */
+/***********/
+
+
+
+
+#[cfg(test)]
+mod testing{
+    use super::*;
+
+    #[test]
+    fn test_new(){
+        let mut state = SimulationState::new();
+        
+        let given_index = 12;
+        let space = Space::new("The Space".to_string(), given_index, &mut state);
+
+        assert_eq!(space.index(), given_index);
+
+        assert!(space.get_dry_bulb_temperature_state_index().is_none());
+
+        
+        
+    }
 }

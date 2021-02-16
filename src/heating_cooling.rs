@@ -1,6 +1,5 @@
 use simulation_state::simulation_state::SimulationState;
 use simulation_state::simulation_state_element::SimulationStateElement;
-use simulation_state::simulation_state_element::HeatingCoolingState;
 
 use crate::object_trait::ObjectTrait;
 
@@ -75,7 +74,7 @@ impl HeaterCooler {
         // Push this to state.        
         let state_index = state.push(
             // off by default,
-            SimulationStateElement::SpaceHeatingCoolingPowerConsumption(space_index,HeatingCoolingState::Off)
+            SimulationStateElement::SpaceHeatingCoolingPowerConsumption(space_index,0.0)
         );
 
 
@@ -114,7 +113,20 @@ impl HeaterCooler {
         match self.kind {
             HeatingCoolingKind::IdealHeaterCooler => "IdealHeaterCooler",
             HeatingCoolingKind::ElectricHeating => "ElectricHeater",
+        }
+    }
 
+    pub fn can_heat(&self)->bool{
+        match self.kind{
+            HeatingCoolingKind::IdealHeaterCooler => true,
+            HeatingCoolingKind::ElectricHeating => true,
+        }
+    }
+
+    pub fn can_cool(&self)->bool{
+        match self.kind{
+            HeatingCoolingKind::IdealHeaterCooler => true,
+            HeatingCoolingKind::ElectricHeating => false,
         }
     }
 
