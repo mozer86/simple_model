@@ -1,30 +1,32 @@
 pub trait ObjectTrait {
-
-    /// Returns a reference to the name of the 
+    /// Returns a reference to the name of the
     /// Substance
-    fn name(&self)->&String;
+    fn name(&self) -> &String;
 
     /// Classname
-    fn class_name(&self)->String;
+    fn class_name(&self) -> String;
 
-    /// Returns the index of the object in its 
+    /// Returns the index of the object in its
     /// containing array
-    fn index(&self)->usize;
+    fn index(&self) -> usize;
 
     /// Checks whether the object contains
     /// all the information required
-    fn is_full(&self)->Result<(),String>;
+    fn is_full(&self) -> Result<(), String>;
 
-    /// Returns an error stating that the object is not 
+    /// Returns an error stating that the object is not
     /// valid
-    fn error_is_not_full<T>(&self)->Result<T,String>{
+    fn error_is_not_full<T>(&self) -> Result<T, String> {
         Err(format!("{} '{}' is empty", self.class_name(), self.name()))
     }
 
     /// Returns an error informing that an empty object
     /// is being used, unsuccesfuly
-    fn error_using_empty<T>(&self)->Result<T,String>{
-        Err(format!("Attempting to use {} '{}', which is empty", self.class_name(), self.name()))
+    fn error_using_empty<T>(&self) -> Result<T, String> {
+        Err(format!(
+            "Attempting to use {} '{}', which is empty",
+            self.class_name(),
+            self.name()
+        ))
     }
-
 }
