@@ -144,14 +144,26 @@ impl Building {
     pub fn get_surfaces(&self)->&Vec<Surface>{
         &self.surfaces
     }
+
+    pub fn get_mut_surfaces(&mut self)->&mut Vec<Surface>{
+        &mut self.surfaces
+    }
     
 
-    pub fn get_genestrations(&self)->&Vec<Fenestration>{
+    pub fn get_fenestrations(&self)->&Vec<Fenestration>{
         &self.fenestrations
+    }
+
+    pub fn get_mut_fenestrations(&mut self)->&mut Vec<Fenestration>{
+        &mut self.fenestrations
     }
 
     pub fn get_spaces(&self)->&Vec<Space>{
         &self.spaces
+    }
+
+    pub fn get_mut_spaces(&mut self)->&mut Vec<Space>{
+        &mut self.spaces
     }
     
 
@@ -454,9 +466,9 @@ impl Building {
     /* SPACES */
 
     /// Creates a new construction
-    pub fn add_space(&mut self, name: String, state: &mut SimulationState) -> usize {
+    pub fn add_space(&mut self, name: String) -> usize {
         let i = self.spaces.len();
-        let space = Space::new(name, i, state);        
+        let space = Space::new(name, i);        
         self.spaces.push(space);
 
         // State is added within the Thermal model
@@ -698,11 +710,10 @@ mod testing{
 
     #[test]
     fn surface_space (){
-        let mut building = Building::new("Test Building".to_string());
-        let mut state = SimulationState::new();
+        let mut building = Building::new("Test Building".to_string());        
 
         let space_name = "Space 0".to_string();
-        let space_index = building.add_space(space_name.clone(), &mut state);
+        let space_index = building.add_space(space_name.clone());
         {
             let s = building.get_space(space_index).unwrap();
             assert_eq!(&space_name, s.name());
@@ -796,7 +807,7 @@ mod testing{
         let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
-        let space_index_0 = building.add_space(space_name_0.clone(), &mut state);
+        let space_index_0 = building.add_space(space_name_0.clone());
         {
             let s = building.get_space(space_index_0).unwrap();
             assert_eq!(&space_name_0, s.name());
@@ -806,7 +817,7 @@ mod testing{
         }
 
         let space_name_1 = "Space 1".to_string();
-        let space_index_1 = building.add_space(space_name_1.clone(), &mut state);
+        let space_index_1 = building.add_space(space_name_1.clone());
         {
             let s = building.get_space(space_index_1).unwrap();
             assert_eq!(&space_name_1, s.name());
@@ -920,11 +931,11 @@ mod testing{
         let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
-        let _ = building.add_space(space_name_0.clone(), &mut state);
+        let _ = building.add_space(space_name_0.clone());
         
 
         let space_name_1 = "Space 1".to_string();
-        let space_index_1 = building.add_space(space_name_1.clone(), &mut state);
+        let space_index_1 = building.add_space(space_name_1.clone());
 
         assert_eq!(state.len(), 0);
         {
@@ -964,11 +975,11 @@ mod testing{
         let mut state: SimulationState = SimulationState::new();
 
         let space_name_0 = "Space 0".to_string();
-        let _ = building.add_space(space_name_0.clone(), &mut state);
+        let _ = building.add_space(space_name_0.clone());
         
 
         let space_name_1 = "Space 1".to_string();
-        let space_index_1 = building.add_space(space_name_1.clone(), &mut state);
+        let space_index_1 = building.add_space(space_name_1.clone());
 
 
         assert_eq!(state.len(), 0);

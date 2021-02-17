@@ -63,6 +63,9 @@ pub struct Fenestration {
     /// A reference to the Boundary in back of the Fenestration
     back_boundary: Boundary,
 
+    /* STATE */
+    first_node_temperature_index : Option<usize>,
+    last_node_temperature_index: Option<usize>,
 
 }
 
@@ -117,6 +120,9 @@ impl Fenestration {
             construction: None,
             front_boundary: Boundary::None,
             back_boundary: Boundary::None,
+
+            first_node_temperature_index : None,
+            last_node_temperature_index: None,
         }
     }
 
@@ -265,7 +271,8 @@ impl Fenestration {
             _ => {
                 Err(format!("Trying to replace front boundary of {} '{}'",self.class_name(), self.name))
             }
-        }        
+        }
+                
     }
 
     /// Returns a reference to the back boundary
@@ -293,6 +300,21 @@ impl Fenestration {
         }        
     }
 
+    pub fn set_first_node_temperature_index(&mut self, i:usize){
+        self.first_node_temperature_index = Some(i);        
+    }
+
+    pub fn set_last_node_temperature_index(&mut self, i:usize){
+        self.last_node_temperature_index = Some(i);        
+    }
+
+    pub fn get_first_node_temperature_index(&mut self)->Option<usize>{
+        self.first_node_temperature_index
+    }
+
+    pub fn get_last_node_temperature_index(&mut self)->Option<usize>{
+        self.last_node_temperature_index
+    }
     
 
 

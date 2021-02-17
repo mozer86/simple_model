@@ -1,8 +1,6 @@
 use crate::heating_cooling::HeaterCooler;
 use crate::luminaire::Luminaire;
 use crate::object_trait::ObjectTrait;
-use simulation_state::simulation_state::SimulationState;
-use simulation_state::simulation_state_element::SimulationStateElement;
 use calendar::date::Date;
 
 /// Represents a space within a building. This will
@@ -66,7 +64,7 @@ impl ObjectTrait for Space {
 impl Space {
 
     /// Creates a new Space
-    pub fn new(name: String, index: usize, state: &mut SimulationState)->Self{        
+    pub fn new(name: String, index: usize)->Self{        
         
         
         // Add the zone to the State
@@ -126,6 +124,11 @@ impl Space {
     pub fn get_dry_bulb_temperature_state_index(&self)-> Option<usize> {
         self.dry_bulb_temperature_state_index
     }
+
+    pub fn set_dry_bulb_temperature_state_index(&mut self, i: usize) {
+        self.dry_bulb_temperature_state_index = Some(i)
+    }
+    
 
     /* ********** */
     /* LUMINAIRES */
@@ -241,10 +244,9 @@ mod testing{
 
     #[test]
     fn test_new(){
-        let mut state = SimulationState::new();
         
         let given_index = 12;
-        let space = Space::new("The Space".to_string(), given_index, &mut state);
+        let space = Space::new("The Space".to_string(), given_index);
 
         assert_eq!(space.index(), given_index);
 

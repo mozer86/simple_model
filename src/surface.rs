@@ -32,6 +32,10 @@ pub struct Surface {
 
     /// A reference to the Boundary in back of the Surface
     back_boundary: Boundary,
+
+    /* STATE */
+    first_node_temperature_index : Option<usize>,
+    last_node_temperature_index: Option<usize>,
         
 }
 
@@ -68,13 +72,21 @@ impl Surface {
     /// and no polygon    
     pub fn new(name: String, index: usize)-> Self {
         Self {
+            name,
+            index,
+
             polygon: None,
             construction: None,
             front_boundary: Boundary::None,
             back_boundary: Boundary::None,            
-            name: name,
-            index: index
+
+            first_node_temperature_index : None,
+            last_node_temperature_index: None,
         }
+    }
+
+    pub fn index(&self)->usize{
+        self.index
     }
     
 
@@ -140,6 +152,22 @@ impl Surface {
 
     pub fn set_polygon(&mut self, p: Polygon3D){
         self.polygon = Some(p);
+    }
+
+    pub fn set_first_node_temperature_index(&mut self, i:usize){
+        self.first_node_temperature_index = Some(i);        
+    }
+
+    pub fn set_last_node_temperature_index(&mut self, i:usize){
+        self.last_node_temperature_index = Some(i);        
+    }
+
+    pub fn get_first_node_temperature_index(&mut self)->Option<usize>{
+        self.first_node_temperature_index
+    }
+
+    pub fn get_last_node_temperature_index(&mut self)->Option<usize>{
+        self.last_node_temperature_index
     }
     
     
