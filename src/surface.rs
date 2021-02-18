@@ -161,7 +161,7 @@ impl Surface {
         self.first_node_temperature_index
     }
 
-    pub fn get_last_node_temperature_index(&mut self) -> Option<usize> {
+    pub fn get_last_node_temperature_index(&self) -> Option<usize> {
         self.last_node_temperature_index
     }
 }

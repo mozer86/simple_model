@@ -35,6 +35,9 @@ pub struct Space {
     ///
     /// This will be filled by the Thermal Simulation module
     dry_bulb_temperature_state_index: Option<usize>,
+
+    brightness_state_index: Option<usize>,
+    loudness_state_index: Option<usize>,
 }
 
 impl ObjectTrait for Space {
@@ -72,7 +75,11 @@ impl Space {
             fenestrations: Vec::new(),
             heating_cooling: None,
             luminaire: None,
+
+            /* STATE */
             dry_bulb_temperature_state_index: None,
+            brightness_state_index: None,
+            loudness_state_index: None,
         }
     }
 
@@ -121,6 +128,22 @@ impl Space {
 
     pub fn set_dry_bulb_temperature_state_index(&mut self, i: usize) {
         self.dry_bulb_temperature_state_index = Some(i)
+    }
+
+    pub fn get_brightness_state_index(&self) -> Option<usize> {
+        self.brightness_state_index
+    }
+
+    pub fn set_brightness_state_index(&mut self, i: usize) {
+        self.brightness_state_index = Some(i)
+    }
+
+    pub fn get_loudness_state_index(&self) -> Option<usize> {
+        self.loudness_state_index
+    }
+
+    pub fn set_loudness_state_index(&mut self, i: usize) {
+        self.loudness_state_index = Some(i)
     }
 
     /* ********** */

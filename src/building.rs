@@ -1,6 +1,7 @@
 use geometry3d::polygon3d::Polygon3D;
 
 use simulation_state::simulation_state::SimulationState;
+use simulation_state::simulation_state_element::SimulationStateElement;
 
 use crate::boundary::Boundary;
 use crate::construction::Construction;
@@ -138,6 +139,92 @@ impl Building {
             fenestrations: Vec::new(),
             spaces: Vec::new(),
         }
+    }
+
+    pub fn map_simulation_state(&mut self, state: &SimulationState)->Result<(),String>{
+        let s = state.as_slice();
+        let mut element_index = 0;
+        while element_index < s.len() {
+            match &s[element_index] {
+                SimulationStateElement::Clothing(_)=>{
+                    /* Added when calling Person::new()*/
+                },
+                SimulationStateElement::FenestrationOpenFraction(_, _)=>{
+                    /* Added when calling Fenestration::new()*/
+                },
+                SimulationStateElement::SpaceHeatingCoolingPowerConsumption(_, _)=>{
+                    /* Added when calling HeaterCooler::new()*/
+                },
+                SimulationStateElement::SpaceLightingPowerConsumption(_, _)=>{
+                    /* Added when calling Luminaire::new()*/
+                },
+                SimulationStateElement::SpaceBrightness(space_index, _)=>{
+                    debug_assert!(self.spaces[*space_index].get_brightness_state_index().is_none());
+                    self.spaces[*space_index].set_brightness_state_index(element_index);
+                },
+                SimulationStateElement::SpaceDryBulbTemperature(space_index, _)=>{
+                    debug_assert!(self.spaces[*space_index].get_dry_bulb_temperature_state_index().is_none());
+                    self.spaces[*space_index].set_dry_bulb_temperature_state_index(element_index);
+                },
+                SimulationStateElement::SurfaceNodeTemperature(surface_index, _, _)=>{
+                    // Check the first one
+                    debug_assert!(self.surfaces[*surface_index].get_first_node_temperature_index().is_none());
+                    self.surfaces[*surface_index].set_first_node_temperature_index(element_index);
+                    element_index += 1;
+                    
+                    // Fill the rest... loop until either the surface_index changes or the kind 
+                    // of SimulationStateElement change
+                    while let SimulationStateElement::SurfaceNodeTemperature(new_surface_index, _, _) = &s[element_index] {
+                        if new_surface_index != surface_index {
+                            break;
+                        }
+                        element_index += 1;
+                        if element_index == s.len() {
+                            self.surfaces[*surface_index].set_last_node_temperature_index(element_index-1);
+                            return Ok(())
+                        }
+                    }
+                    
+                    debug_assert!(self.surfaces[*surface_index].get_last_node_temperature_index().is_none());
+                    self.surfaces[*surface_index].set_last_node_temperature_index(element_index-1);
+
+                    // skip the increase in element_index that happens after the loop
+                    continue; 
+                },
+                SimulationStateElement::FenestrationNodeTemperature(fen_index, _, _)=>{
+                    // Check the first one
+                    debug_assert!(self.fenestrations[*fen_index].get_first_node_temperature_index().is_none());
+                    self.fenestrations[*fen_index].set_first_node_temperature_index(element_index);
+                    element_index += 1;
+                    
+                    // Fill the rest... loop until either the surface_index changes or the kind 
+                    // of SimulationStateElement change                    
+                    while let SimulationStateElement::FenestrationNodeTemperature(new_surface_index, _, _) = &s[element_index] {                        
+                        if new_surface_index != fen_index {
+                            break;
+                        }
+                        element_index += 1;
+                        if element_index == s.len() {
+                            self.fenestrations[*fen_index].set_last_node_temperature_index(element_index-1);
+                            return Ok(())
+                        }
+                    }
+                    
+                    debug_assert!(self.fenestrations[*fen_index].get_last_node_temperature_index().is_none());
+                    self.fenestrations[*fen_index].set_last_node_temperature_index(element_index-1);
+
+                    // skip the increase in element_index that happens after the loop
+                    continue; 
+                },
+                SimulationStateElement::SpaceLoudness(space_index, _)=>{
+                    debug_assert!(self.spaces[*space_index].get_loudness_state_index().is_none());
+                    self.spaces[*space_index].set_loudness_state_index(element_index);
+                },
+            }// End of Match
+            element_index += 1;        
+        }
+
+        Ok(())
     }
 
     fn error_out_of_bounds<T>(&self, element_name: &str, i: usize) -> Result<T, String> {
