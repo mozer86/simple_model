@@ -1,5 +1,7 @@
 //use crate::error::error;
 use crate::object_trait::ObjectTrait;
+use crate::building::Building;
+
 
 /// Represents a Substance; that is to say, a physical
 /// materiality with physical properties. The name Substance
@@ -64,8 +66,8 @@ impl Substance {
     /// Building object, the latter chooses the appropriate index
     pub fn new(name: String, index: usize) -> Self {
         Self {
-            name: name,
-            index: index,
+            name,
+            index,
             properties: None,
         }
     }
@@ -106,6 +108,44 @@ impl Substance {
             Some(p) => Ok(p.density),
             None => self.error_using_empty(),
         }
+    }
+}
+
+impl Building {
+/* SUBSTANCE */
+
+    /// Adds a new empty Substance to the model
+    pub fn add_substance(&mut self, name: String) -> usize {
+        let i = self.substances.len();
+
+        self.substances.push(Substance::new(name, i));
+
+        i
+    }
+
+    /// Retrieves a substance from the Substances array
+    /// in the Building
+    pub fn get_substance(&self, index: usize) -> Result<&Substance, String> {
+        if index >= self.substances.len() {
+            return self.error_out_of_bounds("Substance", index);
+        }
+
+        Ok(&self.substances[index])
+    }
+
+    /// Sets the properties to the substance located in a certain index
+    /// of the Substances array in the Building object
+    pub fn set_substance_properties(
+        &mut self,
+        index: usize,
+        properties: SubstanceProperties,
+    ) -> Result<(), String> {
+        if index >= self.substances.len() {
+            return self.error_out_of_bounds("Substance", index);
+        }
+
+        self.substances[index].set_properties(properties);
+        Ok(())
     }
 }
 

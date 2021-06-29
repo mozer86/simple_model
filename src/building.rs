@@ -1,19 +1,16 @@
-use geometry3d::polygon3d::Polygon3D;
 
 use simulation_state::simulation_state::SimulationState;
 use simulation_state::simulation_state_element::SimulationStateElement;
 
-use crate::boundary::Boundary;
+
 use crate::construction::Construction;
-use crate::fenestration::{Fenestration, FenestrationPositions, FenestrationType};
-use crate::material::{Material, MaterialProperties};
+use crate::fenestration::Fenestration;
+use crate::material::Material;
 use crate::object_trait::ObjectTrait;
 use crate::space::Space;
-use crate::substance::{Substance, SubstanceProperties};
+use crate::substance::Substance;
 use crate::surface::Surface;
 
-use crate::heating_cooling::{HeaterCooler, HeatingCoolingKind};
-use crate::luminaire::Luminaire;
 
 pub struct Building {
     /// The name of the building
@@ -23,17 +20,18 @@ pub struct Building {
     index: usize,
 
     // materiality
-    substances: Vec<Substance>,
-    materials: Vec<Material>,
-    constructions: Vec<Construction>,
+    pub substances: Vec<Substance>,
+    pub materials: Vec<Material>,
+    pub constructions: Vec<Construction>,
 
     // geometry
-    surfaces: Vec<Surface>,
-    spaces: Vec<Space>,
+    pub surfaces: Vec<Surface>,
+    pub spaces: Vec<Space>,
 
     /// The windows and doors in the surface    
-    fenestrations: Vec<Fenestration>,
+    pub fenestrations: Vec<Fenestration>,
 }
+
 
 impl ObjectTrait for Building {
     fn name(&self) -> &String {
@@ -50,73 +48,78 @@ impl ObjectTrait for Building {
 
     /// Checks whether the objects in the building are all full
     fn is_full(&self) -> Result<(), String> {
-        if self.substances.len() == 0 {
+        if self.substances.is_empty() {
             return Err(format!(
                 "{} '{}' has no Substances",
                 self.class_name(),
                 self.name
             ));
-        }
-        for s in self.substances.iter() {
-            match s.is_full() {
-                Ok(_) => {}
-                Err(_) => return s.error_is_not_full(),
+        }else{
+            for s in self.substances.iter() {
+                match s.is_full() {
+                    Ok(_) => {}
+                    Err(_) => return s.error_is_not_full(),
+                }
             }
         }
 
-        if self.substances.len() == 0 {
+        if self.materials.is_empty() {
             return Err(format!(
                 "{} '{}' has no Materials",
                 self.class_name(),
                 self.name
             ));
-        }
-        for s in self.materials.iter() {
-            match s.is_full() {
-                Ok(_) => {}
-                Err(_) => return s.error_is_not_full(),
+        }else{
+            for s in self.materials.iter() {
+                match s.is_full() {
+                    Ok(_) => {}
+                    Err(_) => return s.error_is_not_full(),
+                }
             }
-        }
+        }        
 
-        if self.substances.len() == 0 {
+        if self.constructions.is_empty() {
             return Err(format!(
                 "{} '{}' has no Constructions",
                 self.class_name(),
                 self.name
             ));
-        }
-        for s in self.constructions.iter() {
-            match s.is_full() {
-                Ok(_) => {}
-                Err(_) => return s.error_is_not_full(),
+        }else{
+            for s in self.constructions.iter() {
+                match s.is_full() {
+                    Ok(_) => {}
+                    Err(_) => return s.error_is_not_full(),
+                }
             }
         }
 
-        if self.substances.len() == 0 {
+        if self.surfaces.is_empty() {
             return Err(format!(
                 "{} '{}' has no Surface",
                 self.class_name(),
                 self.name
             ));
-        }
-        for s in self.surfaces.iter() {
-            match s.is_full() {
-                Ok(_) => {}
-                Err(_) => return s.error_is_not_full(),
+        }else{
+            for s in self.surfaces.iter() {
+                match s.is_full() {
+                    Ok(_) => {}
+                    Err(_) => return s.error_is_not_full(),
+                }
             }
         }
 
-        if self.substances.len() == 0 {
+        if self.spaces.is_empty() {
             return Err(format!(
                 "{} '{}' has no Spaces",
                 self.class_name(),
                 self.name
             ));
-        }
-        for s in self.spaces.iter() {
-            match s.is_full() {
-                Ok(_) => {}
-                Err(_) => return s.error_is_not_full(),
+        }else{
+            for s in self.spaces.iter() {
+                match s.is_full() {
+                    Ok(_) => {}
+                    Err(_) => return s.error_is_not_full(),
+                }
             }
         }
         // All good
@@ -128,7 +131,7 @@ impl Building {
     /// Creates an empty building
     pub fn new(name: String) -> Self {
         Self {
-            name: name,
+            name,
             index: 0,
 
             substances: Vec::new(),
@@ -141,6 +144,13 @@ impl Building {
         }
     }
 
+    /// Maps the Physical [SimulationStateElements] into the building.
+    /// 
+    /// The rational here is that, after creating the Building object, the 
+    /// construciton of Physics models will continue to add [SimulationStateElement]
+    /// to the [SimulationState]. However, the process of creating these objects
+    /// receives an immutable [Building] (i.e., `&Building`) and thus they cannot
+    /// map them themselves. That is why we need this function.
     pub fn map_simulation_state(&mut self, state: &SimulationState)->Result<(),String>{
         let s = state.as_slice();
         let mut element_index = 0;
@@ -165,7 +175,7 @@ impl Building {
                 SimulationStateElement::SpaceDryBulbTemperature(space_index, _)=>{
                     debug_assert!(self.spaces[*space_index].get_dry_bulb_temperature_state_index().is_none());
                     self.spaces[*space_index].set_dry_bulb_temperature_state_index(element_index);
-                },
+                },                
                 SimulationStateElement::SurfaceNodeTemperature(surface_index, _, _)=>{
                     // Check the first one
                     debug_assert!(self.surfaces[*surface_index].get_first_node_temperature_index().is_none());
@@ -180,6 +190,7 @@ impl Building {
                         }
                         element_index += 1;
                         if element_index == s.len() {
+                            debug_assert!(self.surfaces[*surface_index].get_last_node_temperature_index().is_none());
                             self.surfaces[*surface_index].set_last_node_temperature_index(element_index-1);
                             return Ok(())
                         }
@@ -205,12 +216,14 @@ impl Building {
                         }
                         element_index += 1;
                         if element_index == s.len() {
+                            debug_assert!(self.fenestrations[*fen_index].get_last_node_temperature_index().is_none());
                             self.fenestrations[*fen_index].set_last_node_temperature_index(element_index-1);
                             return Ok(())
                         }
                     }
                     
                     debug_assert!(self.fenestrations[*fen_index].get_last_node_temperature_index().is_none());
+                    
                     self.fenestrations[*fen_index].set_last_node_temperature_index(element_index-1);
 
                     // skip the increase in element_index that happens after the loop
@@ -227,7 +240,7 @@ impl Building {
         Ok(())
     }
 
-    fn error_out_of_bounds<T>(&self, element_name: &str, i: usize) -> Result<T, String> {
+    pub fn error_out_of_bounds<T>(&self, element_name: &str, i: usize) -> Result<T, String> {
         Err(format!(
             "{} number {} does not exist in {} '{}'",
             element_name,
@@ -237,502 +250,6 @@ impl Building {
         ))
     }
 
-    pub fn get_substances(&self) -> &Vec<Substance> {
-        &self.substances
-    }
-
-    pub fn get_materials(&self) -> &Vec<Material> {
-        &self.materials
-    }
-
-    pub fn get_constructions(&self) -> &Vec<Construction> {
-        &self.constructions
-    }
-
-    pub fn get_surfaces(&self) -> &Vec<Surface> {
-        &self.surfaces
-    }
-
-    pub fn get_mut_surfaces(&mut self) -> &mut Vec<Surface> {
-        &mut self.surfaces
-    }
-
-    pub fn get_fenestrations(&self) -> &Vec<Fenestration> {
-        &self.fenestrations
-    }
-
-    pub fn get_mut_fenestrations(&mut self) -> &mut Vec<Fenestration> {
-        &mut self.fenestrations
-    }
-
-    pub fn get_spaces(&self) -> &Vec<Space> {
-        &self.spaces
-    }
-
-    pub fn get_mut_spaces(&mut self) -> &mut Vec<Space> {
-        &mut self.spaces
-    }
-
-    /* SUBSTANCE */
-
-    /// Adds a new empty Substance to the model
-    pub fn add_substance(&mut self, name: String) -> usize {
-        let i = self.substances.len();
-
-        self.substances.push(Substance::new(name, i));
-
-        i
-    }
-
-    /// Retrieves a substance from the Substances array
-    /// in the Building
-    pub fn get_substance(&self, index: usize) -> Result<&Substance, String> {
-        if index >= self.substances.len() {
-            return self.error_out_of_bounds("Substance", index);
-        }
-
-        Ok(&self.substances[index])
-    }
-
-    /// Sets the properties to the substance located in a certain index
-    /// of the Substances array in the Building object
-    pub fn set_substance_properties(
-        &mut self,
-        index: usize,
-        properties: SubstanceProperties,
-    ) -> Result<(), String> {
-        if index >= self.substances.len() {
-            return self.error_out_of_bounds("Substance", index);
-        }
-
-        self.substances[index].set_properties(properties);
-        Ok(())
-    }
-
-    /* MATERIAL */
-
-    /// Adds a new empty Material to the model
-    pub fn add_material(&mut self, name: String) -> usize {
-        let i = self.materials.len();
-        self.materials.push(Material::new(name, i));
-        i
-    }
-
-    /// Retrieves a material from the Materials array
-    /// in the Building
-    pub fn get_material(&self, index: usize) -> Result<&Material, String> {
-        if index >= self.materials.len() {
-            return self.error_out_of_bounds("Material", index);
-        }
-
-        Ok(&self.materials[index])
-    }
-
-    /// Sets a material surface
-    pub fn set_material_substance(
-        &mut self,
-        material_index: usize,
-        substance_index: usize,
-    ) -> Result<(), String> {
-        if material_index >= self.materials.len() {
-            return self.error_out_of_bounds("Material", material_index);
-        }
-
-        if substance_index >= self.substances.len() {
-            return self.error_out_of_bounds("Substance", substance_index);
-        }
-
-        self.materials[material_index].set_substance(substance_index);
-        Ok(())
-    }
-
-    /// Sets a material property
-    pub fn set_material_properties(
-        &mut self,
-        material_index: usize,
-        properties: MaterialProperties,
-    ) -> Result<(), String> {
-        if material_index >= self.materials.len() {
-            return self.error_out_of_bounds("Material", material_index);
-        }
-
-        self.materials[material_index].set_properties(properties);
-        Ok(())
-    }
-
-    /* CONSTRUCTION */
-
-    /// Creates a new construction
-    pub fn add_construction(&mut self, name: String) -> usize {
-        let i = self.constructions.len();
-        self.constructions.push(Construction::new(name, i));
-        i
-    }
-
-    /// Retrieves a construction
-    pub fn get_construction(&self, index: usize) -> Result<&Construction, String> {
-        if index >= self.constructions.len() {
-            return self.error_out_of_bounds("Construction", index);
-        }
-
-        Ok(&self.constructions[index])
-    }
-
-    /// Pushes a new Material layer to a construction
-    /// in the Building object
-    pub fn add_material_to_construction(
-        &mut self,
-        construction_index: usize,
-        material_index: usize,
-    ) -> Result<(), String> {
-        if material_index >= self.materials.len() {
-            return self.error_out_of_bounds("Material", material_index);
-        }
-
-        if construction_index >= self.constructions.len() {
-            return self.error_out_of_bounds("Construction", construction_index);
-        }
-
-        self.constructions[construction_index].push_layer(material_index);
-
-        Ok(())
-    }
-
-    /* SURFACE */
-
-    /// Creates a new Surface
-    pub fn add_surface(&mut self, name: String) -> usize {
-        let i = self.surfaces.len();
-        self.surfaces.push(Surface::new(name, i));
-
-        // Node temperatures will be added within the Thermal model
-
-        i
-    }
-
-    /// Retrieves a Surface
-    pub fn get_surface(&self, index: usize) -> Result<&Surface, String> {
-        if index >= self.surfaces.len() {
-            return self.error_out_of_bounds("Surface", index);
-        }
-
-        Ok(&self.surfaces[index])
-    }
-
-    /// Sets the front boundary of a Surface
-    pub fn set_surface_front_boundary(
-        &mut self,
-        surface_index: usize,
-        boundary: Boundary,
-    ) -> Result<(), String> {
-        if surface_index >= self.surfaces.len() {
-            return self.error_out_of_bounds("Surface", surface_index);
-        }
-        match boundary {
-            Boundary::Ground | Boundary::None => {
-                self.surfaces[surface_index].set_front_boundary(boundary)
-            }
-            Boundary::Space(s) => {
-                if s >= self.spaces.len() {
-                    return self.error_out_of_bounds("Space", s);
-                } else {
-                    self.spaces[s].push_surface(surface_index);
-                    self.surfaces[surface_index].set_front_boundary(boundary)
-                }
-            }
-        }
-    }
-
-    /// Sets the back boundary of a Surface
-    pub fn set_surface_back_boundary(
-        &mut self,
-        surface_index: usize,
-        boundary: Boundary,
-    ) -> Result<(), String> {
-        if surface_index >= self.surfaces.len() {
-            return self.error_out_of_bounds("Surface", surface_index);
-        }
-
-        match boundary {
-            Boundary::Ground | Boundary::None => {
-                self.surfaces[surface_index].set_back_boundary(boundary)
-            }
-            Boundary::Space(s) => {
-                if s >= self.spaces.len() {
-                    return self.error_out_of_bounds("Space", s);
-                } else {
-                    self.spaces[s].push_surface(surface_index);
-                    self.surfaces[surface_index].set_back_boundary(boundary)
-                }
-            }
-        }
-    }
-
-    /// Sets the polygon for a Surface
-    pub fn set_surface_polygon(
-        &mut self,
-        surface_index: usize,
-        p: Polygon3D,
-    ) -> Result<(), String> {
-        if surface_index >= self.surfaces.len() {
-            return self.error_out_of_bounds("Surface", surface_index);
-        }
-
-        self.surfaces[surface_index].set_polygon(p);
-
-        Ok(())
-    }
-
-    /// Sets the construction of a surface
-    pub fn set_surface_construction(
-        &mut self,
-        surface_index: usize,
-        construction_index: usize,
-    ) -> Result<(), String> {
-        if surface_index >= self.surfaces.len() {
-            return self.error_out_of_bounds("Surface", surface_index);
-        }
-
-        if construction_index >= self.constructions.len() {
-            return self.error_out_of_bounds("Construction", construction_index);
-        }
-
-        self.surfaces[surface_index].set_construction(construction_index);
-
-        Ok(())
-    }
-
-    /* FENESTRATION */
-
-    /// Creates a new Fenestration object
-    pub fn add_fenestration(
-        &mut self,
-        state: &mut SimulationState,
-        name: String,
-        operation_type: FenestrationPositions,
-        fenestration_type: FenestrationType,
-    ) -> usize {
-        let i = self.fenestrations.len();
-        self.fenestrations.push(Fenestration::new(
-            state,
-            name,
-            i,
-            operation_type,
-            fenestration_type,
-        ));
-
-        // State is modified when creating Fenestration
-        i
-    }
-
-    /// Retrieves a Fenestration
-    pub fn get_fenestration(&self, index: usize) -> Result<&Fenestration, String> {
-        if index >= self.fenestrations.len() {
-            return self.error_out_of_bounds("Fenestration", index);
-        }
-        Ok(&self.fenestrations[index])
-    }
-
-    /// Sets the polygon for a Fenestration
-    pub fn set_fenestration_polygon(
-        &mut self,
-        fen_index: usize,
-        p: Polygon3D,
-    ) -> Result<(), String> {
-        if fen_index >= self.fenestrations.len() {
-            return self.error_out_of_bounds("Fenestration", fen_index);
-        }
-
-        self.fenestrations[fen_index].set_polygon(p);
-
-        Ok(())
-    }
-
-    /// Sets the construction of a Fenestration
-    pub fn set_fenestration_construction(
-        &mut self,
-        fen_index: usize,
-        construction_index: usize,
-    ) -> Result<(), String> {
-        if fen_index >= self.fenestrations.len() {
-            return self.error_out_of_bounds("Fenestration", fen_index);
-        }
-
-        if construction_index >= self.constructions.len() {
-            return self.error_out_of_bounds("Construction", construction_index);
-        }
-
-        self.fenestrations[fen_index].set_construction(construction_index);
-
-        Ok(())
-    }
-
-    /// Sets the Open Fraction for a Fenestration
-    pub fn set_fenestration_open_fraction(
-        &mut self,
-        fen_index: usize,
-        state: &mut SimulationState,
-        fraction: f64,
-    ) -> Result<(), String> {
-        if fen_index >= self.fenestrations.len() {
-            return self.error_out_of_bounds("Fenestration", fen_index);
-        }
-
-        self.fenestrations[fen_index].set_open_fraction(state, fraction)
-    }
-
-    /// Sets the front boundary of a Fenestration
-    pub fn set_fenestration_front_boundary(
-        &mut self,
-        fenestration_index: usize,
-        boundary: Boundary,
-    ) -> Result<(), String> {
-        if fenestration_index >= self.fenestrations.len() {
-            return self.error_out_of_bounds("Fenestration", fenestration_index);
-        }
-        match boundary {
-            Boundary::Ground | Boundary::None => {
-                self.fenestrations[fenestration_index].set_front_boundary(boundary)
-            }
-            Boundary::Space(s) => {
-                if s >= self.spaces.len() {
-                    return self.error_out_of_bounds("Space", s);
-                } else {
-                    self.spaces[s].push_fenestration(fenestration_index);
-                    self.fenestrations[fenestration_index].set_front_boundary(boundary)
-                }
-            }
-        }
-    }
-
-    /// Sets the back boundary of a Fenestration
-    pub fn set_fenestration_back_boundary(
-        &mut self,
-        fenestration_index: usize,
-        boundary: Boundary,
-    ) -> Result<(), String> {
-        if fenestration_index >= self.fenestrations.len() {
-            return self.error_out_of_bounds("Fenestration", fenestration_index);
-        }
-
-        match boundary {
-            Boundary::Ground | Boundary::None => {
-                self.fenestrations[fenestration_index].set_back_boundary(boundary)
-            }
-            Boundary::Space(s) => {
-                if s >= self.spaces.len() {
-                    return self.error_out_of_bounds("Space", s);
-                } else {
-                    self.spaces[s].push_fenestration(fenestration_index);
-                    self.fenestrations[fenestration_index].set_back_boundary(boundary)
-                }
-            }
-        }
-    }
-
-    /* SPACES */
-
-    /// Creates a new construction
-    pub fn add_space(&mut self, name: String) -> usize {
-        let i = self.spaces.len();
-        let space = Space::new(name, i);
-        self.spaces.push(space);
-
-        // State is added within the Thermal model
-
-        i
-    }
-
-    /// Retrieves a pace
-    pub fn get_space(&self, index: usize) -> Result<&Space, String> {
-        if index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", index);
-        }
-        Ok(&self.spaces[index])
-    }
-
-    /// Sets a space volume
-    pub fn set_space_volume(&mut self, index: usize, volume: f64) -> Result<(), String> {
-        if index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", index);
-        }
-        self.spaces[index].set_volume(volume);
-        Ok(())
-    }
-
-    /* HEATER AND COOLER */
-    pub fn add_heating_cooling_to_space(
-        &mut self,
-        state: &mut SimulationState,
-        space_index: usize,
-        kind: HeatingCoolingKind,
-    ) -> Result<(), String> {
-        if space_index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", space_index);
-        }
-
-        // State is modified when creating Heating Cooling
-
-        self.spaces[space_index].add_heating_cooling(HeaterCooler::new(
-            state,
-            format!("Space {} Heater/Cooler", space_index), // name
-            space_index,
-            kind,
-        ))
-    }
-
-    pub fn set_space_max_heating_power(
-        &mut self,
-        space_index: usize,
-        power: f64,
-    ) -> Result<(), String> {
-        if space_index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", space_index);
-        }
-
-        self.spaces[space_index].set_max_heating_power(power)
-    }
-
-    pub fn set_space_max_cooling_power(
-        &mut self,
-        space_index: usize,
-        power: f64,
-    ) -> Result<(), String> {
-        if space_index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", space_index);
-        }
-
-        self.spaces[space_index].set_max_cooling_power(power)
-    }
-
-    /* LUMINAIRE */
-    pub fn add_luminaire_to_space(
-        &mut self,
-        state: &mut SimulationState,
-        space_index: usize,
-    ) -> Result<(), String> {
-        if space_index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", space_index);
-        }
-
-        self.spaces[space_index].add_luminaire(Luminaire::new(
-            state,
-            format!("Space {} Luminaire", space_index), // name
-            space_index,
-        ))
-    }
-
-    pub fn set_space_max_lighting_power(
-        &mut self,
-        space_index: usize,
-        power: f64,
-    ) -> Result<(), String> {
-        if space_index >= self.spaces.len() {
-            return self.error_out_of_bounds("Space", space_index);
-        }
-
-        self.spaces[space_index].set_luminaire_max_power(power)
-    }
 }
 
 /***********/
@@ -744,6 +261,9 @@ mod testing {
     use super::*;
 
     use crate::substance::SubstanceProperties;
+    use crate::heating_cooling::HeatingCoolingKind;
+    use crate::boundary::Boundary;
+    use crate::fenestration::{FenestrationPositions, FenestrationType};
 
     #[test]
     fn substance() {

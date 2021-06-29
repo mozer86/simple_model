@@ -1,3 +1,5 @@
+use crate::building::Building;
+
 use geometry3d::loop3d::Loop3D;
 use geometry3d::polygon3d::Polygon3D;
 
@@ -45,7 +47,8 @@ pub struct Fenestration {
 
     // The index of the Shading device attached to the Fenestration
     // in the shading property of the Building object
-    // shading: Option<usize>,
+    //shading: Option<usize>,
+
     /// The opportunity for operating the Fenestration
     operation_type: FenestrationPositions,
 
@@ -99,20 +102,20 @@ impl Fenestration {
         fenestration_type: FenestrationType,
     ) -> Self {
         // Push this to state.
-        let open_index = state.len();
-        state.push(
+        let open_index = state.push(
             // closed by default,
             SimulationStateElement::FenestrationOpenFraction(index, 0.0),
         );
 
         Self {
-            name: name,
-            index: index,
-            operation_type: operation_type,
-            fenestration_type: fenestration_type,
+            name,
+            index,
+            operation_type,
+            fenestration_type,
             open_fraction_index: open_index,
             polygon: None,
             construction: None,
+            //shading: None,
             front_boundary: Boundary::None,
             back_boundary: Boundary::None,
 
@@ -126,23 +129,14 @@ impl Fenestration {
     }
 
     pub fn open_fraction(&self, state: &SimulationState) -> f64 {
+
         let i = self.open_fraction_index;
 
-        if let SimulationStateElement::FenestrationOpenFraction(fen_index, open_fraction) = state[i]
-        {
-            if fen_index != self.index {
-                panic!(
-                    "Incorrect index allocated for OpenFraction of {} '{}'",
-                    self.class_name(),
-                    self.index
-                );
-            }
-
-            // all Good here
-            return open_fraction;
-        } else {
-            panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
+        if let Err(errmsg) = state[i].differ_only_in_value(SimulationStateElement::FenestrationOpenFraction(self.index, 2.)){
+            panic!("Corrupt SimulationState: when trying to get a Fenestration's open_fraction() | {}", errmsg);
         }
+        
+        state[i].get_value()
     }
 
     pub fn get_construction_index(&self) -> Result<usize, String> {
@@ -210,27 +204,11 @@ impl Fenestration {
             )),
             FenestrationPositions::Continuous => {
                 let i = self.open_fraction_index;
-
-                if let SimulationStateElement::FenestrationOpenFraction(fen_index, _) = state[i] {
-                    if fen_index != self.index {
-                        panic!(
-                            "Incorrect index allocated for OpenFraction of {} '{}'",
-                            self.class_name(),
-                            self.index
-                        );
-                    }
-
-                    // all Good here
-                    state[i] =
-                        SimulationStateElement::FenestrationOpenFraction(fen_index, new_open);
-                } else {
-                    panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
-                }
-
+                state.update_value(i, SimulationStateElement::FenestrationOpenFraction(self.index, new_open));            
                 Ok(())
             }
             FenestrationPositions::Binary => {
-                if new_open != 0.0 && new_open != 1.0 {
+                if new_open.abs() > f64::EPSILON && (new_open - 1.0).abs()>f64::EPSILON {
                     return Err(format!(
                         "Trying leave '{}',  a {} {}, half-opened",
                         self.name,
@@ -239,24 +217,8 @@ impl Fenestration {
                     ));
                 } else {
                     let i = self.open_fraction_index;
-
-                    if let SimulationStateElement::FenestrationOpenFraction(fen_index, _) = state[i]
-                    {
-                        if fen_index != self.index {
-                            panic!(
-                                "Incorrect index allocated for OpenFraction of {} '{}'",
-                                self.class_name(),
-                                self.index
-                            );
-                        }
-
-                        // all Good here
-                        state[i] =
-                            SimulationStateElement::FenestrationOpenFraction(fen_index, new_open);
-                    } else {
-                        panic!("Incorrect StateElement kind allocated for OpenFraction of Fenestratoion of {} '{}'", self.class_name(), self.index);
-                    }
-                    return Ok(());
+                    state.update_value(i, SimulationStateElement::FenestrationOpenFraction(self.index, new_open));
+                    Ok(())
                 }
             }
         }
@@ -280,7 +242,7 @@ impl Fenestration {
                     ));
                 } else {
                     self.front_boundary = bound;
-                    return Ok(());
+                    Ok(())
                 }
             }
             _ => Err(format!(
@@ -311,7 +273,7 @@ impl Fenestration {
                 } else {
                     // Set the boundary
                     self.back_boundary = bound;
-                    return Ok(());
+                    Ok(())
                 }
             }
             _ => Err(format!(
@@ -336,6 +298,136 @@ impl Fenestration {
 
     pub fn get_last_node_temperature_index(&self) -> Option<usize> {
         self.last_node_temperature_index
+    }
+}
+
+impl Building{
+    /* FENESTRATION */
+
+    /// Creates a new Fenestration object
+    pub fn add_fenestration(
+        &mut self,
+        state: &mut SimulationState,
+        name: String,
+        operation_type: FenestrationPositions,
+        fenestration_type: FenestrationType,
+    ) -> usize {
+        let i = self.fenestrations.len();
+        self.fenestrations.push(Fenestration::new(
+            state,
+            name,
+            i,
+            operation_type,
+            fenestration_type,
+        ));
+
+        // State is modified when creating Fenestration
+        i
+    }
+
+    /// Retrieves a Fenestration
+    pub fn get_fenestration(&self, index: usize) -> Result<&Fenestration, String> {
+        if index >= self.fenestrations.len() {
+            return self.error_out_of_bounds("Fenestration", index);
+        }
+        Ok(&self.fenestrations[index])
+    }
+
+    /// Sets the polygon for a Fenestration
+    pub fn set_fenestration_polygon(
+        &mut self,
+        fen_index: usize,
+        p: Polygon3D,
+    ) -> Result<(), String> {
+        if fen_index >= self.fenestrations.len() {
+            return self.error_out_of_bounds("Fenestration", fen_index);
+        }
+
+        self.fenestrations[fen_index].set_polygon(p);
+
+        Ok(())
+    }
+
+    /// Sets the construction of a Fenestration
+    pub fn set_fenestration_construction(
+        &mut self,
+        fen_index: usize,
+        construction_index: usize,
+    ) -> Result<(), String> {
+        if fen_index >= self.fenestrations.len() {
+            return self.error_out_of_bounds("Fenestration", fen_index);
+        }
+
+        if construction_index >= self.constructions.len() {
+            return self.error_out_of_bounds("Construction", construction_index);
+        }
+
+        self.fenestrations[fen_index].set_construction(construction_index);
+
+        Ok(())
+    }
+
+    /// Sets the Open Fraction for a Fenestration
+    pub fn set_fenestration_open_fraction(
+        &mut self,
+        fen_index: usize,
+        state: &mut SimulationState,
+        fraction: f64,
+    ) -> Result<(), String> {
+        if fen_index >= self.fenestrations.len() {
+            return self.error_out_of_bounds("Fenestration", fen_index);
+        }
+
+        self.fenestrations[fen_index].set_open_fraction(state, fraction)
+    }
+
+    /// Sets the front boundary of a Fenestration
+    pub fn set_fenestration_front_boundary(
+        &mut self,
+        fenestration_index: usize,
+        boundary: Boundary,
+    ) -> Result<(), String> {
+        if fenestration_index >= self.fenestrations.len() {
+            return self.error_out_of_bounds("Fenestration", fenestration_index);
+        }
+        match boundary {
+            Boundary::Ground | Boundary::None => {
+                self.fenestrations[fenestration_index].set_front_boundary(boundary)
+            }
+            Boundary::Space(s) => {
+                if s >= self.spaces.len() {
+                    self.error_out_of_bounds("Space", s)
+                } else {
+                    self.spaces[s].push_fenestration(fenestration_index);
+                    self.fenestrations[fenestration_index].set_front_boundary(boundary)
+                }
+            }
+        }
+    }
+
+    /// Sets the back boundary of a Fenestration
+    pub fn set_fenestration_back_boundary(
+        &mut self,
+        fenestration_index: usize,
+        boundary: Boundary,
+    ) -> Result<(), String> {
+        if fenestration_index >= self.fenestrations.len() {
+            return self.error_out_of_bounds("Fenestration", fenestration_index);
+        }
+
+        match boundary {
+            Boundary::Ground | Boundary::None => {
+                self.fenestrations[fenestration_index].set_back_boundary(boundary)
+            }
+            Boundary::Space(s) => {
+                if s >= self.spaces.len() {
+                    self.error_out_of_bounds("Space", s)
+                } else {
+                    self.spaces[s].push_fenestration(fenestration_index);
+                    self.fenestrations[fenestration_index].set_back_boundary(boundary)
+                }
+            }
+        }
     }
 }
 

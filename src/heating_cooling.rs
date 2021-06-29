@@ -76,10 +76,10 @@ impl HeaterCooler {
         );
 
         Self {
-            name: name,
+            name,
+            kind,
+            state_index,
             index: 0,
-            kind: kind,
-            state_index: state_index,
             max_cooling_power: None,
             max_heating_power: None,
         }

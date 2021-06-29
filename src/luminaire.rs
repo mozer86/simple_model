@@ -1,6 +1,6 @@
 use simulation_state::simulation_state::SimulationState;
 use simulation_state::simulation_state_element::SimulationStateElement;
-
+use crate::building::Building;
 use crate::object_trait::ObjectTrait;
 
 pub struct Luminaire {
@@ -26,7 +26,7 @@ impl ObjectTrait for Luminaire {
     }
 
     fn class_name(&self) -> String {
-        format!("Luminaire")
+        "Luminaire".to_string()
     }
 
     fn index(&self) -> usize {
@@ -54,9 +54,9 @@ impl Luminaire {
         );
 
         Self {
-            name: name,
+            name,
+            state_index,
             index: 0,
-            state_index: state_index,
             max_power: None,
         }
     }
@@ -71,5 +71,36 @@ impl Luminaire {
 
     pub fn get_max_power(&self) -> Option<f64> {
         self.max_power
+    }
+}
+
+impl Building{
+    /* LUMINAIRE */
+    pub fn add_luminaire_to_space(
+        &mut self,
+        state: &mut SimulationState,
+        space_index: usize,
+    ) -> Result<(), String> {
+        if space_index >= self.spaces.len() {
+            return self.error_out_of_bounds("Space", space_index);
+        }
+
+        self.spaces[space_index].add_luminaire(Luminaire::new(
+            state,
+            format!("Space {} Luminaire", space_index), // name
+            space_index,
+        ))
+    }
+
+    pub fn set_space_max_lighting_power(
+        &mut self,
+        space_index: usize,
+        power: f64,
+    ) -> Result<(), String> {
+        if space_index >= self.spaces.len() {
+            return self.error_out_of_bounds("Space", space_index);
+        }
+
+        self.spaces[space_index].set_luminaire_max_power(power)
     }
 }

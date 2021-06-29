@@ -1,4 +1,5 @@
 use crate::object_trait::ObjectTrait;
+use crate::building::Building;
 
 use geometry3d::polygon3d::Polygon3D;
 
@@ -164,6 +165,113 @@ impl Surface {
     pub fn get_last_node_temperature_index(&self) -> Option<usize> {
         self.last_node_temperature_index
     }
+}
+
+impl Building{
+    /* SURFACE */
+
+    /// Creates a new Surface
+    pub fn add_surface(&mut self, name: String) -> usize {
+        let i = self.surfaces.len();
+        self.surfaces.push(Surface::new(name, i));
+
+        // Node temperatures will be added within the Thermal model
+
+        i
+    }
+
+    /// Retrieves a Surface
+    pub fn get_surface(&self, index: usize) -> Result<&Surface, String> {
+        if index >= self.surfaces.len() {
+            return self.error_out_of_bounds("Surface", index);
+        }
+
+        Ok(&self.surfaces[index])
+    }
+
+    /// Sets the front boundary of a Surface
+    pub fn set_surface_front_boundary(
+        &mut self,
+        surface_index: usize,
+        boundary: Boundary,
+    ) -> Result<(), String> {
+        if surface_index >= self.surfaces.len() {
+            return self.error_out_of_bounds("Surface", surface_index);
+        }
+        match boundary {
+            Boundary::Ground | Boundary::None => {
+                self.surfaces[surface_index].set_front_boundary(boundary)
+            }
+            Boundary::Space(s) => {
+                if s >= self.spaces.len() {
+                    self.error_out_of_bounds("Space", s)
+                } else {
+                    self.spaces[s].push_surface(surface_index);
+                    self.surfaces[surface_index].set_front_boundary(boundary)
+                }
+            }
+        }
+    }
+
+    /// Sets the back boundary of a Surface
+    pub fn set_surface_back_boundary(
+        &mut self,
+        surface_index: usize,
+        boundary: Boundary,
+    ) -> Result<(), String> {
+        if surface_index >= self.surfaces.len() {
+            return self.error_out_of_bounds("Surface", surface_index);
+        }
+
+        match boundary {
+            Boundary::Ground | Boundary::None => {
+                self.surfaces[surface_index].set_back_boundary(boundary)
+            }
+            Boundary::Space(s) => {
+                if s >= self.spaces.len() {
+                    self.error_out_of_bounds("Space", s)
+                } else {
+                    self.spaces[s].push_surface(surface_index);
+                    self.surfaces[surface_index].set_back_boundary(boundary)
+                }
+            }
+        }
+    }
+
+    /// Sets the polygon for a Surface
+    pub fn set_surface_polygon(
+        &mut self,
+        surface_index: usize,
+        p: Polygon3D,
+    ) -> Result<(), String> {
+        if surface_index >= self.surfaces.len() {
+            return self.error_out_of_bounds("Surface", surface_index);
+        }
+
+        self.surfaces[surface_index].set_polygon(p);
+
+        Ok(())
+    }
+
+    /// Sets the construction of a surface
+    pub fn set_surface_construction(
+        &mut self,
+        surface_index: usize,
+        construction_index: usize,
+    ) -> Result<(), String> {
+        if surface_index >= self.surfaces.len() {
+            return self.error_out_of_bounds("Surface", surface_index);
+        }
+
+        if construction_index >= self.constructions.len() {
+            return self.error_out_of_bounds("Construction", construction_index);
+        }
+
+        self.surfaces[surface_index].set_construction(construction_index);
+
+        Ok(())
+    }
+
 }
 
 /***********/

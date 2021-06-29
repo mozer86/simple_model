@@ -1,4 +1,5 @@
 use crate::object_trait::ObjectTrait;
+use crate::building::Building;
 
 /// The representation of a physical layer-Material.
 /// That is to say, a layer of a certain thickness
@@ -54,8 +55,8 @@ impl Material {
     /// Material.
     pub fn new(name: String, index: usize) -> Self {
         Self {
-            name: name,
-            index: index,
+            name,
+            index,
             properties: None,
             substance: None,
         }
@@ -82,6 +83,59 @@ impl Material {
     /// Retrieves the substance index
     pub fn get_substance_index(&self) -> Option<usize> {
         self.substance
+    }
+}
+
+impl Building{
+        /* MATERIAL */
+
+    /// Adds a new empty Material to the model
+    pub fn add_material(&mut self, name: String) -> usize {
+        let i = self.materials.len();
+        self.materials.push(Material::new(name, i));
+        i
+    }
+
+    /// Retrieves a material from the Materials array
+    /// in the Building
+    pub fn get_material(&self, index: usize) -> Result<&Material, String> {
+        if index >= self.materials.len() {
+            return self.error_out_of_bounds("Material", index);
+        }
+
+        Ok(&self.materials[index])
+    }
+
+    /// Sets a material surface
+    pub fn set_material_substance(
+        &mut self,
+        material_index: usize,
+        substance_index: usize,
+    ) -> Result<(), String> {
+        if material_index >= self.materials.len() {
+            return self.error_out_of_bounds("Material", material_index);
+        }
+
+        if substance_index >= self.substances.len() {
+            return self.error_out_of_bounds("Substance", substance_index);
+        }
+
+        self.materials[material_index].set_substance(substance_index);
+        Ok(())
+    }
+
+    /// Sets a material property
+    pub fn set_material_properties(
+        &mut self,
+        material_index: usize,
+        properties: MaterialProperties,
+    ) -> Result<(), String> {
+        if material_index >= self.materials.len() {
+            return self.error_out_of_bounds("Material", material_index);
+        }
+
+        self.materials[material_index].set_properties(properties);
+        Ok(())
     }
 }
 

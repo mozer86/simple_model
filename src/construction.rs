@@ -1,4 +1,5 @@
 use crate::object_trait::ObjectTrait;
+use crate::building::Building;
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
@@ -31,7 +32,7 @@ impl ObjectTrait for Construction {
     }
 
     fn is_full(&self) -> Result<(), String> {
-        if self.layers.len() != 0 {
+        if !self.layers.is_empty() {
             Ok(())
         } else {
             self.error_is_not_full()
@@ -47,8 +48,8 @@ impl Construction {
     /// Building object, the latter chooses the appropriate index
     pub fn new(name: String, index: usize) -> Self {
         Construction {
-            name: name,
-            index: index,
+            name,
+            index,
             layers: Vec::new(),
         }
     }
@@ -65,7 +66,7 @@ impl Construction {
 
     /// Returns the number of the
     pub fn get_layer_index(&self, i: usize) -> Result<usize, String> {
-        if self.layers.len() == 0 {
+        if self.layers.is_empty() {
             return self.error_using_empty();
         }
 
@@ -83,6 +84,45 @@ impl Construction {
     }
 }
 
+impl Building{
+    /* CONSTRUCTION */
+
+    /// Creates a new construction
+    pub fn add_construction(&mut self, name: String) -> usize {
+        let i = self.constructions.len();
+        self.constructions.push(Construction::new(name, i));
+        i
+    }
+
+    /// Retrieves a construction
+    pub fn get_construction(&self, index: usize) -> Result<&Construction, String> {
+        if index >= self.constructions.len() {
+            return self.error_out_of_bounds("Construction", index);
+        }
+
+        Ok(&self.constructions[index])
+    }
+
+    /// Pushes a new Material layer to a construction
+    /// in the Building object
+    pub fn add_material_to_construction(
+        &mut self,
+        construction_index: usize,
+        material_index: usize,
+    ) -> Result<(), String> {
+        if material_index >= self.materials.len() {
+            return self.error_out_of_bounds("Material", material_index);
+        }
+
+        if construction_index >= self.constructions.len() {
+            return self.error_out_of_bounds("Construction", construction_index);
+        }
+
+        self.constructions[construction_index].push_layer(material_index);
+
+        Ok(())
+    }
+}
 /***********/
 /* TESTING */
 /***********/

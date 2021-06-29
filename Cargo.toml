@@ -10,3 +10,4 @@ edition = "2018"
 geometry3d = {path = "../geometry3d"}
 simulation_state = { path = "../simulation_state" }
 calendar = { path = "../calendar" }
+schedule = { path = "../schedule" }
