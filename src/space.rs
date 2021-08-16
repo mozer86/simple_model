@@ -42,11 +42,12 @@ pub struct Space {
     ///
     /// This will be filled by the Thermal Simulation module
     dry_bulb_temperature_state_index: Option<usize>,
-
-    previous_dry_bulb_temperature_state_index: Option<usize>,
-
     brightness_state_index: Option<usize>,
     loudness_state_index: Option<usize>,
+    infiltration_vol_state_index: Option<usize>,
+    infiltration_temp_state_index: Option<usize>,
+    ventilation_vol_state_index: Option<usize>,
+    ventilation_temp_state_index: Option<usize>,
 }
 
 impl ObjectTrait for Space {
@@ -55,7 +56,7 @@ impl ObjectTrait for Space {
     }
 
     fn class_name(&self) -> String {
-        "Space".to_string()
+        "space".to_string()
     }
 
     fn index(&self) -> usize {
@@ -88,9 +89,12 @@ impl Space {
 
             /* STATE */
             dry_bulb_temperature_state_index: None,
-            previous_dry_bulb_temperature_state_index: None,
             brightness_state_index: None,
             loudness_state_index: None,
+            infiltration_vol_state_index: None,
+            infiltration_temp_state_index: None,
+            ventilation_vol_state_index: None,
+            ventilation_temp_state_index: None,
         }
     }
 
@@ -153,14 +157,7 @@ impl Space {
         self.dry_bulb_temperature_state_index = Some(i)
     }
 
-    pub fn get_previous_dry_bulb_temperature_state_index(&self) -> Option<usize> {
-        self.previous_dry_bulb_temperature_state_index
-    }
-
-    pub fn set_previous_dry_bulb_temperature_state_index(&mut self, i: usize) {
-        self.previous_dry_bulb_temperature_state_index = Some(i)
-    }
-
+    
     pub fn get_brightness_state_index(&self) -> Option<usize> {
         self.brightness_state_index
     }

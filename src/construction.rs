@@ -16,6 +16,9 @@ pub struct Construction {
     /// The indices of the Material objects in the
     /// materials property of the Building object
     layers: Vec<usize>,
+
+    // front finishing
+    // back finishing  
 }
 
 impl ObjectTrait for Construction {
@@ -24,7 +27,7 @@ impl ObjectTrait for Construction {
     }
 
     fn class_name(&self) -> String {
-        "Construction".to_string()
+        "construction".to_string()
     }
 
     fn index(&self) -> usize {

@@ -30,6 +30,8 @@ pub struct Building {
 
     /// The windows and doors in the surface    
     pub fenestrations: Vec<Fenestration>,
+
+    
 }
 
 
@@ -39,7 +41,7 @@ impl ObjectTrait for Building {
     }
 
     fn class_name(&self) -> String {
-        "Building".to_string()
+        "building".to_string()
     }
 
     fn index(&self) -> usize {
@@ -175,7 +177,22 @@ impl Building {
                 SimulationStateElement::SpaceDryBulbTemperature(space_index, _)=>{
                     debug_assert!(self.spaces[*space_index].get_dry_bulb_temperature_state_index().is_none());
                     self.spaces[*space_index].set_dry_bulb_temperature_state_index(element_index);
-                },                
+                },         
+                SimulationStateElement::SpaceInfiltrationVolume(space_index,_)=>{
+
+                },   
+                SimulationStateElement::SpaceVentilationVolume(space_index,_)=>{
+
+                },   
+                SimulationStateElement::SpaceInfiltrationTemperature(space_index,_)=>{
+
+                },   
+                SimulationStateElement::SpaceVentilationTemperature(space_index,_)=>{
+
+                },   
+                SimulationStateElement::SpaceAirExchangeVolume(origin,target,_)=>{
+
+                },    
                 SimulationStateElement::SurfaceNodeTemperature(surface_index, _, _)=>{
                     // Check the first one
                     debug_assert!(self.surfaces[*surface_index].get_first_node_temperature_index().is_none());

@@ -41,7 +41,7 @@ impl ObjectTrait for Surface {
     }
 
     fn class_name(&self) -> String {
-        "Surface".to_string()
+        "surface".to_string()
     }
 
     fn index(&self) -> usize {

@@ -54,7 +54,7 @@ impl ObjectTrait for Substance {
     }
 
     fn class_name(&self) -> String {
-        "Substance".to_string()
+        "substance".to_string()
     }
 }
 
