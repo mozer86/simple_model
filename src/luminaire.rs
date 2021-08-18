@@ -1,5 +1,5 @@
-use simulation_state::simulation_state::SimulationState;
-use simulation_state::simulation_state_element::SimulationStateElement;
+use crate::simulation_state::SimulationState;
+use crate::simulation_state_element::SimulationStateElement;
 use crate::building::Building;
 use crate::object_trait::ObjectTrait;
 
@@ -29,19 +29,7 @@ impl ObjectTrait for Luminaire {
         "Luminaire".to_string()
     }
 
-    fn index(&self) -> usize {
-        self.index
-    }
-
-    fn is_full(&self) -> Result<(), String> {
-        // We need at least one value (each module using these systems
-        // will check correctness, probably)
-        if self.max_power.is_some() {
-            Ok(())
-        } else {
-            self.error_is_not_full()
-        }
-    }
+    
 }
 
 impl Luminaire {

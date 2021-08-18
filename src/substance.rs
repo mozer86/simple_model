@@ -1,7 +1,8 @@
-//use crate::error::error;
-use crate::object_trait::ObjectTrait;
-use crate::building::Building;
+use std::rc::Rc;
 
+
+use crate::building::Building;
+use building_state_macro::BuildingObjectBehaviour;
 
 /// Represents a Substance; that is to say, a physical
 /// materiality with physical properties. The name Substance
@@ -14,139 +15,52 @@ use crate::building::Building;
 /// defined because the number of properties of the Substance
 /// object might grow quite a bit, and in the end it is simply
 /// easier to write the struct down
+#[derive(BuildingObjectBehaviour)]
 pub struct Substance {
     /// The name of the Substance. Should be unique for each
     /// Material in the Building object    
-    name: String,
+    pub name: String,
+        
+    /// The position of the [`Substance`] in its containing 
+    /// array
+    index: Option<usize>,
 
-    /// The position of the Substance in its container Vector
-    index: usize,
-
-    properties: Option<SubstanceProperties>,
-}
-
-pub struct SubstanceProperties {
     /// The thermal conductivity of the substance in W/m.K
-    pub thermal_conductivity: f64,
-
+    thermal_conductivity: Option<f64>,
+    
     /// The specific heat capacity of the substance in J/kg.K
-    pub specific_heat_capacity: f64,
-
+    specific_heat_capacity: Option<f64>,
+    
     /// The density of the substance in kg/m3
-    pub density: f64,
+    density: Option<f64>,
 }
 
-impl ObjectTrait for Substance {
-    fn name(&self) -> &String {
-        &self.name
-    }
-
-    fn is_full(&self) -> Result<(), String> {
-        if self.properties.is_some() {
-            Ok(())
-        } else {
-            self.error_is_not_full()
-        }
-    }
-
-    fn index(&self) -> usize {
-        self.index
-    }
-
-    fn class_name(&self) -> String {
-        "substance".to_string()
-    }
-}
 
 impl Substance {
-    /// Creates a new empty Surface with a certain index.ObjectTrait
-    /// The index does not have any meaning if the Substance is
-    /// self-contained; but it becomes meaningful when it is part of an
-    /// Array. For instance, when inserting a new Substance to the     
-    /// Building object, the latter chooses the appropriate index
-    pub fn new(name: String, index: usize) -> Self {
-        Self {
-            name,
-            index,
-            properties: None,
-        }
-    }
-
-    /// Fills the Substance with physical properties
-    pub fn set_properties(&mut self, properties: SubstanceProperties) {
-        self.properties = Some(properties)
-    }
 
     /// Calculates the thermal diffusivity of the
     /// Substance
     pub fn thermal_diffusivity(&self) -> Result<f64, String> {
-        match &self.properties {
-            Some(p) => Ok(p.thermal_conductivity / (p.density * p.specific_heat_capacity)),
-            None => self.error_using_empty(),
-        }
-    }
-
-    /// Returns the thermal conductivity of the substance in W/m.K
-    pub fn thermal_conductivity(&self) -> Result<f64, String> {
-        match &self.properties {
-            Some(p) => Ok(p.thermal_conductivity),
-            None => self.error_using_empty(),
-        }
-    }
-
-    /// The specific heat capacity of the substance in J/kg.K
-    pub fn specific_heat_capacity(&self) -> Result<f64, String> {
-        match &self.properties {
-            Some(p) => Ok(p.specific_heat_capacity),
-            None => self.error_using_empty(),
-        }
-    }
-
-    /// The density of the substance in kg/m3
-    pub fn density(&self) -> Result<f64, String> {
-        match &self.properties {
-            Some(p) => Ok(p.density),
-            None => self.error_using_empty(),
-        }
+        let thermal_conductivity = self.thermal_conductivity()?;
+        let density = self.density()?;
+        let specific_heat_capacity = self.specific_heat_capacity()?;
+        Ok(thermal_conductivity / (density * specific_heat_capacity))
     }
 }
 
 impl Building {
-/* SUBSTANCE */
 
-    /// Adds a new empty Substance to the model
-    pub fn add_substance(&mut self, name: String) -> usize {
-        let i = self.substances.len();
-
-        self.substances.push(Substance::new(name, i));
-
-        i
+    /// Adds a [`Substance`] to the [`Building`].
+    /// 
+    /// The [`Substance`] is put behind an `Rc`, and a clone
+    /// of such `Rc` is returned
+    pub fn add_substance(&mut self, substance: Substance) -> Rc<Substance> {
+        let sub = Rc::new(substance);
+        self.substances.push(Rc::clone(&sub));
+        sub
     }
 
-    /// Retrieves a substance from the Substances array
-    /// in the Building
-    pub fn get_substance(&self, index: usize) -> Result<&Substance, String> {
-        if index >= self.substances.len() {
-            return self.error_out_of_bounds("Substance", index);
-        }
-
-        Ok(&self.substances[index])
-    }
-
-    /// Sets the properties to the substance located in a certain index
-    /// of the Substances array in the Building object
-    pub fn set_substance_properties(
-        &mut self,
-        index: usize,
-        properties: SubstanceProperties,
-    ) -> Result<(), String> {
-        if index >= self.substances.len() {
-            return self.error_out_of_bounds("Substance", index);
-        }
-
-        self.substances[index].set_properties(properties);
-        Ok(())
-    }
+   
 }
 
 /***********/
@@ -157,30 +71,29 @@ impl Building {
 mod testing {
     use super::*;
 
+
     #[test]
-    fn test_basic() {
+    fn test_substance_basic() {
+        
+        let s_name = "The Substance".to_string();
+        let mut s = Substance::new(s_name.clone());
+        assert_eq!(s_name, s.name);
+        assert!(s.thermal_conductivity().is_err());
+        assert!(s.specific_heat_capacity().is_err());
+        assert!(s.density().is_err());
+        
+        // Fill with properties
         let lambda = 1.23123;
         let rho = 1.2312312555;
         let c = 9.123128;
-
-        let index = 123;
-        let s_name = "The Substance".to_string();
-        let mut s = Substance::new(s_name.clone(), index);
-        assert_eq!(&s_name, s.name());
-        assert_eq!(s.index(), index);
-        assert!(s.is_full().is_err());
-
-        // Fill with properties
-        s.set_properties(SubstanceProperties {
-            thermal_conductivity: lambda,
-            specific_heat_capacity: c,
-            density: rho,
-        });
-
-        assert!(s.is_full().is_ok());
-
+        s.set_thermal_conductivity(lambda)
+            .set_specific_heat_capacity(c)
+            .set_density(rho);
+        
+        
         assert_eq!(s.thermal_diffusivity().unwrap(), lambda / rho / c);
         assert_eq!(s.density().unwrap(), rho);
         assert_eq!(s.specific_heat_capacity().unwrap(), c);
+        assert_eq!(s.thermal_conductivity().unwrap(), lambda);
     }
 }

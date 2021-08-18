@@ -1,6 +1,8 @@
-#[derive(Copy, Clone)]
-pub enum Boundary {
-    None,
+
+#[derive(Clone,Copy)]
+pub enum Boundary {    
     Ground,
     Space(usize),
 }
+
+

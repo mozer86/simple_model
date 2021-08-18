@@ -1,130 +1,64 @@
-use crate::object_trait::ObjectTrait;
+use building_state_macro::BuildingObjectBehaviour;use std::rc::Rc;
 use crate::building::Building;
+use crate::material::Material;
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
 /// Materials
+#[derive(BuildingObjectBehaviour)]
 pub struct Construction {
     /// The name of the Construction object.
     /// Must be unique within the model
-    name: String,
-
-    /// The index of the Construction object within
-    /// the constructions property in the Building object
-    index: usize,
+    pub name: String,
 
     /// The indices of the Material objects in the
     /// materials property of the Building object
-    layers: Vec<usize>,
+    pub layers: Vec<Rc<Material>>,
+
+    index: Option<usize>,
 
     // front finishing
     // back finishing  
 }
 
-impl ObjectTrait for Construction {
-    fn name(&self) -> &String {
-        &self.name
-    }
+impl Construction{
+    /// Calculates the R-value of the Construction (not including surface coefficients).
+    pub fn r_value(&self/*building: &Building, construction: &Rc<Construction>*/) -> Result<f64, String> {
+        //let construction = building.get_construction(construction_index).unwrap();
 
-    fn class_name(&self) -> String {
-        "construction".to_string()
-    }
+        //let materials = building.get_materials();
+        //let substances = building.get_substances();
 
-    fn index(&self) -> usize {
-        self.index
-    }
+        let mut r = 0.0;
 
-    fn is_full(&self) -> Result<(), String> {
-        if !self.layers.is_empty() {
-            Ok(())
-        } else {
-            self.error_is_not_full()
-        }
-    }
-}
+        for material in self.layers.iter() {
+            // let material = &building.materials[*material_index];
+            // let substance_index = material.get_substance_index().unwrap();
+            let substance = &material.substance;//building.get_substance(substance_index).unwrap();
+            let lambda = substance.thermal_conductivity().unwrap();
 
-impl Construction {
-    /// Create a new empty Construction ...
-    /// The index does not have any meaning if the Construction is
-    /// self-contained; but it becomes meaningful when it is part of an
-    /// Array. For instance, when inserting a new Construction to the     
-    /// Building object, the latter chooses the appropriate index
-    pub fn new(name: String, index: usize) -> Self {
-        Construction {
-            name,
-            index,
-            layers: Vec::new(),
-        }
-    }
-
-    /// Borrows the Layers vector
-    pub fn layers(&self) -> &Vec<usize> {
-        &self.layers
-    }
-
-    /// Returns the number of layers in the object
-    pub fn n_layers(&self) -> usize {
-        self.layers.len()
-    }
-
-    /// Returns the number of the
-    pub fn get_layer_index(&self, i: usize) -> Result<usize, String> {
-        if self.layers.is_empty() {
-            return self.error_using_empty();
+            r += material.thickness / lambda;
         }
 
-        match self.layers.get(i) {
-            Some(v) => Ok(*v),
-            None => {
-                return Err(format!("Index out of bounds... trying to access layer {} of {} '{}', but it has only {} layers", i, self.class_name(), self.name, self.layers.len()));
-            }
-        }
-    }
-
-    /// adds another layer to the Construction.
-    pub fn push_layer(&mut self, layer_index: usize) {
-        self.layers.push(layer_index)
+        Ok(r)
     }
 }
 
 impl Building{
     /* CONSTRUCTION */
 
-    /// Creates a new construction
-    pub fn add_construction(&mut self, name: String) -> usize {
-        let i = self.constructions.len();
-        self.constructions.push(Construction::new(name, i));
-        i
-    }
+    /// Adds a [`Construction`] to the [`Building`].
+    /// 
+    /// The [`Construction`] is put behind an `Rc`, and a clone
+    /// of such `Rc` is returned
+    pub fn add_construction(&mut self, mut construction: Construction) -> Rc<Construction> {
+        construction.set_index(self.constructions.len());
+        let ret = Rc::new(construction);
+        self.constructions.push(Rc::clone(&ret));
+        ret
+    }    
 
-    /// Retrieves a construction
-    pub fn get_construction(&self, index: usize) -> Result<&Construction, String> {
-        if index >= self.constructions.len() {
-            return self.error_out_of_bounds("Construction", index);
-        }
-
-        Ok(&self.constructions[index])
-    }
-
-    /// Pushes a new Material layer to a construction
-    /// in the Building object
-    pub fn add_material_to_construction(
-        &mut self,
-        construction_index: usize,
-        material_index: usize,
-    ) -> Result<(), String> {
-        if material_index >= self.materials.len() {
-            return self.error_out_of_bounds("Material", material_index);
-        }
-
-        if construction_index >= self.constructions.len() {
-            return self.error_out_of_bounds("Construction", construction_index);
-        }
-
-        self.constructions[construction_index].push_layer(material_index);
-
-        Ok(())
-    }
+    
 }
 /***********/
 /* TESTING */
@@ -133,28 +67,39 @@ impl Building{
 #[cfg(test)]
 mod testing {
     use super::*;
+    use crate::substance::Substance;
 
     #[test]
-    fn test_basic() {
-        let name = "The construction".to_string();
-        let index = 12312;
-        let mut c = Construction::new(name.clone(), index);
-        assert_eq!(&name, c.name());
-        assert_eq!(index, c.index());
-        assert_eq!(0, c.n_layers());
-        assert!(c.is_full().is_err());
+    fn test_construction_basic() {
+        
+        let c_name = "The construction".to_string();
+        
+        let mut c = Construction::new(c_name.clone());
+        assert_eq!(0, c.layers.len());        
+        assert_eq!(c_name, c.name);
+        
+        // Create substance
+        let sub_name = "the_sub".to_string();
+        let sub = Rc::new(Substance::new(sub_name.clone()));
 
-        let layer0 = 23;
-        c.push_layer(layer0);
-        assert_eq!(1, c.n_layers());
-        assert_eq!(layer0, c.get_layer_index(0).unwrap());
-        assert!(c.get_layer_index(1).is_err());
+        // Create a Material
+        let mat_1_name = "mat_1".to_string();
+        let mat_1_thickness = 0.12312;
+        let mat_1 = Rc::new(Material::new(mat_1_name.clone(), Rc::clone(&sub) ,mat_1_thickness ));
 
-        let layer1 = 412;
-        c.push_layer(layer1);
-        assert_eq!(2, c.n_layers());
-        assert_eq!(layer1, c.get_layer_index(1).unwrap());
-        assert!(c.get_layer_index(1).is_ok());
-        assert!(c.get_layer_index(2).is_err());
+        c.layers.push(mat_1);
+        assert_eq!(1, c.layers.len()); 
+        assert_eq!(mat_1_name, c.layers[0].name);       
+        assert_eq!(mat_1_thickness, c.layers[0].thickness);       
+
+        let mat_2_name = "mat_2".to_string();
+        let mat_2_thickness = 1.12312;
+        let mat_2 = Rc::new(Material::new(mat_2_name.clone(), Rc::clone(&sub) ,mat_2_thickness ));
+
+        c.layers.push(mat_2);
+        assert_eq!(2, c.layers.len()); 
+        assert_eq!(mat_2_name, c.layers[1].name); 
+        assert_eq!(mat_2_thickness, c.layers[1].thickness);             
+
     }
 }
