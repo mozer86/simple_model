@@ -1,6 +1,6 @@
-use std::rc::Rc;
+// use std::rc::Rc;
 use building_state_macro::BuildingObjectBehaviour;
-use crate::surface::Surface;
+// use crate::surface::Surface;
 // use crate::heating_cooling::HeaterCooler;
 // use crate::luminaire::Luminaire;
 use crate::building::Building;
@@ -8,6 +8,7 @@ use crate::building::Building;
 // use calendar::date::Date;
 // use schedule::schedule_trait::Schedule;
 use crate::simulation_state::SimulationState;
+
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
@@ -21,11 +22,11 @@ pub struct Space {
 
     /// The indices of the surrounding Surfaces in the
     /// Building's Surfaces array
-    pub surfaces: Vec<Rc<Surface>>,
+    pub surfaces: Vec<usize>,
 
     /// The indices of the surrounding Fenestration in the
     /// Building's Surfaces array
-    // fenestrations: Vec<usize>,
+    pub fenestrations: Vec<usize>,
     
     /// The luminaire in the space
     // luminaire: Option<Luminaire>,
