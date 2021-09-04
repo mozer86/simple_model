@@ -13,7 +13,7 @@ fn get_state_element(ini: usize, fin: usize) -> SimulationStateElement {
 
         // Operational ones
         1 => SimulationStateElement::FenestrationOpenFraction(n, n as f64),
-        2 => SimulationStateElement::SpaceHeatingCoolingPowerConsumption(n, n as f64),
+        2 => SimulationStateElement::HeatingCoolingPowerConsumption(n, n as f64),
         3 => SimulationStateElement::SpaceLightingPowerConsumption(n, n as f64),
 
         // Physical ones

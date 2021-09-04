@@ -6,7 +6,7 @@ use building_state_macro::BuildingObjectBehaviour;
 use crate::building::Building;
 use crate::construction::Construction;
 use crate::boundary::Boundary;
-// use crate::simulation_state::SimulationState;
+use crate::simulation_state::SimulationState;
 // use crate::simulation_state_element::SimulationStateElement;
 
 #[derive(Copy, Clone, Eq, PartialEq)]

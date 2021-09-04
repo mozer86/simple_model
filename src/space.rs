@@ -7,7 +7,7 @@ use crate::building::Building;
 // use crate::heating_cooling::HeatingCoolingKind;
 // use calendar::date::Date;
 // use schedule::schedule_trait::Schedule;
-// use crate::simulation_state::SimulationState;
+use crate::simulation_state::SimulationState;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room

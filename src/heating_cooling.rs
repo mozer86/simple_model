@@ -1,9 +1,10 @@
+use crate::building::Building;
 use building_state_macro::BuildingObjectBehaviour;
-// use crate::simulation_state::SimulationState;
-// use crate::simulation_state_element::SimulationStateElement;
+use crate::simulation_state::SimulationState;
+use crate::simulation_state_element::SimulationStateElement;
 
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum HeatingCoolingKind {
     /// An ideal heating/cooling device.
     /// Heats and Cools with an efficiency of
@@ -15,6 +16,16 @@ pub enum HeatingCoolingKind {
     ElectricHeating,
 }
 
+
+impl HeatingCoolingKind{
+    fn max_target_spaces(&self)->Option<usize>{
+        match self{
+            Self::IdealHeaterCooler => None,
+            Self::ElectricHeating => Some(1),
+        }
+    }
+}
+
 #[derive(Clone,BuildingObjectBehaviour)]
 pub struct HeaterCooler {
     
@@ -24,6 +35,10 @@ pub struct HeaterCooler {
     /// The kind of heater utilized
     pub kind: HeatingCoolingKind,
     
+    /// The [`Space`]s that this [`HeaterCooler`] heats and/or 
+    /// cools
+    target_spaces: Vec<usize>,
+
     /// The position of the system in its
     /// containing Array (this is not used for now, as
     /// only one HeaterCooler is allowed per space)
@@ -33,7 +48,7 @@ pub struct HeaterCooler {
     max_heating_power: Option<f64>,
 
     /// Max cooling power
-    max_cooling_power: Option<f64>,
+    max_cooling_power: Option<f64>,    
 
     #[state]
     heating_cooling_consumption: Option<usize>,
@@ -44,13 +59,8 @@ pub struct HeaterCooler {
 impl HeaterCooler {
     
 
-    // fn sub_class_name(&self) -> &str {
-    //     match self.kind {
-    //         HeatingCoolingKind::IdealHeaterCooler => "IdealHeaterCooler",
-    //         HeatingCoolingKind::ElectricHeating => "ElectricHeater",
-    //     }
-    // }
-
+    
+    
     pub fn can_heat(&self) -> bool {
         match self.kind {
             HeatingCoolingKind::IdealHeaterCooler => true,
@@ -65,5 +75,35 @@ impl HeaterCooler {
         }
     }
 
+    pub fn target_spaces(&self)->&Vec<usize>{
+        &self.target_spaces
+    }
+
+    pub fn push_target_space(&mut self, i: usize)->Result<(),String>{
+        if let Some(max_targets) = self.kind.max_target_spaces(){
+            // if there is a limit
+            if self.target_spaces.len() >= max_targets{
+                return Err(format!("Maximum number of target zones '{}' has been reached for HVAC {:?}", max_targets, self.kind))
+            }
+        }
+        // there is no limit, or it has not been surpassed
+        self.target_spaces.push(i);
+        Ok(())    
+    }
+
     
+}
+
+
+impl Building {
+    pub fn add_hvac(&mut self, mut hvac: HeaterCooler, state: &mut SimulationState)->&HeaterCooler{
+        let hvac_i = self.hvacs.len();
+        // add element
+        state.push(SimulationStateElement::HeatingCoolingPowerConsumption(hvac_i, 0.));
+
+        // push
+        hvac.set_index(hvac_i);        
+        self.hvacs.push(hvac);
+        self.hvacs.last().unwrap()
+    }
 }
