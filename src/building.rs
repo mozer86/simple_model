@@ -11,7 +11,6 @@ use crate::material::Material;
 use crate::space::Space;
 use crate::substance::Substance;
 use crate::surface::Surface;
-use std::cell::RefCell;
 
 #[derive(Default, BuildingObjectBehaviour)]
 pub struct Building {
@@ -24,7 +23,7 @@ pub struct Building {
     pub constructions: Vec<Rc<Construction>>,
 
     // geometry
-    pub surfaces: Vec<Rc<RefCell<Surface>>>,
+    pub surfaces: Vec<Surface>,
     pub spaces: Vec<Space>,
 
     /// The windows and doors in the surface    
@@ -106,7 +105,7 @@ impl Building {
                 }
                 SimulationStateElement::SurfaceNodeTemperature(surface_index, _, _) => {
                     // Check the first one
-                    let mut surface = self.surfaces[*surface_index].borrow_mut();
+                    let surface = &mut self.surfaces[*surface_index];
                     debug_assert!(surface
                         .first_node_temperature_index()
                         .is_none());
@@ -127,14 +126,14 @@ impl Building {
                         }
                         element_index += 1;
                         if element_index == s.len() {
-                            let mut surface = self.surfaces[*surface_index].borrow_mut();
+                            let surface = &mut self.surfaces[*surface_index];
                             debug_assert!(surface.last_node_temperature_index().is_none());
                             surface.set_last_node_temperature_index(element_index - 1);
                             return Ok(());
                         }
                     }
 
-                    let mut surface = self.surfaces[*surface_index].borrow_mut();
+                    let surface = &mut self.surfaces[*surface_index];
                     debug_assert!(surface
                         .last_node_temperature_index()
                         .is_none());

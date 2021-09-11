@@ -1,7 +1,6 @@
 use building_state_macro::BuildingObjectBehaviour;
 use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
-use std::cell::RefCell;
 
 use crate::boundary::*;
 use crate::building::Building;
@@ -54,10 +53,10 @@ impl Building {
     /* SURFACE */
 
     /// Creates a new Surface
-    pub fn add_surface(&mut self, mut surface: Surface) -> Rc<RefCell<Surface>> {
+    pub fn add_surface(&mut self, mut surface: Surface) -> &Surface {
         surface.index = Some(self.surfaces.len());
-        self.surfaces.push(Rc::new(RefCell::new(surface)));
-        Rc::clone(self.surfaces.last().unwrap())
+        self.surfaces.push(surface);
+        self.surfaces.last().unwrap()
     }
 }
 
