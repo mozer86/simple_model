@@ -15,7 +15,7 @@ This example focuses on simulating a simple apartment.
 
 # Introduction
 
-This file is an example of how to model a simple apartment. This section provides details on the 
+This file is an example of how to model a simple apartment. This section provides details about the 
 apartment itself, before any modeling happens.
 
 ## Apartment layout
@@ -70,8 +70,8 @@ use spectral_db::white_paint as "white paint";
 Substances represent the interior of the walls. For instance, if we wanted to represent Concrete, we can
 do the following:
 
-```rust
-Substance{
+```rust 
+Substance {
     // this is how we write text
     name: "concrete", 
 
@@ -83,7 +83,7 @@ Substance{
     density: 2400 // in kg/m3
 }
 
-Substance{
+Substance {
     // this is how we write text
     name: "glass", 
 
@@ -127,16 +127,16 @@ Material{
 Constructions are combinations of Materials; that is, they are a sandwich of one or more Materials.
 
 ```rust
-Construction{
+Construction {
     name: "Concrete Surface",
     layers:[
         "13cm concrete"
     ]
 }
 
-Construction{
+Construction {
     name: "Window material",
-    layers:[
+    layers: [
         "3mm glass"
     ]
 }

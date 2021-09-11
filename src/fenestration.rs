@@ -1,11 +1,11 @@
-use std::rc::Rc;
+use building_state_macro::BuildingObjectBehaviour;
 use geometry3d::loop3d::Loop3D;
 use geometry3d::polygon3d::Polygon3D;
-use building_state_macro::BuildingObjectBehaviour;
+use std::rc::Rc;
 
+use crate::boundary::Boundary;
 use crate::building::Building;
 use crate::construction::Construction;
-use crate::boundary::Boundary;
 use crate::simulation_state::SimulationState;
 // use crate::simulation_state_element::SimulationStateElement;
 
@@ -29,8 +29,8 @@ pub enum FenestrationType {
 #[derive(Clone, BuildingObjectBehaviour)]
 pub struct Fenestration {
     /// The name of the sub surface
-    pub name: String,    
-    
+    pub name: String,
+
     /// The Polygon3D that represents
     /// the dimensions and size of the Fenestration
     pub polygon: Polygon3D,
@@ -48,8 +48,7 @@ pub struct Fenestration {
     // The index of the Shading device attached to the Fenestration
     // in the shading property of the Building object
     //shading: Option<usize>,
-
-    /// The position of the [`Fenestration`] in its containing 
+    /// The position of the [`Fenestration`] in its containing
     /// array
     index: Option<usize>,
 
@@ -71,21 +70,17 @@ pub struct Fenestration {
     open_fraction: Option<usize>,
 }
 
-
 impl Fenestration {
-    
-
     /// Clones the outer [`Loop3D`] of the [`Fenestration`]
     pub fn clone_loop(&self) -> Loop3D {
-        self.polygon.outer().clone()        
+        self.polygon.outer().clone()
     }
 
     /// Gets the area, based on the [`Polygon3D`] that represents
     /// this [`Fenestration`]
-    pub fn area(&self) -> f64{
-        self.polygon.area()        
+    pub fn area(&self) -> f64 {
+        self.polygon.area()
     }
-
 
     // fn sub_class_name(&self) -> &str {
     //     match self.operation_type {
@@ -105,7 +100,6 @@ impl Fenestration {
         }
     }
 
-
     // pub fn set_open_fraction(
     //     &self,
     //     state: &mut SimulationState,
@@ -120,7 +114,7 @@ impl Fenestration {
     //         )),
     //         FenestrationPositions::Continuous => {
     //             let i = self.open_fraction_index()?;
-    //             state.update_value(i, SimulationStateElement::FenestrationOpenFraction(self.index, new_open));            
+    //             state.update_value(i, SimulationStateElement::FenestrationOpenFraction(self.index, new_open));
     //             Ok(())
     //         }
     //         FenestrationPositions::Binary => {
@@ -139,22 +133,17 @@ impl Fenestration {
     //         }
     //     }
     // }
-
-    
 }
 
-impl Building{
+impl Building {
     /* FENESTRATION */
 
     /// Creates a new Fenestration object
     pub fn add_fenestration(&mut self, mut fenestration: Fenestration) -> &Fenestration {
-        
-        fenestration.index = Some(self.fenestrations.len());            
+        fenestration.index = Some(self.fenestrations.len());
         self.fenestrations.push(fenestration);
         self.fenestrations.last().unwrap()
     }
-
-    
 }
 
 /***********/

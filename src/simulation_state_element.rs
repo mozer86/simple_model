@@ -17,16 +17,16 @@ pub enum SimulationStateElement {
 
     /// Represents the heating/cooling energy consumption of a Heating/Cooling system,
     /// in Watts
-    /// 
+    ///
     /// Contains the index of the HeaterCooler in the building's vector,
     /// and the power.        
     #[operational]
     HeatingCoolingPowerConsumption(usize, f64),
 
     /// Represents the power being consumed by
-    /// a Luminaire object. (space_index, power) in Watts
+    /// a Luminaire object, in Watts (luminaire index, power)
     #[operational]
-    SpaceLightingPowerConsumption(usize, f64),
+    LuminairePowerConsumption(usize, f64),
 
     /* SOLAR */
     // Space
@@ -83,8 +83,8 @@ pub enum SimulationStateElement {
     /// The volume of air that is moving from one space to another in
     /// a controlled way. In m3/s
     #[physical]
-    SpaceAirExchangeVolume(usize,usize, f64),
-   
+    SpaceAirExchangeVolume(usize, usize, f64),
+
     /// Temperature (f64) of Surface's (usize) node (usize)
     /// I.e. the order is (Surface Index, Node index, Temperature).    
     #[physical]
@@ -116,12 +116,14 @@ pub enum SimulationStateElement {
 }
 
 impl SimulationStateElement {
-
     pub fn safe_get_value(&self, pattern: Self) -> f64 {
-        match self.differ_only_in_value(pattern){
-            Ok(())=>self.get_value(),
-            Err(e)=>{
-                panic!("Corrupt Simulation State : '{}' Looking for pattern '{:?}', found '{:?}'", e, pattern, self)
+        match self.differ_only_in_value(pattern) {
+            Ok(()) => self.get_value(),
+            Err(e) => {
+                panic!(
+                    "Corrupt Simulation State : '{}' Looking for pattern '{:?}', found '{:?}'",
+                    e, pattern, self
+                )
             }
         }
     }
@@ -139,30 +141,30 @@ impl SimulationStateElement {
             Self::HeatingCoolingPowerConsumption(space_index, _) => {
                 format!("Heating/Cooling {} - Power Consumption [W]", space_index)
             }
-            Self::SpaceLightingPowerConsumption(space_index, _) => {
-                format!("Space {} - Lighting Power Consumption [W]", space_index)
+            Self::LuminairePowerConsumption(space_index, _) => {
+                format!("Luminaire {} - Lighting Power Consumption [W]", space_index)
             }
-            Self::SpaceInfiltrationVolume(space_index, _)=>{
+            Self::SpaceInfiltrationVolume(space_index, _) => {
                 format!("Space {} - Infiltration Volume [m3/s]", space_index)
-            },
-            Self::SpaceInfiltrationTemperature(space_index, _)=>{
+            }
+            Self::SpaceInfiltrationTemperature(space_index, _) => {
                 format!("Space {} - Infiltration [C]", space_index)
-            },
-            Self::SpaceVentilationVolume(space_index, _)=>{
+            }
+            Self::SpaceVentilationVolume(space_index, _) => {
                 format!("Space {} - Ventilation Volume [m3/s]", space_index)
-            },
-            Self::SpaceVentilationTemperature(space_index, _)=>{
+            }
+            Self::SpaceVentilationTemperature(space_index, _) => {
                 format!("Space {} - Ventilation Temperature [C]", space_index)
-            },
-            Self::SpaceAirExchangeVolume(origin,target, _)=>{
-                format!("Space {} to Space {} - Air Exchange [m3/s]", origin,target)
-            },
+            }
+            Self::SpaceAirExchangeVolume(origin, target, _) => {
+                format!("Space {} to Space {} - Air Exchange [m3/s]", origin, target)
+            }
 
             // Physical ones
             Self::SpaceDryBulbTemperature(space_index, _) => {
                 format!("Space {} Dry Bulb Temperature [C]", space_index)
             }
-            
+
             Self::SurfaceNodeTemperature(surface_index, node_index, _) => {
                 format!(
                     "Surface {} - Node {} Temperature [C]",
@@ -183,9 +185,6 @@ impl SimulationStateElement {
             }
         }
     }
-
-    
-    
 }
 
 /***********/
@@ -197,7 +196,7 @@ mod testing {
     use super::*;
 
     #[test]
-    fn test_differ_only_in_value(){
+    fn test_differ_only_in_value() {
         // Equals
         let a = SimulationStateElement::Clothing(2.0);
         let b = SimulationStateElement::Clothing(2.0);
@@ -210,17 +209,17 @@ mod testing {
 
         // Different variant
         let a = SimulationStateElement::Clothing(2.0);
-        let b = SimulationStateElement::SpaceDryBulbTemperature(2,1.0);
+        let b = SimulationStateElement::SpaceDryBulbTemperature(2, 1.0);
         assert!(a.differ_only_in_value(b).is_err());
 
         // Same variant, different content
-        let a = SimulationStateElement::SpaceDryBulbTemperature(3,2.0);
-        let b = SimulationStateElement::SpaceDryBulbTemperature(2,1.0);
+        let a = SimulationStateElement::SpaceDryBulbTemperature(3, 2.0);
+        let b = SimulationStateElement::SpaceDryBulbTemperature(2, 1.0);
         assert!(a.differ_only_in_value(b).is_err());
 
         // Same variant, same content, different value
-        let a = SimulationStateElement::SpaceDryBulbTemperature(2,2.0);
-        let b = SimulationStateElement::SpaceDryBulbTemperature(2,1.0);
+        let a = SimulationStateElement::SpaceDryBulbTemperature(2, 2.0);
+        let b = SimulationStateElement::SpaceDryBulbTemperature(2, 1.0);
         assert!(a.differ_only_in_value(b).is_ok());
     }
 
@@ -237,13 +236,13 @@ mod testing {
     }
 
     #[test]
-    fn test_get_value(){
+    fn test_get_value() {
         let v = 2.1231;
         let temp = SimulationStateElement::SpaceDryBulbTemperature(0, v);
-        let b = SimulationStateElement::SurfaceNodeTemperature(0,1,v);
+        let b = SimulationStateElement::SurfaceNodeTemperature(0, 1, v);
 
-        assert_eq!(v,temp.get_value());
-        assert_eq!(v,b.get_value());
+        assert_eq!(v, temp.get_value());
+        assert_eq!(v, b.get_value());
     }
 
     #[test]

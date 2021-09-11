@@ -1,6 +1,7 @@
-use building_state_macro::BuildingObjectBehaviour;use std::rc::Rc;
 use crate::building::Building;
 use crate::material::Material;
+use building_state_macro::BuildingObjectBehaviour;
+use std::rc::Rc;
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
@@ -16,14 +17,15 @@ pub struct Construction {
     pub layers: Vec<Rc<Material>>,
 
     index: Option<usize>,
-
     // front finishing
-    // back finishing  
+    // back finishing
 }
 
-impl Construction{
+impl Construction {
     /// Calculates the R-value of the Construction (not including surface coefficients).
-    pub fn r_value(&self/*building: &Building, construction: &Rc<Construction>*/) -> Result<f64, String> {
+    pub fn r_value(
+        &self, /*building: &Building, construction: &Rc<Construction>*/
+    ) -> Result<f64, String> {
         //let construction = building.get_construction(construction_index).unwrap();
 
         //let materials = building.get_materials();
@@ -34,7 +36,7 @@ impl Construction{
         for material in self.layers.iter() {
             // let material = &building.materials[*material_index];
             // let substance_index = material.get_substance_index().unwrap();
-            let substance = &material.substance;//building.get_substance(substance_index).unwrap();
+            let substance = &material.substance; //building.get_substance(substance_index).unwrap();
             let lambda = substance.thermal_conductivity().unwrap();
 
             r += material.thickness / lambda;
@@ -44,11 +46,11 @@ impl Construction{
     }
 }
 
-impl Building{
+impl Building {
     /* CONSTRUCTION */
 
     /// Adds a [`Construction`] to the [`Building`].
-    /// 
+    ///
     /// The [`Construction`] is put behind an `Rc`, and a clone
     /// of such `Rc` is returned
     pub fn add_construction(&mut self, mut construction: Construction) -> Rc<Construction> {
@@ -56,9 +58,7 @@ impl Building{
         let ret = Rc::new(construction);
         self.constructions.push(Rc::clone(&ret));
         ret
-    }    
-
-    
+    }
 }
 /***********/
 /* TESTING */
@@ -71,13 +71,12 @@ mod testing {
 
     #[test]
     fn test_construction_basic() {
-        
         let c_name = "The construction".to_string();
-        
+
         let mut c = Construction::new(c_name.clone());
-        assert_eq!(0, c.layers.len());        
+        assert_eq!(0, c.layers.len());
         assert_eq!(c_name, c.name);
-        
+
         // Create substance
         let sub_name = "the_sub".to_string();
         let sub = Rc::new(Substance::new(sub_name.clone()));
@@ -85,21 +84,28 @@ mod testing {
         // Create a Material
         let mat_1_name = "mat_1".to_string();
         let mat_1_thickness = 0.12312;
-        let mat_1 = Rc::new(Material::new(mat_1_name.clone(), Rc::clone(&sub) ,mat_1_thickness ));
+        let mat_1 = Rc::new(Material::new(
+            mat_1_name.clone(),
+            Rc::clone(&sub),
+            mat_1_thickness,
+        ));
 
         c.layers.push(mat_1);
-        assert_eq!(1, c.layers.len()); 
-        assert_eq!(mat_1_name, c.layers[0].name);       
-        assert_eq!(mat_1_thickness, c.layers[0].thickness);       
+        assert_eq!(1, c.layers.len());
+        assert_eq!(mat_1_name, c.layers[0].name);
+        assert_eq!(mat_1_thickness, c.layers[0].thickness);
 
         let mat_2_name = "mat_2".to_string();
         let mat_2_thickness = 1.12312;
-        let mat_2 = Rc::new(Material::new(mat_2_name.clone(), Rc::clone(&sub) ,mat_2_thickness ));
+        let mat_2 = Rc::new(Material::new(
+            mat_2_name.clone(),
+            Rc::clone(&sub),
+            mat_2_thickness,
+        ));
 
         c.layers.push(mat_2);
-        assert_eq!(2, c.layers.len()); 
-        assert_eq!(mat_2_name, c.layers[1].name); 
-        assert_eq!(mat_2_thickness, c.layers[1].thickness);             
-
+        assert_eq!(2, c.layers.len());
+        assert_eq!(mat_2_name, c.layers[1].name);
+        assert_eq!(mat_2_thickness, c.layers[1].thickness);
     }
 }

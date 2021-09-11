@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 geometry3d = {path = "../geometry3d"}
-calendar = { path = "../calendar" }
+calendar = { git = "https://github.com/SIMPLE-BuildingSimulation/calendar.git" }
 schedule = { path = "../schedule" }
 building_state_macro = {path="../building_state_macro"}
 

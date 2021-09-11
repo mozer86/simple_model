@@ -27,12 +27,11 @@ fn get_state_element(ini: usize, fin: usize) -> SimulationStateElement {
 }
 
 fn get_some_flattened_state(n: usize) -> Vec<f64> {
-    let mut state : Vec<f64> = Vec::with_capacity(n);
+    let mut state: Vec<f64> = Vec::with_capacity(n);
     let mut rng = rand::thread_rng();
-    
-    
+
     for _ in 0..n {
-        let v : f64 = rng.gen();
+        let v: f64 = rng.gen();
         state.push(v);
     }
     state

@@ -1,18 +1,17 @@
 use crate::simulation_state_element::SimulationStateElement;
 use std::ops::Index;
 
-
 #[cfg(debug_assertions)]
 use std::mem;
 
 /// The SimulationState is a Vector of SimulationStateElement objects.
 /// It is intended to be a quick-to-clone structure.
 ///
-/// To make it quicker to operate, the following conventions 
+/// To make it quicker to operate, the following conventions
 /// are enforced:
-/// * Personal elements go first, then Operational go second, and Physical go third. (This is checked when pushing elements to the state) 
+/// * Personal elements go first, then Operational go second, and Physical go third. (This is checked when pushing elements to the state)
 /// * Elements cannot be repeated (this is not really checked.).
-#[derive(Default,Clone)]
+#[derive(Default, Clone)]
 pub struct SimulationState {
     /// The number of operational StateElements
     /// in the State
@@ -204,19 +203,17 @@ impl SimulationState {
         println!();
     }
 
-    /// Replaces the [SimulationStateElement] in index `i` in a [SimulationState] by a `new_element`. 
+    /// Replaces the [SimulationStateElement] in index `i` in a [SimulationState] by a `new_element`.
     /// Panics if the new and old elements are not of the same variant or if their content differs in something
     /// else than in their final value.
-    pub fn update_value(&mut self, i: usize, new_element: SimulationStateElement){
-                
-        if let Err(errmsg) = self[i].differ_only_in_value(new_element){
+    pub fn update_value(&mut self, i: usize, new_element: SimulationStateElement) {
+        if let Err(errmsg) = self[i].differ_only_in_value(new_element) {
             panic!("Corrupt SimulationState: {}", errmsg);
         }
 
         // Replace
-        self.elements[i]=new_element;
+        self.elements[i] = new_element;
     }
-    
 }
 
 impl Index<usize> for SimulationState {
@@ -227,8 +224,6 @@ impl Index<usize> for SimulationState {
     }
 }
 
-
-
 /***********/
 /* TESTING */
 /***********/
@@ -238,7 +233,7 @@ mod testing {
     use super::*;
 
     #[test]
-    fn test_new(){
+    fn test_new() {
         let state = SimulationState::new();
         assert_eq!(state.n_individual, 0);
         assert_eq!(state.passed_personal, false);
@@ -255,9 +250,7 @@ mod testing {
         // Add one operational
         assert_eq!(
             0,
-            state.push(SimulationStateElement::SpaceLightingPowerConsumption(
-                0, 1.0
-            ))
+            state.push(SimulationStateElement::LuminairePowerConsumption(0, 1.0))
         );
         assert_eq!(1, state.len());
         assert_eq!(1, state.n_operational());
@@ -266,9 +259,7 @@ mod testing {
 
         assert_eq!(
             1,
-            state.push(SimulationStateElement::SpaceLightingPowerConsumption(
-                0, 1.0
-            ))
+            state.push(SimulationStateElement::LuminairePowerConsumption(0, 1.0))
         );
         assert_eq!(2, state.len());
         assert_eq!(2, state.n_operational());
@@ -290,17 +281,13 @@ mod testing {
         let mut state = SimulationState::new();
 
         // Add one operational
-        state.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            0, 1.0,
-        ));
+        state.push(SimulationStateElement::LuminairePowerConsumption(0, 1.0));
 
         // push a physical one
         state.push(SimulationStateElement::SpaceDryBulbTemperature(2, 2.));
 
         // Add an operational... it should panic now
-        state.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            0, 1.0,
-        ));
+        state.push(SimulationStateElement::LuminairePowerConsumption(0, 1.0));
     }
 
     #[test]
@@ -313,12 +300,8 @@ mod testing {
         state1.push(SimulationStateElement::Clothing(1.0));
 
         // Add operational ones
-        state1.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            1, 1.0,
-        ));
-        state1.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            1, 1.0,
-        ));
+        state1.push(SimulationStateElement::LuminairePowerConsumption(1, 1.0));
+        state1.push(SimulationStateElement::LuminairePowerConsumption(1, 1.0));
 
         // push physical ones
         state1.push(SimulationStateElement::SpaceDryBulbTemperature(1, 1.));
@@ -332,12 +315,8 @@ mod testing {
         state2.push(SimulationStateElement::Clothing(2.0));
 
         // Add operational ones
-        state2.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            2, 2.0,
-        ));
-        state2.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            2, 2.0,
-        ));
+        state2.push(SimulationStateElement::LuminairePowerConsumption(2, 2.0));
+        state2.push(SimulationStateElement::LuminairePowerConsumption(2, 2.0));
 
         // push physical ones
         state2.push(SimulationStateElement::SpaceDryBulbTemperature(2, 2.));
@@ -373,26 +352,26 @@ mod testing {
 
         // Check that the two operational states were transferred
 
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state1[2] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state1[2] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state2[2] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state2[2] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
 
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state1[3] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state1[3] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state2[3] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state2[3] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
@@ -437,12 +416,8 @@ mod testing {
         state1.push(SimulationStateElement::Clothing(1.0));
 
         // Add operational ones
-        state1.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            1, 1.0,
-        ));
-        state1.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            1, 1.0,
-        ));
+        state1.push(SimulationStateElement::LuminairePowerConsumption(1, 1.0));
+        state1.push(SimulationStateElement::LuminairePowerConsumption(1, 1.0));
 
         // push physical ones
         state1.push(SimulationStateElement::SpaceDryBulbTemperature(1, 1.));
@@ -456,12 +431,8 @@ mod testing {
         state2.push(SimulationStateElement::Clothing(2.0));
 
         // Add operational ones
-        state2.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            2, 2.0,
-        ));
-        state2.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            2, 2.0,
-        ));
+        state2.push(SimulationStateElement::LuminairePowerConsumption(2, 2.0));
+        state2.push(SimulationStateElement::LuminairePowerConsumption(2, 2.0));
 
         // push physical ones
         state2.push(SimulationStateElement::SpaceDryBulbTemperature(2, 2.));
@@ -497,26 +468,26 @@ mod testing {
 
         // Check that the two operational states are untouched
 
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state1[2] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state1[2] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state2[2] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state2[2] {
             assert_eq!(index, 2);
             assert_eq!(value, 2.0);
         } else {
             assert!(false);
         }
 
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state1[3] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state1[3] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state2[3] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state2[3] {
             assert_eq!(index, 2);
             assert_eq!(value, 2.0);
         } else {
@@ -561,12 +532,8 @@ mod testing {
         state1.push(SimulationStateElement::Clothing(1.0));
 
         // Add operational ones
-        state1.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            1, 1.0,
-        ));
-        state1.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            1, 1.0,
-        ));
+        state1.push(SimulationStateElement::LuminairePowerConsumption(1, 1.0));
+        state1.push(SimulationStateElement::LuminairePowerConsumption(1, 1.0));
 
         // push physical ones
         state1.push(SimulationStateElement::SpaceDryBulbTemperature(1, 1.));
@@ -580,12 +547,8 @@ mod testing {
         state2.push(SimulationStateElement::Clothing(2.0));
 
         // Add operational ones
-        state2.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            2, 2.0,
-        ));
-        state2.push(SimulationStateElement::SpaceLightingPowerConsumption(
-            2, 2.0,
-        ));
+        state2.push(SimulationStateElement::LuminairePowerConsumption(2, 2.0));
+        state2.push(SimulationStateElement::LuminairePowerConsumption(2, 2.0));
 
         // push physical ones
         state2.push(SimulationStateElement::SpaceDryBulbTemperature(2, 2.));
@@ -621,26 +584,26 @@ mod testing {
 
         // Check that the two operational states are untouched
 
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state1[2] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state1[2] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state2[2] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state2[2] {
             assert_eq!(index, 2);
             assert_eq!(value, 2.0);
         } else {
             assert!(false);
         }
 
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state1[3] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state1[3] {
             assert_eq!(index, 1);
             assert_eq!(value, 1.0);
         } else {
             assert!(false);
         }
-        if let SimulationStateElement::SpaceLightingPowerConsumption(index, value) = state2[3] {
+        if let SimulationStateElement::LuminairePowerConsumption(index, value) = state2[3] {
             assert_eq!(index, 2);
             assert_eq!(value, 2.0);
         } else {

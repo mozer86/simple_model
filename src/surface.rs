@@ -1,14 +1,13 @@
-use std::rc::Rc;
-use geometry3d::polygon3d::Polygon3D;
 use building_state_macro::BuildingObjectBehaviour;
+use geometry3d::polygon3d::Polygon3D;
+use std::rc::Rc;
+use std::cell::RefCell;
 
+use crate::boundary::*;
 use crate::building::Building;
 use crate::construction::Construction;
-use crate::boundary::*;
 //use crate::fenestration::*;
 use crate::simulation_state::SimulationState;
-
-
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
@@ -16,7 +15,7 @@ use crate::simulation_state::SimulationState;
 pub struct Surface {
     /// The name of the surface
     pub name: String,
-    
+
     /// The Polygon3D that represents
     /// the dimensions and size of the Surface
     pub polygon: Polygon3D,
@@ -31,7 +30,6 @@ pub struct Surface {
     /// A reference to the Boundary in back of the Surface
     back_boundary: Option<Boundary>,
 
-
     index: Option<usize>,
 
     /* STATE */
@@ -42,29 +40,25 @@ pub struct Surface {
     last_node_temperature: Option<usize>,
 }
 
-
-
 /// A surface in the Building, separating two spaces,
 /// or a space and the exterior, or exterior and exterior
 impl Surface {
-    
     /// Returns the area of the [`Surface`] (calculated
     /// based on the [`Polygon3D`] that represents it)
-    pub fn area(&self) -> f64 {        
+    pub fn area(&self) -> f64 {
         self.polygon.area()
-    }    
+    }
 }
 
-impl Building{
+impl Building {
     /* SURFACE */
 
     /// Creates a new Surface
-    pub fn add_surface(&mut self, mut surface: Surface) -> &Surface {
-        surface.index = Some(self.surfaces.len());        
-        self.surfaces.push(surface);
-        self.surfaces.last().unwrap()
+    pub fn add_surface(&mut self, mut surface: Surface) -> Rc<RefCell<Surface>> {
+        surface.index = Some(self.surfaces.len());
+        self.surfaces.push(Rc::new(RefCell::new(surface)));
+        Rc::clone(self.surfaces.last().unwrap())
     }
-    
 }
 
 /***********/
@@ -75,12 +69,11 @@ impl Building{
 mod testing {
     use super::*;
     use geometry3d::loop3d::Loop3D;
-    use geometry3d::polygon3d::Polygon3D;
     use geometry3d::point3d::Point3D;
-    
+    use geometry3d::polygon3d::Polygon3D;
+
     #[test]
     fn test_surface_basic() {
-        
         let construction = Rc::new(Construction::new("the construction".to_string()));
         let mut outer = Loop3D::new();
         outer.push(Point3D::new(0., 0., 0.)).unwrap();
@@ -90,11 +83,10 @@ mod testing {
         outer.close().unwrap();
 
         let polygon = Polygon3D::new(outer).unwrap();
-        
 
         let surf_name = "Some surface".to_string();
         let mut surf = Surface::new(surf_name.clone(), polygon, construction);
-        
+
         assert!(surf.front_boundary.is_none());
         assert!(surf.front_boundary().is_err());
         assert!(surf.back_boundary.is_none());
@@ -110,22 +102,17 @@ mod testing {
         surf.set_last_node_temperature_index(39);
 
         assert!(surf.front_boundary.is_some());
-        if let Ok(Boundary::Ground) = surf.front_boundary(){
-
-        }
+        if let Ok(Boundary::Ground) = surf.front_boundary() {}
         assert!(surf.back_boundary.is_some());
-        if let Ok(Boundary::Space(i)) = surf.back_boundary(){
+        if let Ok(Boundary::Space(i)) = surf.back_boundary() {
             assert_eq!(i, 1);
         }
-        
+
         assert!(surf.first_node_temperature.is_some());
         assert_eq!(surf.first_node_temperature_index(), Some(31));
         assert!(surf.last_node_temperature.is_some());
         assert_eq!(surf.last_node_temperature_index(), Some(39));
 
-
-     
-        
         // match s0.front_boundary() {
         //     Boundary::None => {}
         //     _ => assert!(false),

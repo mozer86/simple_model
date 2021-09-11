@@ -9,14 +9,13 @@ use crate::building::Building;
 // use schedule::schedule_trait::Schedule;
 use crate::simulation_state::SimulationState;
 
-
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
 #[derive(Clone, BuildingObjectBehaviour)]
 pub struct Space {
     /// The name of the space
     pub name: String,
-    
+
     /// Volume of the space
     pub volume: Option<f64>,
 
@@ -27,17 +26,14 @@ pub struct Space {
     /// The indices of the surrounding Fenestration in the
     /// Building's Surfaces array
     pub fenestrations: Vec<usize>,
-    
-    /// The luminaire in the space
-    // luminaire: Option<Luminaire>,
 
     /// The importance of this space over time
     // importance : Option<Box<dyn Schedule<f64>>>,
-    
-    /// The position of the [`Space`] in its containing 
+
+    /// The position of the [`Space`] in its containing
     /// array
     index: Option<usize>,
-    
+
     #[state]
     dry_bulb_temperature: Option<usize>,
 
@@ -58,27 +54,21 @@ pub struct Space {
 
     #[state]
     ventilation_temperature: Option<usize>,
-
-    
 }
 
-
-
-
-impl Building{
+impl Building {
     /* SPACES */
 
     /// Adds a [`Space`] to the [`Building`].
-    /// 
+    ///
     /// The [`Space`] is put behind an `Rc`, and a clone
     /// of such `Rc` is returned
     pub fn add_space(&mut self, mut space: Space) -> &Space {
         space.set_index(self.spaces.len());
-        
+
         self.spaces.push(space);
         self.spaces.last().unwrap()
     }
-    
 }
 
 /***********/
@@ -91,7 +81,6 @@ mod testing {
 
     #[test]
     fn test_new() {
-        
         let space_name = "the_space".to_string();
 
         let mut space = Space::new(space_name.clone());
@@ -101,7 +90,6 @@ mod testing {
         let vol = 987.12312;
         space.set_volume(vol);
         assert_eq!(space.volume().unwrap(), vol);
-        
 
         let i = 91;
         assert!(space.dry_bulb_temperature.is_none());
