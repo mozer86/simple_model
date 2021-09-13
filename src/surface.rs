@@ -6,12 +6,12 @@ use std::cell::RefCell;
 use crate::boundary::*;
 use crate::building::Building;
 use crate::construction::Construction;
-//use crate::fenestration::*;
+use crate::simulation_state_element::StateElementField;
 use crate::simulation_state::SimulationState;
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive(Clone, BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,
@@ -34,10 +34,10 @@ pub struct Surface {
 
     /* STATE */
     #[state]
-    first_node_temperature: Option<usize>,
+    first_node_temperature: StateElementField,
 
     #[state]
-    last_node_temperature: Option<usize>,
+    last_node_temperature: StateElementField,
 }
 
 /// A surface in the Building, separating two spaces,
@@ -54,9 +54,9 @@ impl Building {
     /* SURFACE */
 
     /// Creates a new Surface
-    pub fn add_surface(&mut self, mut surface: Surface) -> Rc<RefCell<Surface>> {
+    pub fn add_surface(&mut self, mut surface: Surface) -> Rc<Surface> {
         surface.index = Some(self.surfaces.len());
-        self.surfaces.push(Rc::new(RefCell::new(surface)));
+        self.surfaces.push(Rc::new(surface));
         Rc::clone(self.surfaces.last().unwrap())
     }
 }
@@ -91,9 +91,9 @@ mod testing {
         assert!(surf.front_boundary().is_err());
         assert!(surf.back_boundary.is_none());
         assert!(surf.back_boundary().is_err());
-        assert!(surf.first_node_temperature.is_none());
+        assert!(surf.first_node_temperature.borrow().is_none());
         assert!(surf.first_node_temperature_index().is_none());
-        assert!(surf.last_node_temperature.is_none());
+        assert!(surf.last_node_temperature.borrow().is_none());
         assert!(surf.last_node_temperature_index().is_none());
 
         surf.set_front_boundary(Boundary::Ground);
@@ -104,48 +104,14 @@ mod testing {
         assert!(surf.front_boundary.is_some());
         if let Ok(Boundary::Ground) = surf.front_boundary() {}
         assert!(surf.back_boundary.is_some());
-        if let Ok(Boundary::Space(i)) = surf.back_boundary() {
+        if let Ok(&Boundary::Space(i)) = surf.back_boundary() {
             assert_eq!(i, 1);
         }
 
-        assert!(surf.first_node_temperature.is_some());
+        assert!(surf.first_node_temperature.borrow().is_some());
         assert_eq!(surf.first_node_temperature_index(), Some(31));
-        assert!(surf.last_node_temperature.is_some());
+        assert!(surf.last_node_temperature.borrow().is_some());
         assert_eq!(surf.last_node_temperature_index(), Some(39));
 
-        // match s0.front_boundary() {
-        //     Boundary::None => {}
-        //     _ => assert!(false),
-        // };
-        // match s0.back_boundary() {
-        //     Boundary::None => {}
-        //     _ => assert!(false),
-        // }
-        // assert!(s0.is_full().is_err());
-        // assert!(s0.area().is_err());
-
-        // // set, get construction
-        // let construction_index = 9872;
-        // s0.set_construction(construction_index);
-        // if let Some(i) = s0.get_construction_index() {
-        //     assert_eq!(i, construction_index);
-        // } else {
-        //     assert!(false);
-        // }
-
-        // // set,get front boundary
-        // s0.set_front_boundary(Boundary::Ground).unwrap();
-        // match s0.front_boundary() {
-        //     Boundary::Ground => {}
-        //     _ => assert!(false),
-        // };
-        // s0.set_back_boundary(Boundary::Ground).unwrap();
-        // match s0.back_boundary() {
-        //     Boundary::Ground => {}
-        //     _ => assert!(false),
-        // };
-
-        // // polygon still missing
-        // assert!(s0.is_full().is_err());
     }
 }

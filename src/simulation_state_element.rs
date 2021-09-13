@@ -1,4 +1,8 @@
+use std::cell::RefCell;
 use building_state_macro::SimulationStateBehaviour;
+
+
+pub type StateElementField = RefCell<Option<usize>>;
 
 /// The idea is to have a cheap-to-clone (or copy?) structure
 #[derive(Debug, Copy, Clone, PartialEq, SimulationStateBehaviour)]

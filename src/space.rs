@@ -1,17 +1,16 @@
-// use std::rc::Rc;
-use building_state_macro::BuildingObjectBehaviour;
+use std::rc::Rc;
+#[allow(dead_code)]
+use std::cell::RefCell;
+// use crate::fenestration::Fenestration;
 // use crate::surface::Surface;
-// use crate::heating_cooling::HeaterCooler;
-// use crate::luminaire::Luminaire;
+use building_state_macro::BuildingObjectBehaviour;
 use crate::building::Building;
-// use crate::heating_cooling::HeatingCoolingKind;
-// use calendar::date::Date;
-// use schedule::schedule_trait::Schedule;
 use crate::simulation_state::SimulationState;
+use crate::simulation_state_element::StateElementField;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
-#[derive(Clone, BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour)]
 pub struct Space {
     /// The name of the space
     pub name: String,
@@ -19,13 +18,15 @@ pub struct Space {
     /// Volume of the space
     pub volume: Option<f64>,
 
+    /*
     /// The indices of the surrounding Surfaces in the
     /// Building's Surfaces array
-    pub surfaces: Vec<usize>,
+    pub surfaces: Vec<Rc<RefCell<Surface>>>,
 
     /// The indices of the surrounding Fenestration in the
     /// Building's Surfaces array
-    pub fenestrations: Vec<usize>,
+    pub fenestrations: Vec<Rc<RefCell<Fenestration>>>,
+    */
 
     /// The importance of this space over time
     // importance : Option<Box<dyn Schedule<f64>>>,
@@ -35,25 +36,25 @@ pub struct Space {
     index: Option<usize>,
 
     #[state]
-    dry_bulb_temperature: Option<usize>,
+    dry_bulb_temperature: StateElementField,
 
     #[state]
-    brightness: Option<usize>,
+    brightness: StateElementField,
 
     #[state]
-    loudness: Option<usize>,
+    loudness: StateElementField,
 
     #[state]
-    infiltration_volume: Option<usize>,
+    infiltration_volume: StateElementField,
 
     #[state]
-    infiltration_temperature: Option<usize>,
+    infiltration_temperature: StateElementField,
 
     #[state]
-    ventilation_volume: Option<usize>,
+    ventilation_volume: StateElementField,
 
     #[state]
-    ventilation_temperature: Option<usize>,
+    ventilation_temperature: StateElementField,
 }
 
 impl Building {
@@ -63,11 +64,11 @@ impl Building {
     ///
     /// The [`Space`] is put behind an `Rc`, and a clone
     /// of such `Rc` is returned
-    pub fn add_space(&mut self, mut space: Space) -> &Space {
+    pub fn add_space(&mut self, mut space: Space) -> Rc<Space> {
         space.set_index(self.spaces.len());
 
-        self.spaces.push(space);
-        self.spaces.last().unwrap()
+        self.spaces.push(Rc::new(space));
+        Rc::clone(self.spaces.last().unwrap())
     }
 }
 
@@ -89,27 +90,27 @@ mod testing {
 
         let vol = 987.12312;
         space.set_volume(vol);
-        assert_eq!(space.volume().unwrap(), vol);
+        assert_eq!(*space.volume().unwrap(), vol);
 
         let i = 91;
-        assert!(space.dry_bulb_temperature.is_none());
+        assert!(space.dry_bulb_temperature.borrow().is_none());
         assert!(space.dry_bulb_temperature_index().is_none());
         space.set_dry_bulb_temperature_index(i);
-        assert!(space.dry_bulb_temperature.is_some());
+        assert!(space.dry_bulb_temperature.borrow().is_some());
         assert_eq!(space.dry_bulb_temperature_index().unwrap(), i);
 
         let i = 191;
-        assert!(space.brightness.is_none());
+        assert!(space.brightness.borrow().is_none());
         assert!(space.brightness_index().is_none());
         space.set_brightness_index(i);
-        assert!(space.brightness.is_some());
+        assert!(space.brightness.borrow().is_some());
         assert_eq!(space.brightness_index().unwrap(), i);
 
         let i = 111;
-        assert!(space.loudness.is_none());
+        assert!(space.loudness.borrow().is_none());
         assert!(space.loudness_index().is_none());
         space.set_loudness_index(i);
-        assert!(space.loudness.is_some());
+        assert!(space.loudness.borrow().is_some());
         assert_eq!(space.loudness_index().unwrap(), i);
     }
 }

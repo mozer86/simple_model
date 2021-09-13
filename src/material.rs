@@ -2,6 +2,7 @@ use crate::building::Building;
 use crate::substance::Substance;
 use building_state_macro::BuildingObjectBehaviour;
 use std::rc::Rc;
+// use std::cell::RefCell;
 
 /// The representation of a physical layer-Material.
 /// That is to say, a layer of a certain thickness

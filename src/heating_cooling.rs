@@ -1,7 +1,11 @@
+use crate::space::Space;
 use crate::building::Building;
 use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::SimulationStateElement;
+use crate::simulation_state_element::{SimulationStateElement, StateElementField};
 use building_state_macro::BuildingObjectBehaviour;
+use std::rc::Rc;
+use std::cell::RefCell;
+
 
 #[derive(Copy, Clone, Debug)]
 pub enum HeatingCoolingKind {
@@ -24,7 +28,7 @@ impl HeatingCoolingKind {
     }
 }
 
-#[derive(Clone, BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour)]
 pub struct HeaterCooler {
     /// The name of the system
     pub name: String,
@@ -34,7 +38,7 @@ pub struct HeaterCooler {
 
     /// The `Space`s that this [`HeaterCooler`] heats and/or
     /// cools
-    target_spaces: Vec<usize>,
+    pub target_spaces: Vec<Rc<Space>>,
 
     /// The position of the system in its
     /// containing Array (this is not used for now, as
@@ -48,7 +52,7 @@ pub struct HeaterCooler {
     max_cooling_power: Option<f64>,
 
     #[state]
-    heating_cooling_consumption: Option<usize>,
+    heating_cooling_consumption: StateElementField,
 }
 
 impl HeaterCooler {
@@ -69,11 +73,11 @@ impl HeaterCooler {
     }
 
     /// Borrows the spaces that this Heater/Cooler is serving
-    pub fn target_spaces(&self) -> &Vec<usize> {
+    pub fn target_spaces(&self) -> &Vec<Rc<Space>> {
         &self.target_spaces
     }
 
-    pub fn push_target_space(&mut self, i: usize) -> Result<(), String> {
+    pub fn push_target_space(&mut self, space: Rc<Space>) -> Result<(), String> {
         if let Some(max_targets) = self.kind.max_target_spaces() {
             // if there is a limit
             if self.target_spaces.len() >= max_targets {
@@ -84,7 +88,7 @@ impl HeaterCooler {
             }
         }
         // there is no limit, or it has not been surpassed
-        self.target_spaces.push(i);
+        self.target_spaces.push(space);
         Ok(())
     }
 }
@@ -94,7 +98,7 @@ impl Building {
         &mut self,
         mut hvac: HeaterCooler,
         state: &mut SimulationState,
-    ) -> &HeaterCooler {
+    ) -> Rc<HeaterCooler> {
         let hvac_i = self.hvacs.len();
         // add element
         state.push(SimulationStateElement::HeatingCoolingPowerConsumption(
@@ -103,7 +107,7 @@ impl Building {
 
         // push
         hvac.set_index(hvac_i);
-        self.hvacs.push(hvac);
-        self.hvacs.last().unwrap()
+        self.hvacs.push(Rc::new(hvac));
+        Rc::clone(self.hvacs.last().unwrap())
     }
 }

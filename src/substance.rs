@@ -1,4 +1,5 @@
 use std::rc::Rc;
+// use std::cell::RefCell;
 
 use crate::building::Building;
 use building_state_macro::BuildingObjectBehaviour;
@@ -83,8 +84,8 @@ mod testing {
             .set_density(rho);
 
         assert_eq!(s.thermal_diffusivity().unwrap(), lambda / rho / c);
-        assert_eq!(s.density().unwrap(), rho);
-        assert_eq!(s.specific_heat_capacity().unwrap(), c);
-        assert_eq!(s.thermal_conductivity().unwrap(), lambda);
+        assert_eq!(*s.density().unwrap(), rho);
+        assert_eq!(*s.specific_heat_capacity().unwrap(), c);
+        assert_eq!(*s.thermal_conductivity().unwrap(), lambda);
     }
 }
