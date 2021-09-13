@@ -1,9 +1,13 @@
 use crate::building::Building;
 use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::SimulationStateElement;
+use crate::simulation_state_element::{SimulationStateElement,StateElementField};
 use building_state_macro::BuildingObjectBehaviour;
+use crate::space::Space;
 
-#[derive(Clone, BuildingObjectBehaviour)]
+use std::cell::RefCell;
+use std::rc::Rc;
+
+#[derive(BuildingObjectBehaviour)]
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,
@@ -24,12 +28,12 @@ pub struct Luminaire {
     /// a luminaire will be disipated into the air of a thermal
     /// zone. So, if this is an exterior luminaire or if no thermal
     /// calculation is performed, this can be left to [`None`].
-    target_space: Option<usize>,
+    target_space: Option<Rc<Space>>,
 
     /// The index of the state of the luminaire
     /// in the State array
     #[state]
-    power_consumption: Option<usize>,
+    power_consumption: StateElementField,
 }
 
 impl Building {
@@ -37,7 +41,7 @@ impl Building {
         &mut self,
         mut luminaire: Luminaire,
         state: &mut SimulationState,
-    ) -> &Luminaire {
+    ) -> Rc<Luminaire> {
         let lum_index = self.luminaires.len();
 
         state.push(SimulationStateElement::LuminairePowerConsumption(
@@ -45,7 +49,7 @@ impl Building {
         ));
 
         luminaire.set_index(lum_index);
-        self.luminaires.push(luminaire);
-        self.luminaires.last().unwrap()
+        self.luminaires.push(Rc::new(luminaire));
+        Rc::clone(self.luminaires.last().unwrap())
     }
 }

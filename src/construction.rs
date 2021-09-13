@@ -33,11 +33,9 @@ impl Construction {
 
         let mut r = 0.0;
 
-        for material in self.layers.iter() {
-            // let material = &building.materials[*material_index];
-            // let substance_index = material.get_substance_index().unwrap();
-            let substance = &material.substance; //building.get_substance(substance_index).unwrap();
-            let lambda = substance.thermal_conductivity().unwrap();
+        for material in self.layers.iter() {            
+            // let substance = (*material.substance).borrow(); 
+            let lambda = material.substance.thermal_conductivity().unwrap();
 
             r += material.thickness / lambda;
         }

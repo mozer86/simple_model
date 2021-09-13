@@ -2,12 +2,13 @@ use building_state_macro::BuildingObjectBehaviour;
 use geometry3d::loop3d::Loop3D;
 use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
+use std::cell::RefCell;
 
 use crate::boundary::Boundary;
 use crate::building::Building;
 use crate::construction::Construction;
 use crate::simulation_state::SimulationState;
-// use crate::simulation_state_element::SimulationStateElement;
+use crate::simulation_state_element::StateElementField;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 pub enum FenestrationPositions {
@@ -26,7 +27,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive(Clone, BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
@@ -59,15 +60,15 @@ pub struct Fenestration {
     back_boundary: Option<Boundary>,
 
     #[state]
-    first_node_temperature: Option<usize>,
+    first_node_temperature: StateElementField,
 
     #[state]
-    last_node_temperature: Option<usize>,
+    last_node_temperature: StateElementField,
 
     /// Index of the SimulationStateElement representing
     /// the fraction open in the SimulationState
     #[state]
-    open_fraction: Option<usize>,
+    open_fraction: StateElementField,
 }
 
 impl Fenestration {
@@ -139,10 +140,10 @@ impl Building {
     /* FENESTRATION */
 
     /// Creates a new Fenestration object
-    pub fn add_fenestration(&mut self, mut fenestration: Fenestration) -> &Fenestration {
+    pub fn add_fenestration(&mut self, mut fenestration: Fenestration) -> Rc<Fenestration> {
         fenestration.index = Some(self.fenestrations.len());
-        self.fenestrations.push(fenestration);
-        self.fenestrations.last().unwrap()
+        self.fenestrations.push(Rc::new(fenestration));
+        Rc::clone(self.fenestrations.last().unwrap())
     }
 }
 
