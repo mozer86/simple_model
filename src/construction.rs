@@ -1,12 +1,14 @@
 use crate::building::Building;
 use crate::material::Material;
-use building_state_macro::BuildingObjectBehaviour;
 use std::rc::Rc;
+use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
+use crate::scanner::{Scanner, TokenType};
+
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
 /// Materials
-#[derive(BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
 pub struct Construction {
     /// The name of the Construction object.
     /// Must be unique within the model
@@ -23,20 +25,12 @@ pub struct Construction {
 
 impl Construction {
     /// Calculates the R-value of the Construction (not including surface coefficients).
-    pub fn r_value(
-        &self, /*building: &Building, construction: &Rc<Construction>*/
-    ) -> Result<f64, String> {
-        //let construction = building.get_construction(construction_index).unwrap();
-
-        //let materials = building.get_materials();
-        //let substances = building.get_substances();
+    pub fn r_value(&self) -> Result<f64, String> {
 
         let mut r = 0.0;
 
-        for material in self.layers.iter() {            
-            // let substance = (*material.substance).borrow(); 
-            let lambda = material.substance.thermal_conductivity().unwrap();
-
+        for material in self.layers.iter() {                        
+            let lambda = material.substance.thermal_conductivity()?;
             r += material.thickness / lambda;
         }
 
@@ -105,5 +99,39 @@ mod testing {
         assert_eq!(2, c.layers.len());
         assert_eq!(mat_2_name, c.layers[1].name);
         assert_eq!(mat_2_thickness, c.layers[1].thickness);
+    }
+
+    #[test]
+    fn test_construction_from_bytes(){
+        let bytes = b" {
+            name : \"A Material\",            
+            substance : Substance {          
+                    name: \"le substancia\", // some doc?
+                    thermal_conductivity : 1.2,
+                    specific_heat_capacity : 2.2,    
+                    density : 3.2                    
+                },
+            thickness: 0.1            
+        }
+        ";
+
+        
+
+        let mut building = Building::new("the building".to_string());
+        let mat = Material::from_bytes(bytes, &mut building).unwrap();
+
+        let mat = building.add_material(mat);
+
+        let bytes = b" {
+            name : \"The Construction\",            
+            layers: [
+                \"A Material\"
+            ]            
+        }
+        ";
+
+        let construction = Construction::from_bytes(bytes, &mut building).unwrap();
+        assert!(Rc::ptr_eq(&mat, &construction.layers[0]));
+
     }
 }

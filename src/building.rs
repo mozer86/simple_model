@@ -11,7 +11,7 @@ use crate::material::Material;
 use crate::space::Space;
 use crate::substance::Substance;
 use crate::surface::Surface;
-use std::cell::RefCell;
+
 
 #[derive(Default, BuildingObjectBehaviour)]
 pub struct Building {
@@ -196,11 +196,7 @@ impl Building {
 #[cfg(test)]
 mod testing {
     use super::*;
-
-    // use crate::substance::SubstanceProperties;
-    // use crate::heating_cooling::HeatingCoolingKind;
-    // use crate::boundary::Boundary;
-    // use crate::fenestration::{FenestrationPositions, FenestrationType};
+    
 
     #[test]
     fn building_substance() {
@@ -214,6 +210,28 @@ mod testing {
         let s = &building.substances[0];
         assert_eq!(subs_name, s.name);
         assert_eq!(subs_name, s0.name);
+    }
+
+    use crate::boundary::Boundary;
+    #[test]
+    fn write_io_doc(){
+        let mut summary = "# Summary\n\n".to_string();
+        // Add manually written chapters
+        summary.push_str("- [Chapter 1](./chapter_1.md)\n");
+
+        // Add automatic documentation
+        let dir = "./ioreference/src";
+        Boundary::print_doc(&dir, &mut summary).unwrap();
+        Construction::print_doc(&dir, &mut summary).unwrap();
+        Luminaire::print_doc(&dir, &mut summary).unwrap();
+        Material::print_doc(&dir, &mut summary).unwrap();
+        Space::print_doc(&dir, &mut summary).unwrap();
+        Substance::print_doc(&dir, &mut summary).unwrap();
+        // assert!(false)
+
+        let summary_file = format!("{}/SUMMARY.md", dir);
+        std::fs::write(summary_file, summary.as_bytes()).unwrap();
+
     }
 
     

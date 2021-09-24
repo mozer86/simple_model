@@ -1,0 +1,6 @@
+[book]
+authors = ["germolinal"]
+language = "en"
+multilingual = false
+src = "src"
+title = "SIMPLE Simulation Input Output reference"

@@ -4,7 +4,6 @@ use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::{SimulationStateElement, StateElementField};
 use building_state_macro::BuildingObjectBehaviour;
 use std::rc::Rc;
-use std::cell::RefCell;
 
 
 #[derive(Copy, Clone, Debug)]

@@ -2,7 +2,6 @@ use building_state_macro::BuildingObjectBehaviour;
 use geometry3d::loop3d::Loop3D;
 use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
-use std::cell::RefCell;
 
 use crate::boundary::Boundary;
 use crate::building::Building;
@@ -49,6 +48,7 @@ pub struct Fenestration {
     // The index of the Shading device attached to the Fenestration
     // in the shading property of the Building object
     //shading: Option<usize>,
+    
     /// The position of the [`Fenestration`] in its containing
     /// array
     index: Option<usize>,

@@ -1,16 +1,18 @@
 use std::rc::Rc;
 #[allow(dead_code)]
-use std::cell::RefCell;
 // use crate::fenestration::Fenestration;
 // use crate::surface::Surface;
-use building_state_macro::BuildingObjectBehaviour;
+
+use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
 use crate::building::Building;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
+use crate::scanner::{Scanner, TokenType};
+
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
-#[derive(BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
 pub struct Space {
     /// The name of the space
     pub name: String,

@@ -1,8 +1,9 @@
 use std::rc::Rc;
 // use std::cell::RefCell;
+use crate::scanner::{Scanner,TokenType};
 
 use crate::building::Building;
-use building_state_macro::BuildingObjectBehaviour;
+use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
 
 /// Represents a Substance; that is to say, a physical
 /// materiality with physical properties. The name Substance
@@ -10,13 +11,8 @@ use building_state_macro::BuildingObjectBehaviour;
 /// and other software's terminology (which does not include
 /// Substace, but it does include Material, which is essentially
 /// a Substance with a thickness).
-///
-/// All properties are public and no ::new() method is
-/// defined because the number of properties of the Substance
-/// object might grow quite a bit, and in the end it is simply
-/// easier to write the struct down
-#[derive(BuildingObjectBehaviour)]
-pub struct Substance {
+#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
+pub struct Substance {    
     /// The name of the Substance. Should be unique for each
     /// Material in the Building object    
     pub name: String,
@@ -87,5 +83,25 @@ mod testing {
         assert_eq!(*s.density().unwrap(), rho);
         assert_eq!(*s.specific_heat_capacity().unwrap(), c);
         assert_eq!(*s.thermal_conductivity().unwrap(), lambda);
+    }
+
+    #[test]
+    fn test_substance_from_bytes(){
+        let bytes = b" {
+            name : \"A substance\",            
+            thermal_conductivity : 1.2,
+            specific_heat_capacity : 2.2,    
+            density : 3.2
+        }";
+
+        let mut building = Building::new("the building".to_string());
+
+        let sub = Substance::from_bytes(bytes, &mut building).unwrap();
+
+        assert_eq!(sub.name, "A substance".to_string());
+        assert!((1.2 - sub.thermal_conductivity.unwrap()).abs()<std::f64::EPSILON);
+        assert!((2.2 - sub.specific_heat_capacity.unwrap()).abs()<std::f64::EPSILON);
+        assert!((3.2 - sub.density.unwrap()).abs()<std::f64::EPSILON);
+
     }
 }

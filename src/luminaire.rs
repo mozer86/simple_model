@@ -1,13 +1,17 @@
 use crate::building::Building;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::{SimulationStateElement,StateElementField};
-use building_state_macro::BuildingObjectBehaviour;
 use crate::space::Space;
+use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
 
-use std::cell::RefCell;
+use crate::scanner::{Scanner, TokenType};
+
 use std::rc::Rc;
 
-#[derive(BuildingObjectBehaviour)]
+#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
+/// A Luminaire
+/// 
+/// Please fill this doc
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,
@@ -27,7 +31,7 @@ pub struct Luminaire {
     /// thermal simulations, in which the heat disipated by
     /// a luminaire will be disipated into the air of a thermal
     /// zone. So, if this is an exterior luminaire or if no thermal
-    /// calculation is performed, this can be left to [`None`].
+    /// calculation is performed, this can be left empty.
     target_space: Option<Rc<Space>>,
 
     /// The index of the state of the luminaire
@@ -53,3 +57,5 @@ impl Building {
         Rc::clone(self.luminaires.last().unwrap())
     }
 }
+
+

@@ -1,6 +1,6 @@
 use crate::building::Building;
 
-#[derive(Debug,Clone,Copy, Eq, PartialEq)]
+#[derive(Debug, Clone,Copy, Eq, PartialEq)]
 pub enum TokenType{
     // single char
     Colon,
@@ -43,6 +43,52 @@ pub enum TokenType{
     Error,
 }
 
+impl std::fmt::Display for TokenType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self{
+            TokenType::Colon => write!(f, ":"),
+            TokenType::Comma=> write!(f, ","),
+            TokenType::LeftBrace=> write!(f, "{{"),
+            TokenType::RightBrace=> write!(f, "}}"),
+            TokenType::LeftBracket=> write!(f, "["),
+            TokenType::RightBracket=> write!(f, "]"),
+            TokenType::Hash=> write!(f, "#"),
+            TokenType::Underscore=> write!(f, "_"),
+            TokenType::Star=> write!(f, "*"),
+            TokenType::Bang=> write!(f, "!"),
+            TokenType::CodeBoundary=> write!(f, "`"),
+            TokenType::LeftParen=> write!(f, "("),
+            TokenType::RightParen=> write!(f, ")"),
+
+            // double char
+            TokenType::ColonColon=> write!(f, "::"),
+            TokenType::StarStar=> write!(f, "**"),
+            
+            // triple char
+            TokenType::HorizontalRule=> write!(f, "==="),
+            TokenType::SimpleBuildingBlockLimit=> write!(f, "```"),
+            
+            // keywords
+            TokenType::Use=> write!(f, "use"),
+            
+            // mixed words
+            TokenType::TokenEnumName=> write!(f, "EnumName"),
+            TokenType::Identifier=> write!(f, "Identifier"),
+            TokenType::TokenString=> write!(f, "String"),
+            TokenType::Number=> write!(f, "Number"),
+            TokenType::Word=> write!(f, "Word"),
+            
+            // special
+            TokenType::ControlBlockLimit=> write!(f, "ControlBlockLimit"),
+                
+            // other
+            TokenType::EOF=> write!(f, "EOF"),
+            TokenType::Error=> write!(f, "Error"),
+        }
+    }
+}
+
+
 /// An `enum` indicating which kind of file 
 /// are we reading.
 #[derive(Debug,Eq,PartialEq)]
@@ -61,6 +107,41 @@ pub struct Token<'a> {
     pub txt: &'a [u8],
 }
 
+impl <'a>Token<'a>{
+    pub fn resolve_as_float(&self) -> Result<f64,String> {
+        let txt = std::str::from_utf8(self.txt).unwrap();
+        if let TokenType::Number = self.token_type{
+             match txt.parse::<f64>(){
+                 Ok(fvalue)=>Ok(fvalue),
+                 Err(e)=>Err(format!("This is a bug, please report it: {}", e))
+             }             
+        }else{
+            Err(format!("Token '{}' cannot be transformed into a float", txt))
+        }
+    }
+
+    pub fn resolve_as_usize(&self) -> Result<usize,String> {
+        let txt = std::str::from_utf8(self.txt).unwrap();
+        if let TokenType::Number = self.token_type{
+             match txt.parse::<usize>(){
+                 Ok(fvalue)=>Ok(fvalue),
+                 Err(_)=>Err(format!("value '{}' does not seem to be a positive integer. Hint: remove dots, e.g., don't write '12.', write '12'", txt))
+             }             
+        }else{
+            Err(format!("Token '{}' cannot be transformed into a positive integer", txt))
+        }
+    }
+
+    pub fn resolve_as_string(&self) -> Result<String,String> {
+        let txt = std::str::from_utf8(self.txt).unwrap();
+        if let TokenType::TokenString = self.token_type{
+             Ok(txt[1..txt.len()-1].to_string())         
+        }else{
+            Err(format!("Token '{}' cannot be transformed into a String", txt))
+        }
+    }
+}
+
 pub struct Scanner<'a> {
     
     line : usize,    
@@ -71,7 +152,7 @@ pub struct Scanner<'a> {
 
     start_index: usize,
 
-    error_msg: String,
+    pub error_msg: String,
     
     finished: bool, 
     
@@ -93,6 +174,14 @@ impl <'a>Scanner<'a> {
             error_msg : "".to_string(),
             read_mode: ReadMode::SimpleBuilding,
         }
+    }
+
+    pub fn borrow_slice(&self, start: usize, end: usize)->&[u8]{
+        &self.source[start..end]
+    }
+
+    pub fn update_start_index(&mut self){
+        self.start_index = self.current_index;
     }
 
     /// Builds a [`Token`] corresponding to the current position of 
@@ -149,7 +238,7 @@ impl <'a>Scanner<'a> {
 
     /// Gets the `char` at the `current_index`. Returns `\0` if 
     /// finished.
-    fn peek(&self)->char{
+    pub fn peek(&self)->char{
         if self.finished {
             return '\0';
         }
@@ -168,7 +257,7 @@ impl <'a>Scanner<'a> {
 
     /// Skips the white spaces and the comments and all 
     /// those things.
-    fn skip_white_space(&mut self){
+    pub fn skip_white_space(&mut self){
         match self.read_mode{
             ReadMode::Markdown => self.markdown_skip_white_space(),
             _ => self.simple_building_skip_white_space()
@@ -431,6 +520,8 @@ impl <'a>Scanner<'a> {
             // Single character            
             '{' => self.make_token( TokenType::LeftBrace),
             '}' => self.make_token( TokenType::RightBrace),
+            '(' => self.make_token( TokenType::LeftParen),
+            ')' => self.make_token( TokenType::RightParen),
             '[' => self.make_token( TokenType::LeftBracket),
             ']' => self.make_token( TokenType::RightBracket),
             ',' => self.make_token( TokenType::Comma),                        
@@ -541,8 +632,8 @@ impl <'a>Scanner<'a> {
     pub fn scan_token(&mut self) -> Token<'a> {
         self.skip_white_space();        
         
-        self.start_index = self.current_index;
         
+        self.start_index = self.current_index;
         match self.read_mode{
             ReadMode::Markdown =>{
                 self.scan_markdown_token()
@@ -553,17 +644,73 @@ impl <'a>Scanner<'a> {
             ReadMode::SimpleBuilding =>{
                 self.scan_simple_building_token()
             }
-        }     
+        }
     }
 
     /// Consumes an object and returns the start and end of that object.
-    fn get_object_slice(&mut self)->(usize,usize){
-        while self.peek() != '}'{
+    pub fn get_object_slice(&mut self)->(usize,usize){
+        let mut levels = 0;
+        let mut started = false;
+        while levels > 0 || !started  {            
+            if self.peek() == '{'{
+                levels += 1;
+                started = true;
+            }
+            if self.peek() == '}'{
+                levels -= 1;
+            }
             self.current_index +=1;
+
+            if self.current_index == self.source.len(){
+                self.finished = true;
+                break;
+            }
         }
-        // consume the closing bracket 
-        self.current_index +=1;
+        // return
         (self.start_index, self.current_index)        
+    }
+
+
+    pub fn scan_field(&mut self)->Result<(Token,Token),String>{
+        
+
+        // Scan the name of the field
+        let field_name = self.scan_token();
+        if field_name.token_type != TokenType::Identifier{
+            return Err(format!(" Expecting field identifier, found {:?} '{}'", field_name.token_type, std::str::from_utf8(field_name.txt).unwrap()))
+        }
+
+        let colon = self.scan_token();
+        if colon.token_type != TokenType::Colon{
+            return Err(format!(" Unexpected token '{}'... expecting ':' separating field names and values", std::str::from_utf8(field_name.txt).unwrap()))
+        }
+
+        let value = self.scan_token();
+
+
+        self.start_index = self.current_index;
+
+        return Ok((field_name, value))
+    }
+
+    /// Checks whether a certain field is in the 
+    /// source code. 
+    /// 
+    /// Note that this function is not meant to be 
+    /// fast, as it intends to search for a field within a small source.
+    pub fn get_field(&mut self)->Result<(Token,Token),String>{
+        
+        let fieldname = self.scan_token();
+        if fieldname.token_type != TokenType::Identifier {
+            return Err(format!("Expecting fieldname to be an Identifier... found '{}'", fieldname.token_type))
+        }
+        let colon = self.scan_token();
+        if colon.token_type != TokenType::Colon {
+            return Err(format!("Expecting colon (':') to separate field names and values... found '{}'", colon.token_type))
+        }
+        let fieldvalue = self.scan_token();
+        
+        Ok((fieldname, fieldvalue))        
     }
     
     pub fn parse_building(&mut self)->Result<Building,String>{
@@ -931,8 +1078,11 @@ mod testing {
             name: \"The apartment\"
         }
         Substance {
-            name : \"Some subtance\",
-            thermal_conductivity : 2.31
+            name : \"Some substance\",
+            anonymous_car: Car {
+                speed: 100.,                
+            }
+            thermal_conductivity : 2.31,
         }
         ";
         let mut scanner = Scanner::new(src);
@@ -942,16 +1092,72 @@ mod testing {
         assert_eq!(ident.txt, b"Building");
         let (start,end) = scanner.get_object_slice();
         let slice = &scanner.source[start..end];
-        println!("{}", std::str::from_utf8(slice).unwrap());
+        println!("{}\n====", std::str::from_utf8(slice).unwrap());
 
         let ident = scanner.scan_token();
         assert_eq!(ident.token_type, TokenType::Identifier);
         assert_eq!(ident.txt, b"Substance");
         let (start,end) = scanner.get_object_slice();
         let slice = &scanner.source[start..end];
-        println!("{}", std::str::from_utf8(slice).unwrap());
+        println!("{}\n====", std::str::from_utf8(slice).unwrap());
         
     }
+
+    #[test]
+    fn test_scan_field(){
+        let src = b"
+        Substance {
+            name : \"Some substance\",
+            thermal_conductivity : 2.31
+        }
+        ";
+        let mut scanner = Scanner::new(src);
+
+        let ident = scanner.scan_token();
+        assert_eq!(ident.token_type, TokenType::Identifier);
+        assert_eq!(ident.txt, b"Substance");
+
+        let token = scanner.scan_token();
+        assert_eq!(token.token_type, TokenType::LeftBrace);
+        
+        if let Ok((fieldname, value)) = scanner.scan_field(){
+            assert_eq!("name", std::str::from_utf8(fieldname.txt).unwrap());
+            assert_eq!("Some substance", value.resolve_as_string().unwrap());
+        }
+        
+        let token = scanner.scan_token();
+        assert_eq!(token.token_type, TokenType::Comma);
+
+        
+        if let Ok((fieldname, value)) = scanner.scan_field(){
+            assert_eq!("thermal_conductivity", std::str::from_utf8(fieldname.txt).unwrap());
+            assert_eq!(2.31, value.resolve_as_float().unwrap());
+            assert!(value.resolve_as_usize().is_err());
+        }
+    }    
     
+
+    #[test]
+    fn test_get_field(){
+        let src = b"car : 2, bus: \"el bus\"}";
+        let mut scanner = Scanner::new(src);
+        if let Ok((name, value)) = scanner.get_field(){
+            assert_eq!("car".to_string(), std::str::from_utf8(name.txt).unwrap());
+            assert_eq!(2, value.resolve_as_usize().unwrap());                     
+        }else{
+            panic!("Could not read field")
+        }
+
+        assert_eq!(scanner.scan_token().token_type, TokenType::Comma);
+
+        
+        if let Ok((name, value)) = scanner.get_field(){
+            assert_eq!("bus".to_string(), std::str::from_utf8(name.txt).unwrap());
+            assert_eq!("el bus".to_string(), value.resolve_as_string().unwrap());                        
+        }else{
+            panic!("Could not read field")
+        }
+
+    }
 
 }

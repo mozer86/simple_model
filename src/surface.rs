@@ -1,7 +1,6 @@
 use building_state_macro::BuildingObjectBehaviour;
 use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
-use std::cell::RefCell;
 use crate::boundary::*;
 use crate::building::Building;
 use crate::construction::Construction;
@@ -96,16 +95,13 @@ mod testing {
         assert!(surf.last_node_temperature_index().is_none());
 
         surf.set_front_boundary(Boundary::Ground);
-        surf.set_back_boundary(Boundary::Space(1));
         surf.set_first_node_temperature_index(31);
         surf.set_last_node_temperature_index(39);
 
         assert!(surf.front_boundary.is_some());
         if let Ok(Boundary::Ground) = surf.front_boundary() {}
         assert!(surf.back_boundary.is_some());
-        if let Ok(&Boundary::Space(i)) = surf.back_boundary() {
-            assert_eq!(i, 1);
-        }
+        
 
         assert!(surf.first_node_temperature.borrow().is_some());
         assert_eq!(surf.first_node_temperature_index(), Some(31));
