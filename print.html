@@ -200,14 +200,14 @@ cools</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="electricheater"><a class="header" href="#electricheater">ElectricHeater</a></h1>
 <pre><code class="language-rs">ElectricHeater {
 	name : string
-	target_space : Space
+	target_space : Space   // Optional
 	max_heating_power : number   // Optional
 }
 </code></pre>
 <h2 id="fields-2"><a class="header" href="#fields-2">Fields</a></h2>
 <h3 id="name-2"><a class="header" href="#name-2">name</a></h3>
 <p>The name of the system</p>
-<h3 id="target_space"><a class="header" href="#target_space">target_space</a></h3>
+<h3 id="target_space--optional"><a class="header" href="#target_space--optional">target_space  (<em>optional</em>)</a></h3>
 <p>The [<code>Space</code>] that this [<code>ElectricHeater</code>] heats and/or
 cools</p>
 <h3 id="max_heating_power--optional-1"><a class="header" href="#max_heating_power--optional-1">max_heating_power  (<em>optional</em>)</a></h3>
@@ -226,7 +226,7 @@ cools</p>
 <p>The name of the Luminaire</p>
 <h3 id="max_power--optional"><a class="header" href="#max_power--optional">max_power  (<em>optional</em>)</a></h3>
 <p>The maximum power consumption</p>
-<h3 id="target_space--optional"><a class="header" href="#target_space--optional">target_space  (<em>optional</em>)</a></h3>
+<h3 id="target_space--optional-1"><a class="header" href="#target_space--optional-1">target_space  (<em>optional</em>)</a></h3>
 <p>The space in which the space is located</p>
 <p>While this value is might not be relevant for
 e.g., lighting calculations, this is necessary for
