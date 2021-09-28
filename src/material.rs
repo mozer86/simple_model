@@ -1,3 +1,24 @@
+/*
+MIT License
+Copyright (c) 2021 Germán Molina
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+use crate::Float;
+
 use crate::model::SimpleModel;
 use crate::substance::Substance;
 use std::rc::Rc;
@@ -19,7 +40,7 @@ pub struct Material {
     pub substance: Rc<Substance>,
 
     /// The thickness of the [`Material`]
-    pub thickness: f64,
+    pub thickness: Float,
 
     
 }
@@ -32,6 +53,13 @@ pub struct Material {
 #[cfg(test)]
 mod testing {
     use super::*;
+
+    #[cfg(feature = "float")]
+    const EPSILON : f32 = std::f32::EPSILON;
+
+    #[cfg(not(feature = "float"))]
+    const EPSILON : f64 = std::f64::EPSILON;
+
 
     #[test]
     fn test_material_basic() {
@@ -79,7 +107,7 @@ mod testing {
         let mat = Material::from_bytes(bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());
-        assert!((0.1 - mat.thickness).abs()<std::f64::EPSILON);
+        assert!((0.1 - mat.thickness).abs()<EPSILON);
         assert!(Rc::ptr_eq(&sub, &mat.substance));
 
         /* SELF-CONTAINED DEFAULT */
@@ -102,12 +130,12 @@ mod testing {
         let mat = Material::from_bytes(bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());
-        assert!((0.1  - mat.thickness).abs()<std::f64::EPSILON);
+        assert!((0.1  - mat.thickness).abs()<EPSILON);
         let sub = &mat.substance;
         assert_eq!(sub.name, "le substancia".to_string());
-        assert!((1.2 - sub.thermal_conductivity().unwrap()).abs()<std::f64::EPSILON);
-        assert!((2.2 - sub.specific_heat_capacity().unwrap()).abs()<std::f64::EPSILON);
-        assert!((3.2 - sub.density().unwrap()).abs()<std::f64::EPSILON);
+        assert!((1.2 - sub.thermal_conductivity().unwrap()).abs()<EPSILON);
+        assert!((2.2 - sub.specific_heat_capacity().unwrap()).abs()<EPSILON);
+        assert!((3.2 - sub.density().unwrap()).abs()<EPSILON);
 
     }
 }

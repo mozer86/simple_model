@@ -1,8 +1,29 @@
+/*
+MIT License
+Copyright (c) 2021 Germán Molina
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 use std::cell::RefCell;
 use building_state_macro::SimulationStateBehaviour;
 
 
 pub type StateElementField = RefCell<Option<usize>>;
+
 
 /// The idea is to have a cheap-to-clone (or copy?) structure
 #[derive(Debug, Copy, Clone, PartialEq, SimulationStateBehaviour)]
@@ -11,13 +32,13 @@ pub enum SimulationStateElement {
     /// The amount of clothing the person is using,
     /// in Clo value
     #[personal]
-    Clothing(f64),
+    Clothing,
 
     /* OPERATION AND OCCUPATION */
     /// Represents how open is a fenestration.
     /// Contains the Index of fenestration, and its open fraction
     #[operational]
-    FenestrationOpenFraction(usize, f64),
+    FenestrationOpenFraction(usize),
 
     /// Represents the heating/cooling energy consumption of a Heating/Cooling system,
     /// in Watts
@@ -25,18 +46,18 @@ pub enum SimulationStateElement {
     /// Contains the index of the HeaterCooler in the building's vector,
     /// and the power.        
     #[operational]
-    HeatingCoolingPowerConsumption(usize, f64),
+    HeatingCoolingPowerConsumption(usize),
 
     /// Represents the power being consumed by
     /// a Luminaire object, in Watts (luminaire index, power)
     #[operational]
-    LuminairePowerConsumption(usize, f64),
+    LuminairePowerConsumption(usize),
 
     /* SOLAR */
     // Space
-    //SpaceTotalSolarHeatGain(usize,f64),
-    //SpaceDirectSolarHeatGain(usize,f64),
-    //SpaceDiffuseSolarHeatGain(usize,f64),
+    //SpaceTotalSolarHeatGain(usize),
+    //SpaceDirectSolarHeatGain(usize),
+    //SpaceDiffuseSolarHeatGain(usize),
     /// Represents the Brightness of a space.
     ///
     /// This perception is a placeholder. I need to
@@ -47,61 +68,61 @@ pub enum SimulationStateElement {
     /// **This is written as a perception for now,
     /// but it should be a physical quantity**
     #[physical]
-    SpaceBrightness(usize, f64),
+    SpaceBrightness(usize),
 
     // Surface
-    //SurfaceFrontTotalSolarIrradiance(usize,f64),
-    //SurfaceBackTotalSolarIrradiance(usize,f64),
-    //SurfaceFrontDirectSolarIrradiance(usize,f64),
-    //SurfaceBackDirectSolarIrradiance(usize,f64),
-    //SurfaceFrontDiffuseSolarIrradiance(usize,f64),
-    //SurfaceBackDiffuseSolarIrradiance(usize,f64),
+    //SurfaceFrontTotalSolarIrradiance(usize),
+    //SurfaceBackTotalSolarIrradiance(usize),
+    //SurfaceFrontDirectSolarIrradiance(usize),
+    //SurfaceBackDirectSolarIrradiance(usize),
+    //SurfaceFrontDiffuseSolarIrradiance(usize),
+    //SurfaceBackDiffuseSolarIrradiance(usize),
 
     /* THERMAL */
     /// Space Air Temperature in C... The elements
     /// are the index of the Space in the Building mode
     /// and the temperature
     #[physical]
-    SpaceDryBulbTemperature(usize, f64),
+    SpaceDryBulbTemperature(usize),
 
     /// The volume of air that is entering the space in
     /// an uncontrolled way. In m3/s
     #[physical]
-    SpaceInfiltrationVolume(usize, f64),
+    SpaceInfiltrationVolume(usize),
 
     /// The temperature of air that is entering the space in
     /// an uncontrolled way. In C
     #[physical]
-    SpaceInfiltrationTemperature(usize, f64),
+    SpaceInfiltrationTemperature(usize),
 
     /// The volume of air that is entering the space in
     /// a controlled way. In m3/s
     #[physical]
-    SpaceVentilationVolume(usize, f64),
+    SpaceVentilationVolume(usize),
 
     /// The temperature of air that is entering the space in
     /// a controlled way. In C
     #[physical]
-    SpaceVentilationTemperature(usize, f64),
+    SpaceVentilationTemperature(usize),
 
     /// The volume of air that is moving from one space to another in
     /// a controlled way. In m3/s
     #[physical]
-    SpaceAirExchangeVolume(usize, usize, f64),
+    SpaceAirExchangeVolume(usize, usize),
 
-    /// Temperature (f64) of Surface's (usize) node (usize)
+    /// Temperature (Float) of Surface's (usize) node (usize)
     /// I.e. the order is (Surface Index, Node index, Temperature).    
     #[physical]
-    SurfaceNodeTemperature(usize, usize, f64),
+    SurfaceNodeTemperature(usize, usize),
 
-    /// Temperature (f64) of Fenestration's (usize) node (usize)
+    /// Temperature (Float) of Fenestration's (usize) node (usize)
     /// I.e. the order is (Surface Index, Node index, Temperature).    
     #[physical]
-    FenestrationNodeTemperature(usize, usize, f64),
+    FenestrationNodeTemperature(usize, usize),
 
-    // Temperature (f64) of Fenestation's (usize) node usize
+    // Temperature (Float) of Fenestation's (usize) node usize
     // I.e. the order is (Surface Index, Node index, Temperature).
-    //FenestrationNodeTemperature(usize,usize,f64),
+    //FenestrationNodeTemperature(usize,usize),
 
     // Fenestration
 
@@ -116,11 +137,12 @@ pub enum SimulationStateElement {
     /// **This is written as a perception for now,
     /// but it should be a physical quantity**
     #[physical]
-    SpaceLoudness(usize, f64),
+    SpaceLoudness(usize),
 }
 
 impl SimulationStateElement {
-    pub fn safe_get_value(&self, pattern: Self) -> f64 {
+    /*
+    pub fn safe_get_value(&self, pattern: Self) -> Float {
         match self.differ_only_in_value(pattern) {
             Ok(()) => self.get_value(),
             Err(e) => {
@@ -131,64 +153,65 @@ impl SimulationStateElement {
             }
         }
     }
+    */
 
-    /// Transforms a StateElement into a String
-    pub fn to_string(&self) -> String {
-        match self {
-            // Individual ones
-            Self::Clothing(_) => format!("Clothing"),
+    // /// Transforms a StateElement into a String
+    // pub fn to_string(&self) -> String {
+    //     match self {
+    //         // Individual ones
+    //         Self::Clothing(_) => format!("Clothing"),
 
-            // Operational ones
-            Self::FenestrationOpenFraction(fenestration_index, _) => {
-                format!("Fenestration {} - OpenFraction [-]", fenestration_index)
-            }
-            Self::HeatingCoolingPowerConsumption(space_index, _) => {
-                format!("Heating/Cooling {} - Power Consumption [W]", space_index)
-            }
-            Self::LuminairePowerConsumption(space_index, _) => {
-                format!("Luminaire {} - Lighting Power Consumption [W]", space_index)
-            }
-            Self::SpaceInfiltrationVolume(space_index, _) => {
-                format!("Space {} - Infiltration Volume [m3/s]", space_index)
-            }
-            Self::SpaceInfiltrationTemperature(space_index, _) => {
-                format!("Space {} - Infiltration [C]", space_index)
-            }
-            Self::SpaceVentilationVolume(space_index, _) => {
-                format!("Space {} - Ventilation Volume [m3/s]", space_index)
-            }
-            Self::SpaceVentilationTemperature(space_index, _) => {
-                format!("Space {} - Ventilation Temperature [C]", space_index)
-            }
-            Self::SpaceAirExchangeVolume(origin, target, _) => {
-                format!("Space {} to Space {} - Air Exchange [m3/s]", origin, target)
-            }
+    //         // Operational ones
+    //         Self::FenestrationOpenFraction(fenestration_index, _) => {
+    //             format!("Fenestration {} - OpenFraction [-]", fenestration_index)
+    //         }
+    //         Self::HeatingCoolingPowerConsumption(space_index, _) => {
+    //             format!("Heating/Cooling {} - Power Consumption [W]", space_index)
+    //         }
+    //         Self::LuminairePowerConsumption(space_index, _) => {
+    //             format!("Luminaire {} - Lighting Power Consumption [W]", space_index)
+    //         }
+    //         Self::SpaceInfiltrationVolume(space_index, _) => {
+    //             format!("Space {} - Infiltration Volume [m3/s]", space_index)
+    //         }
+    //         Self::SpaceInfiltrationTemperature(space_index, _) => {
+    //             format!("Space {} - Infiltration [C]", space_index)
+    //         }
+    //         Self::SpaceVentilationVolume(space_index, _) => {
+    //             format!("Space {} - Ventilation Volume [m3/s]", space_index)
+    //         }
+    //         Self::SpaceVentilationTemperature(space_index, _) => {
+    //             format!("Space {} - Ventilation Temperature [C]", space_index)
+    //         }
+    //         Self::SpaceAirExchangeVolume(origin, target, _) => {
+    //             format!("Space {} to Space {} - Air Exchange [m3/s]", origin, target)
+    //         }
 
-            // Physical ones
-            Self::SpaceDryBulbTemperature(space_index, _) => {
-                format!("Space {} Dry Bulb Temperature [C]", space_index)
-            }
+    //         // Physical ones
+    //         Self::SpaceDryBulbTemperature(space_index, _) => {
+    //             format!("Space {} Dry Bulb Temperature [C]", space_index)
+    //         }
 
-            Self::SurfaceNodeTemperature(surface_index, node_index, _) => {
-                format!(
-                    "Surface {} - Node {} Temperature [C]",
-                    surface_index, node_index
-                )
-            }
-            Self::FenestrationNodeTemperature(fen_index, node_index, _) => {
-                format!(
-                    "Fenestration {} - Node {} Temperature [C]",
-                    fen_index, node_index
-                )
-            }
-            Self::SpaceBrightness(space_index, _) => {
-                format!("Space {} - Brightness", space_index)
-            }
-            Self::SpaceLoudness(space_index, _) => {
-                format!("Space {} - Loudness", space_index)
-            }
-        }
-    }
+    //         Self::SurfaceNodeTemperature(surface_index, node_index, _) => {
+    //             format!(
+    //                 "Surface {} - Node {} Temperature [C]",
+    //                 surface_index, node_index
+    //             )
+    //         }
+    //         Self::FenestrationNodeTemperature(fen_index, node_index, _) => {
+    //             format!(
+    //                 "Fenestration {} - Node {} Temperature [C]",
+    //                 fen_index, node_index
+    //             )
+    //         }
+    //         Self::SpaceBrightness(space_index, _) => {
+    //             format!("Space {} - Brightness", space_index)
+    //         }
+    //         Self::SpaceLoudness(space_index, _) => {
+    //             format!("Space {} - Loudness", space_index)
+    //         }
+    //     }
+    // }
 }
 
 /***********/
@@ -199,72 +222,35 @@ impl SimulationStateElement {
 mod testing {
     use super::*;
 
-    #[test]
-    fn test_differ_only_in_value() {
-        // Equals
-        let a = SimulationStateElement::Clothing(2.0);
-        let b = SimulationStateElement::Clothing(2.0);
-        assert!(a.differ_only_in_value(b).is_ok());
-
-        // Same variant, Different value (same content)
-        let a = SimulationStateElement::Clothing(2.0);
-        let b = SimulationStateElement::Clothing(1.0);
-        assert!(a.differ_only_in_value(b).is_ok());
-
-        // Different variant
-        let a = SimulationStateElement::Clothing(2.0);
-        let b = SimulationStateElement::SpaceDryBulbTemperature(2, 1.0);
-        assert!(a.differ_only_in_value(b).is_err());
-
-        // Same variant, different content
-        let a = SimulationStateElement::SpaceDryBulbTemperature(3, 2.0);
-        let b = SimulationStateElement::SpaceDryBulbTemperature(2, 1.0);
-        assert!(a.differ_only_in_value(b).is_err());
-
-        // Same variant, same content, different value
-        let a = SimulationStateElement::SpaceDryBulbTemperature(2, 2.0);
-        let b = SimulationStateElement::SpaceDryBulbTemperature(2, 1.0);
-        assert!(a.differ_only_in_value(b).is_ok());
-    }
+    
 
     #[test]
     fn test_compare() {
         let i = 2;
-        let v = 2.1231;
-        let a = SimulationStateElement::SpaceDryBulbTemperature(i, v);
+        let a = SimulationStateElement::SpaceDryBulbTemperature(i);
 
-        assert!(a == SimulationStateElement::SpaceDryBulbTemperature(i, v));
-        assert!(a != SimulationStateElement::SpaceDryBulbTemperature(2 * i, v));
-        assert!(a != SimulationStateElement::SpaceDryBulbTemperature(i, 2. * v));
-        assert!(a != SimulationStateElement::SurfaceNodeTemperature(i, 2, v));
+        assert!(a == SimulationStateElement::SpaceDryBulbTemperature(i));        
+        assert!(a != SimulationStateElement::SpaceDryBulbTemperature(2 * i));
+        assert!(a != SimulationStateElement::SurfaceNodeTemperature(i, 2));
     }
 
-    #[test]
-    fn test_get_value() {
-        let v = 2.1231;
-        let temp = SimulationStateElement::SpaceDryBulbTemperature(0, v);
-        let b = SimulationStateElement::SurfaceNodeTemperature(0, 1, v);
-
-        assert_eq!(v, temp.get_value());
-        assert_eq!(v, b.get_value());
-    }
-
+    
     #[test]
     fn test_classify() {
         // Physical
-        let e = SimulationStateElement::SpaceDryBulbTemperature(2, 2.);
+        let e = SimulationStateElement::SpaceDryBulbTemperature(2);
         assert!(e.is_physical());
         assert!(!e.is_operational());
         assert!(!e.is_personal());
 
         // Individual
-        let e = SimulationStateElement::Clothing(2.);
+        let e = SimulationStateElement::Clothing;
         assert!(!e.is_physical());
         assert!(!e.is_operational());
         assert!(e.is_personal());
 
         // Operational
-        let e = SimulationStateElement::HeatingCoolingPowerConsumption(2, 0.0);
+        let e = SimulationStateElement::HeatingCoolingPowerConsumption(2);
         assert!(!e.is_physical());
         assert!(e.is_operational());
         assert!(!e.is_personal());

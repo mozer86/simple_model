@@ -1,3 +1,24 @@
+/*
+MIT License
+Copyright (c) 2021 Germán Molina
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+use crate::Float;
+
 use crate::model::SimpleModel;
 
 #[derive(Debug, Clone,Copy, Eq, PartialEq)]
@@ -108,10 +129,10 @@ pub struct Token<'a> {
 }
 
 impl <'a>Token<'a>{
-    pub fn resolve_as_float(&self) -> Result<f64,String> {
+    pub fn resolve_as_float(&self) -> Result<Float,String> {
         let txt = std::str::from_utf8(self.txt).unwrap();
         if let TokenType::Number = self.token_type{
-             match txt.parse::<f64>(){
+             match txt.parse::<Float>(){
                  Ok(fvalue)=>Ok(fvalue),
                  Err(e)=>Err(format!("This is a bug, please report it: {}", e))
              }             

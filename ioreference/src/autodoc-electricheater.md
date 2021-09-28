@@ -5,7 +5,7 @@
 ```rs
 ElectricHeater {
 	name : string
-	target_space : Space
+	target_space : Space   // Optional
 	max_heating_power : number   // Optional
 }
 ```
@@ -21,7 +21,7 @@ ElectricHeater {
 
 
 
-### target_space
+### target_space  (*optional*)
 
   The [`Space`] that this [`ElectricHeater`] heats and/or
   cools
