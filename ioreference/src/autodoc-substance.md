@@ -24,7 +24,7 @@ Substance {
 ### name
 
   The name of the Substance. Should be unique for each
-  Material in the Building object    
+  Material in the SimpleModel object    
 
 
 

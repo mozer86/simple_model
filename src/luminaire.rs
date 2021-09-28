@@ -1,25 +1,20 @@
-use crate::building::Building;
+use crate::model::SimpleModel;
 use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::{SimulationStateElement,StateElementField};
+use crate::simulation_state_element::StateElementField;
 use crate::space::Space;
-use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
+use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 
 use crate::scanner::{Scanner, TokenType};
 
 use std::rc::Rc;
 
-#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 /// A Luminaire
 /// 
 /// Please fill this doc
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,
-
-    /// The position of the Luminaire in its
-    /// containing Array (this is not used for now, as
-    /// only one HeaterCooler is allowed per space)
-    index: Option<usize>,
 
     /// The maximum power consumption
     max_power: Option<f64>,
@@ -39,23 +34,4 @@ pub struct Luminaire {
     #[state]
     power_consumption: StateElementField,
 }
-
-impl Building {
-    pub fn add_luminaire(
-        &mut self,
-        mut luminaire: Luminaire,
-        state: &mut SimulationState,
-    ) -> Rc<Luminaire> {
-        let lum_index = self.luminaires.len();
-
-        state.push(SimulationStateElement::LuminairePowerConsumption(
-            lum_index, 0.,
-        ));
-
-        luminaire.set_index(lum_index);
-        self.luminaires.push(Rc::new(luminaire));
-        Rc::clone(self.luminaires.last().unwrap())
-    }
-}
-
 

@@ -1,4 +1,4 @@
-use crate::building::Building;
+use crate::model::SimpleModel;
 
 #[derive(Debug, Clone,Copy, Eq, PartialEq)]
 pub enum TokenType{
@@ -713,7 +713,7 @@ impl <'a>Scanner<'a> {
         Ok((fieldname, fieldvalue))        
     }
     
-    pub fn parse_building(&mut self)->Result<Building,String>{
+    pub fn parse_building(&mut self)->Result<SimpleModel,String>{
         
         
         // identify elements in the code
@@ -735,10 +735,10 @@ impl <'a>Scanner<'a> {
                 return Err(format!("Unexpected token of type {:?}", identifier.token_type));
             }
             match identifier.txt {
-                b"Building" => {
+                b"SimpleModel" => {
                     // only one building allowed
                     if buildings.len() > 0{
-                        return Err(format!("More than one 'Building' found"))
+                        return Err(format!("More than one 'SimpleModel' found"))
                     }                    
                     buildings.push(self.get_object_slice());
                 },
@@ -775,7 +775,7 @@ impl <'a>Scanner<'a> {
     
         // NOW BUILD
         // let building = match buildings.get(0){
-        //     Some(b)=>Building::new("as".to_string()),//Building::from_slice(b),
+        //     Some(b)=>SimpleModel::new("as".to_string()),//SimpleModel::from_slice(b),
         //     None =>{return Err(format!("No building found..."))}
         // };
         
@@ -783,7 +783,7 @@ impl <'a>Scanner<'a> {
 
         // Return        
         // Ok(building)
-        Ok(Building::new("a".to_string()))
+        Ok(SimpleModel::new("a".to_string()))
     }
 
 }
@@ -1074,7 +1074,7 @@ mod testing {
 
     #[test]
     fn test_get_object_slice(){
-        let src = b"Building {
+        let src = b"SimpleModel {
             name: \"The apartment\"
         }
         Substance {
@@ -1089,7 +1089,7 @@ mod testing {
 
         let ident = scanner.scan_token();
         assert_eq!(ident.token_type, TokenType::Identifier);
-        assert_eq!(ident.txt, b"Building");
+        assert_eq!(ident.txt, b"SimpleModel");
         let (start,end) = scanner.get_object_slice();
         let slice = &scanner.source[start..end];
         println!("{}\n====", std::str::from_utf8(slice).unwrap());

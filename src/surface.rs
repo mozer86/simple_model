@@ -1,15 +1,14 @@
-use building_state_macro::BuildingObjectBehaviour;
+use building_state_macro::SimpleObjectBehaviour;
 use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
 use crate::boundary::*;
-use crate::building::Building;
 use crate::construction::Construction;
 use crate::simulation_state_element::StateElementField;
 use crate::simulation_state::SimulationState;
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive(BuildingObjectBehaviour)]
+#[derive(SimpleObjectBehaviour)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,
@@ -18,7 +17,7 @@ pub struct Surface {
     /// the dimensions and size of the Surface
     pub polygon: Polygon3D,
 
-    /// The index of the construction in the Building's
+    /// The index of the construction in the SimpleModel's
     /// Construction array    
     pub construction: Rc<Construction>,
 
@@ -27,9 +26,7 @@ pub struct Surface {
 
     /// A reference to the Boundary in back of the Surface
     back_boundary: Option<Boundary>,
-
-    index: Option<usize>,
-
+    
     /* STATE */
     #[state]
     first_node_temperature: StateElementField,
@@ -38,24 +35,13 @@ pub struct Surface {
     last_node_temperature: StateElementField,
 }
 
-/// A surface in the Building, separating two spaces,
+/// A surface in the SimpleModel, separating two spaces,
 /// or a space and the exterior, or exterior and exterior
 impl Surface {
     /// Returns the area of the [`Surface`] (calculated
     /// based on the [`Polygon3D`] that represents it)
     pub fn area(&self) -> f64 {
         self.polygon.area()
-    }
-}
-
-impl Building {
-    /* SURFACE */
-
-    /// Creates a new Surface
-    pub fn add_surface(&mut self, mut surface: Surface) -> Rc<Surface> {
-        surface.index = Some(self.surfaces.len());
-        self.surfaces.push(Rc::new(surface));
-        Rc::clone(self.surfaces.last().unwrap())
     }
 }
 
@@ -100,7 +86,7 @@ mod testing {
 
         assert!(surf.front_boundary.is_some());
         if let Ok(Boundary::Ground) = surf.front_boundary() {}
-        assert!(surf.back_boundary.is_some());
+        assert!(surf.back_boundary.is_none());
         
 
         assert!(surf.first_node_temperature.borrow().is_some());

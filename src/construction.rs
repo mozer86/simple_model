@@ -1,24 +1,23 @@
-use crate::building::Building;
+use crate::model::SimpleModel;
 use crate::material::Material;
 use std::rc::Rc;
-use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
+use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 use crate::scanner::{Scanner, TokenType};
 
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
 /// Materials
-#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct Construction {
     /// The name of the Construction object.
     /// Must be unique within the model
     pub name: String,
 
     /// The indices of the Material objects in the
-    /// materials property of the Building object
+    /// materials property of the SimpleModel object
     pub layers: Vec<Rc<Material>>,
-
-    index: Option<usize>,
+    
     // front finishing
     // back finishing
 }
@@ -38,20 +37,7 @@ impl Construction {
     }
 }
 
-impl Building {
-    /* CONSTRUCTION */
 
-    /// Adds a [`Construction`] to the [`Building`].
-    ///
-    /// The [`Construction`] is put behind an `Rc`, and a clone
-    /// of such `Rc` is returned
-    pub fn add_construction(&mut self, mut construction: Construction) -> Rc<Construction> {
-        construction.set_index(self.constructions.len());
-        let ret = Rc::new(construction);
-        self.constructions.push(Rc::clone(&ret));
-        ret
-    }
-}
 /***********/
 /* TESTING */
 /***********/
@@ -117,7 +103,7 @@ mod testing {
 
         
 
-        let mut building = Building::new("the building".to_string());
+        let mut building = SimpleModel::new("the building".to_string());
         let mat = Material::from_bytes(bytes, &mut building).unwrap();
 
         let mat = building.add_material(mat);

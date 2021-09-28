@@ -1,7 +1,5 @@
-use crate::heating_cooling::HeaterCooler;
-use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::SimulationStateElement;
-use building_state_macro::BuildingObjectBehaviour;
+use crate::hvac::*;
+use building_state_macro::{SimpleObjectBehaviour, ModelGetterSetter};
 use std::rc::Rc;
 
 use crate::construction::Construction;
@@ -13,8 +11,8 @@ use crate::substance::Substance;
 use crate::surface::Surface;
 
 
-#[derive(Default, BuildingObjectBehaviour)]
-pub struct Building {
+#[derive(Default, SimpleObjectBehaviour, ModelGetterSetter)]
+pub struct SimpleModel {
     /// The name of the building
     pub name: String,
 
@@ -31,19 +29,19 @@ pub struct Building {
     pub fenestrations: Vec<Rc<Fenestration>>,
 
     /// The Heating/Cooling devices in the space
-    pub hvacs: Vec<Rc<HeaterCooler>>,
+    pub hvacs: Vec<Rc<dyn HVAC>>,
 
     /// Luminaires
     pub luminaires: Vec<Rc<Luminaire>>,
 }
-
-impl Building {
+/*
+impl Model {
     /// Maps the Physical [SimulationStateElement] into the building.
     ///
-    /// The rational here is that, after creating the Building object, the
+    /// The rational here is that, after creating the Model object, the
     /// construciton of Physics models will continue to add [SimulationStateElement]
     /// to the [SimulationState]. However, the process of creating these objects
-    /// receives an immutable [Building] (i.e., `&Building`) and thus they cannot
+    /// receives an immutable [Model] (i.e., `&Model`) and thus they cannot
     /// map them themselves. That is why we need this function.
     pub fn map_simulation_state(&mut self, state: &SimulationState) -> Result<(), String> {
         
@@ -188,6 +186,7 @@ impl Building {
         Ok(())
     }
 }
+*/
 
 /***********/
 /* TESTING */
@@ -200,7 +199,7 @@ mod testing {
 
     #[test]
     fn building_substance() {
-        let mut building = Building::new("Test Building".to_string());
+        let mut building = SimpleModel::new("Test Model".to_string());
 
         let subs_name = "Substance 0".to_string();
         let substance = Substance::new(subs_name.clone());
@@ -223,6 +222,7 @@ mod testing {
         let dir = "./ioreference/src";
         Boundary::print_doc(&dir, &mut summary).unwrap();
         Construction::print_doc(&dir, &mut summary).unwrap();
+        HVACKind::print_doc(&dir, &mut summary).unwrap();
         Luminaire::print_doc(&dir, &mut summary).unwrap();
         Material::print_doc(&dir, &mut summary).unwrap();
         Space::print_doc(&dir, &mut summary).unwrap();

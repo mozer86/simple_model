@@ -1,10 +1,9 @@
-use building_state_macro::BuildingObjectBehaviour;
+use building_state_macro::{SimpleObjectBehaviour};
 use geometry3d::loop3d::Loop3D;
 use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
 
 use crate::boundary::Boundary;
-use crate::building::Building;
 use crate::construction::Construction;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
@@ -26,7 +25,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive(BuildingObjectBehaviour)]
+#[derive(SimpleObjectBehaviour)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
@@ -36,7 +35,7 @@ pub struct Fenestration {
     pub polygon: Polygon3D,
 
     /// The index of the Construction object in the
-    /// constructions property of the Building object    
+    /// constructions property of the SimpleModel object    
     pub construction: Rc<Construction>,
 
     /// The opportunity for operating the Fenestration
@@ -46,13 +45,9 @@ pub struct Fenestration {
     pub fenestration_type: FenestrationType,
 
     // The index of the Shading device attached to the Fenestration
-    // in the shading property of the Building object
+    // in the shading property of the SimpleModel object
     //shading: Option<usize>,
     
-    /// The position of the [`Fenestration`] in its containing
-    /// array
-    index: Option<usize>,
-
     /// A reference to the Boundary in front of the Fenestration
     front_boundary: Option<Boundary>,
 
@@ -136,16 +131,6 @@ impl Fenestration {
     // }
 }
 
-impl Building {
-    /* FENESTRATION */
-
-    /// Creates a new Fenestration object
-    pub fn add_fenestration(&mut self, mut fenestration: Fenestration) -> Rc<Fenestration> {
-        fenestration.index = Some(self.fenestrations.len());
-        self.fenestrations.push(Rc::new(fenestration));
-        Rc::clone(self.fenestrations.last().unwrap())
-    }
-}
 
 /***********/
 /* TESTING */

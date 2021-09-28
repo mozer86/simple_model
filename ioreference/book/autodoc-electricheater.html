@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Space - SIMPLE Simulation Input Output reference</title>
+        <title>ElectricHeater - SIMPLE Simulation Input Output reference</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">3.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">4.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">4.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">4.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">5.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">6.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html" class="active"><strong aria-hidden="true">7.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">8.</strong> Substance</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">3.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">4.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">4.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html" class="active"><strong aria-hidden="true">4.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">5.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">6.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">7.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">8.</strong> Substance</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,28 +134,30 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="space"><a class="header" href="#space">Space</a></h1>
-<p>Represents a space within a building. This will
-often be a room, but it might also be half a room</p>
-<pre><code class="language-rs">Space {
+                        <h1 id="electricheater"><a class="header" href="#electricheater">ElectricHeater</a></h1>
+<pre><code class="language-rs">ElectricHeater {
 	name : string
-	volume : number   // Optional
+	target_space : Space
+	max_heating_power : number   // Optional
 }
 </code></pre>
 <h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
 <h3 id="name"><a class="header" href="#name">name</a></h3>
-<p>The name of the space</p>
-<h3 id="volume--optional"><a class="header" href="#volume--optional">volume  (<em>optional</em>)</a></h3>
-<p>Volume of the space</p>
+<p>The name of the system</p>
+<h3 id="target_space"><a class="header" href="#target_space">target_space</a></h3>
+<p>The [<code>Space</code>] that this [<code>ElectricHeater</code>] heats and/or
+cools</p>
+<h3 id="max_heating_power--optional"><a class="header" href="#max_heating_power--optional">max_heating_power  (<em>optional</em>)</a></h3>
+<p>Max heating power</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="autodoc-material.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="autodoc-idealheatercooler.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="autodoc-substance.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="autodoc-luminaire.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -164,10 +166,10 @@ often be a room, but it might also be half a room</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="autodoc-material.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="autodoc-idealheatercooler.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="autodoc-substance.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="autodoc-luminaire.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

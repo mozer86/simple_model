@@ -1,9 +1,8 @@
-use std::rc::Rc;
 // use std::cell::RefCell;
 use crate::scanner::{Scanner,TokenType};
 
-use crate::building::Building;
-use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
+use crate::model::SimpleModel;
+use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 
 /// Represents a Substance; that is to say, a physical
 /// materiality with physical properties. The name Substance
@@ -11,16 +10,12 @@ use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
 /// and other software's terminology (which does not include
 /// Substace, but it does include Material, which is essentially
 /// a Substance with a thickness).
-#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct Substance {    
     /// The name of the Substance. Should be unique for each
-    /// Material in the Building object    
+    /// Material in the SimpleModel object    
     pub name: String,
-
-    /// The position of the [`Substance`] in its containing
-    /// array
-    index: Option<usize>,
-
+    
     /// The thermal conductivity of the substance in W/m.K
     thermal_conductivity: Option<f64>,
 
@@ -42,17 +37,6 @@ impl Substance {
     }
 }
 
-impl Building {
-    /// Adds a [`Substance`] to the [`Building`].
-    ///
-    /// The [`Substance`] is put behind an `Rc`, and a clone
-    /// of such `Rc` is returned
-    pub fn add_substance(&mut self, substance: Substance) -> Rc<Substance> {
-        let sub = Rc::new(substance);
-        self.substances.push(Rc::clone(&sub));
-        sub
-    }
-}
 
 /***********/
 /* TESTING */
@@ -94,7 +78,7 @@ mod testing {
             density : 3.2
         }";
 
-        let mut building = Building::new("the building".to_string());
+        let mut building = SimpleModel::new("the building".to_string());
 
         let sub = Substance::from_bytes(bytes, &mut building).unwrap();
 

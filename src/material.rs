@@ -1,7 +1,7 @@
-use crate::building::Building;
+use crate::model::SimpleModel;
 use crate::substance::Substance;
 use std::rc::Rc;
-use building_state_macro::{BuildingObjectBehaviour, SimpleInputOutput};
+use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 use crate::scanner::{Scanner, TokenType};
 
 
@@ -9,7 +9,7 @@ use crate::scanner::{Scanner, TokenType};
 /// The representation of a physical layer-Material.
 /// That is to say, a layer of a certain thickness
 /// made of a certain Substance
-#[derive(BuildingObjectBehaviour, SimpleInputOutput)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct Material {
     /// The name of the material object
     pub name: String,
@@ -21,21 +21,7 @@ pub struct Material {
     /// The thickness of the [`Material`]
     pub thickness: f64,
 
-    /// The position of the [`Material`] in its containing
-    /// array
-    index: Option<usize>,
-}
-
-impl Building {
-    /// Adds a [`Material`] to the [`Building`].
-    ///
-    /// The [`Material`] is put behind an `Rc`, and a clone
-    /// of such `Rc` is returned
-    pub fn add_material(&mut self, material: Material) -> Rc<Material> {
-        let ret = Rc::new(material);
-        self.materials.push(Rc::clone(&ret));
-        ret
-    }
+    
 }
 
 
@@ -78,7 +64,7 @@ mod testing {
         }
         ";
 
-        let mut building = Building::new("the building".to_string());
+        let mut building = SimpleModel::new("the building".to_string());
 
         let sub = Substance::from_bytes(bytes, &mut building).unwrap();
         let sub = building.add_substance(sub);
@@ -112,7 +98,7 @@ mod testing {
 
         
 
-        let mut building = Building::new("the building".to_string());
+        let mut building = SimpleModel::new("the building".to_string());
         let mat = Material::from_bytes(bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());

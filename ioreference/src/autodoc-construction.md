@@ -8,7 +8,7 @@
 ```rs
 Construction {
 	name : string
-	layers : [ Rc, ...] 
+	layers : [ Material, ...] 
 }
 ```
 
@@ -27,7 +27,7 @@ Construction {
 ### layers
 
   The indices of the Material objects in the
-  materials property of the Building object
+  materials property of the SimpleModel object
 
 
 

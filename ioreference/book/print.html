@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">3.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">4.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">5.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">6.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">7.</strong> Substance</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">3.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">4.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">4.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">4.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">5.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">6.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">7.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">8.</strong> Substance</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -140,13 +140,21 @@
 <p>Represents the boundary of a <code>Surface</code></p>
 <p>By default (i.e., if no boundary is assigned to a Surface), 
 the boundary will be assumed to be outside. </p>
+<h2 id="ground"><a class="header" href="#ground">Ground</a></h2>
+<p>The Surface is in contact with the Ground</p>
+<pre><code>Ground
+</code></pre>
+<h2 id="space"><a class="header" href="#space">Space</a></h2>
+<p>The Surface leads to another surface</p>
+<pre><code>Space(Space)
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="construction"><a class="header" href="#construction">Construction</a></h1>
 <p>An object representing a multilayer
 Construction; that is to say, an array of
 Materials</p>
 <pre><code class="language-rs">Construction {
 	name : string
-	layers : [ Rc, ...] 
+	layers : [ Material, ...] 
 }
 </code></pre>
 <h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
@@ -155,7 +163,55 @@ Materials</p>
 Must be unique within the model</p>
 <h3 id="layers"><a class="header" href="#layers">layers</a></h3>
 <p>The indices of the Material objects in the
-materials property of the Building object</p>
+materials property of the SimpleModel object</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hvac"><a class="header" href="#hvac">HVAC</a></h1>
+<p>A collection of elements heating and cooling systems</p>
+<ul>
+<li>
+<p><strong>IdealHeaterCooler</strong>:   An ideal heating/cooling device.
+Heats and Cools with an efficiency of
+1, and nothing effects its COP or efficiency</p>
+</li>
+<li>
+<p><strong>ElectricHeater</strong>:   An electric heater, it can only
+heat.</p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="idealheatercooler"><a class="header" href="#idealheatercooler">IdealHeaterCooler</a></h1>
+<p>An ideal Heating and Cooling device, with a COP of 1.</p>
+<p>asd</p>
+<pre><code class="language-rs">IdealHeaterCooler {
+	name : string
+	target_spaces : [ Space, ...] 
+	max_heating_power : number   // Optional
+	max_cooling_power : number   // Optional
+}
+</code></pre>
+<h2 id="fields-1"><a class="header" href="#fields-1">Fields</a></h2>
+<h3 id="name-1"><a class="header" href="#name-1">name</a></h3>
+<p>The name of the system</p>
+<h3 id="target_spaces"><a class="header" href="#target_spaces">target_spaces</a></h3>
+<p>The <code>Space</code>s that this [<code>IdealHeaterCooler</code>] heats and/or
+cools</p>
+<h3 id="max_heating_power--optional"><a class="header" href="#max_heating_power--optional">max_heating_power  (<em>optional</em>)</a></h3>
+<p>Max heating power</p>
+<h3 id="max_cooling_power--optional"><a class="header" href="#max_cooling_power--optional">max_cooling_power  (<em>optional</em>)</a></h3>
+<p>Max cooling power</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="electricheater"><a class="header" href="#electricheater">ElectricHeater</a></h1>
+<pre><code class="language-rs">ElectricHeater {
+	name : string
+	target_space : Space
+	max_heating_power : number   // Optional
+}
+</code></pre>
+<h2 id="fields-2"><a class="header" href="#fields-2">Fields</a></h2>
+<h3 id="name-2"><a class="header" href="#name-2">name</a></h3>
+<p>The name of the system</p>
+<h3 id="target_space"><a class="header" href="#target_space">target_space</a></h3>
+<p>The [<code>Space</code>] that this [<code>ElectricHeater</code>] heats and/or
+cools</p>
+<h3 id="max_heating_power--optional-1"><a class="header" href="#max_heating_power--optional-1">max_heating_power  (<em>optional</em>)</a></h3>
+<p>Max heating power</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="luminaire"><a class="header" href="#luminaire">Luminaire</a></h1>
 <p>A Luminaire</p>
 <p>Please fill this doc</p>
@@ -165,8 +221,8 @@ materials property of the Building object</p>
 	target_space : Space   // Optional
 }
 </code></pre>
-<h2 id="fields-1"><a class="header" href="#fields-1">Fields</a></h2>
-<h3 id="name-1"><a class="header" href="#name-1">name</a></h3>
+<h2 id="fields-3"><a class="header" href="#fields-3">Fields</a></h2>
+<h3 id="name-3"><a class="header" href="#name-3">name</a></h3>
 <p>The name of the Luminaire</p>
 <h3 id="max_power--optional"><a class="header" href="#max_power--optional">max_power  (<em>optional</em>)</a></h3>
 <p>The maximum power consumption</p>
@@ -188,15 +244,15 @@ made of a certain Substance</p>
 	thickness : number
 }
 </code></pre>
-<h2 id="fields-2"><a class="header" href="#fields-2">Fields</a></h2>
-<h3 id="name-2"><a class="header" href="#name-2">name</a></h3>
+<h2 id="fields-4"><a class="header" href="#fields-4">Fields</a></h2>
+<h3 id="name-4"><a class="header" href="#name-4">name</a></h3>
 <p>The name of the material object</p>
 <h3 id="substance"><a class="header" href="#substance">substance</a></h3>
 <p>A reference to the [<code>Substance</code>] of which this
 [<code>Material</code>] is made of</p>
 <h3 id="thickness"><a class="header" href="#thickness">thickness</a></h3>
 <p>The thickness of the [<code>Material</code>]</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="space"><a class="header" href="#space">Space</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="space-1"><a class="header" href="#space-1">Space</a></h1>
 <p>Represents a space within a building. This will
 often be a room, but it might also be half a room</p>
 <pre><code class="language-rs">Space {
@@ -204,8 +260,8 @@ often be a room, but it might also be half a room</p>
 	volume : number   // Optional
 }
 </code></pre>
-<h2 id="fields-3"><a class="header" href="#fields-3">Fields</a></h2>
-<h3 id="name-3"><a class="header" href="#name-3">name</a></h3>
+<h2 id="fields-5"><a class="header" href="#fields-5">Fields</a></h2>
+<h3 id="name-5"><a class="header" href="#name-5">name</a></h3>
 <p>The name of the space</p>
 <h3 id="volume--optional"><a class="header" href="#volume--optional">volume  (<em>optional</em>)</a></h3>
 <p>Volume of the space</p>
@@ -223,10 +279,10 @@ a Substance with a thickness).</p>
 	density : number   // Optional
 }
 </code></pre>
-<h2 id="fields-4"><a class="header" href="#fields-4">Fields</a></h2>
-<h3 id="name-4"><a class="header" href="#name-4">name</a></h3>
+<h2 id="fields-6"><a class="header" href="#fields-6">Fields</a></h2>
+<h3 id="name-6"><a class="header" href="#name-6">name</a></h3>
 <p>The name of the Substance. Should be unique for each
-Material in the Building object</p>
+Material in the SimpleModel object</p>
 <h3 id="thermal_conductivity--optional"><a class="header" href="#thermal_conductivity--optional">thermal_conductivity  (<em>optional</em>)</a></h3>
 <p>The thermal conductivity of the substance in W/m.K</p>
 <h3 id="specific_heat_capacity--optional"><a class="header" href="#specific_heat_capacity--optional">specific_heat_capacity  (<em>optional</em>)</a></h3>

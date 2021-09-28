@@ -2,7 +2,7 @@ use std::rc::Rc;
 use building_state_macro::SimpleInputOutput;
 use crate::scanner::{Scanner, TokenType};
 use crate::space::Space;
-use crate::building::Building;
+use crate::model::SimpleModel;
 
 
 /// Represents the boundary of a `Surface`
@@ -17,6 +17,7 @@ pub enum Boundary {
 
     /// The Surface leads to another surface
     Space(Rc<Space>),
+
 }
 
 
@@ -35,7 +36,7 @@ mod testing {
     fn test_boundary_from_bytes(){
         
         /* Ground */
-        let mut building = Building::new("the building".to_string());
+        let mut building = SimpleModel::new("the building".to_string());
         let bytes = b" ::Ground,";
         let bound = Boundary::from_bytes(bytes, &mut building).unwrap();
         if let Boundary::Ground = bound{
@@ -45,7 +46,7 @@ mod testing {
         }
 
         /* SPACE BY NAME */
-        let mut building = Building::new("the building".to_string());
+        let mut building = SimpleModel::new("the building".to_string());
         let space = Space::new("the space".to_string());
         let space = building.add_space(space);
 
@@ -58,7 +59,7 @@ mod testing {
         }
 
         /* SPACE ANONYMOUS */
-        let mut building = Building::new("the building".to_string());        
+        let mut building = SimpleModel::new("the building".to_string());        
         let bytes = b" ::Space(Space{
             name: \"Some Space\"
         }),";
