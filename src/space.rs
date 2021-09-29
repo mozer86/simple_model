@@ -34,6 +34,9 @@ pub struct Space {
     /// The name of the space
     pub name: String,
 
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// Volume of the space
     pub volume: Option<Float>,
 

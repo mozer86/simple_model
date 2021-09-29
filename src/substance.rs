@@ -37,6 +37,9 @@ pub struct Substance {
     /// Material in the SimpleModel object    
     pub name: String,
     
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// The thermal conductivity of the substance in W/m.K
     thermal_conductivity: Option<Float>,
 

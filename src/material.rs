@@ -35,6 +35,9 @@ pub struct Material {
     /// The name of the material object
     pub name: String,
 
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// A reference to the [`Substance`] of which this
     /// [`Material`] is made of    
     pub substance: Rc<Substance>,

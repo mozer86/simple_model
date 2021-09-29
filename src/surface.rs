@@ -34,6 +34,9 @@ pub struct Surface {
     /// The name of the surface
     pub name: String,
 
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// The Polygon3D that represents
     /// the dimensions and size of the Surface
     pub polygon: Polygon3D,

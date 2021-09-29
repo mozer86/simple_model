@@ -37,6 +37,9 @@ pub struct Luminaire {
     /// The name of the Luminaire
     name: String,
 
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// The maximum power consumption
     max_power: Option<Float>,
 

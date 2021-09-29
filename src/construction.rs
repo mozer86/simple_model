@@ -35,6 +35,9 @@ pub struct Construction {
     /// Must be unique within the model
     pub name: String,
 
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// The indices of the Material objects in the
     /// materials property of the SimpleModel object
     pub layers: Vec<Rc<Material>>,

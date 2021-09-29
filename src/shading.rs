@@ -33,4 +33,6 @@ enum ShadingClass {
 pub struct ShadingDevice {
     location: ShadingLocation,
     class: ShadingClass
+    /// The position of this object in its contaner Vector
+    index: usize,
 }

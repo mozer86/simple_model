@@ -50,6 +50,9 @@ pub enum FenestrationType {
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
+    
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
 
     /// The Polygon3D that represents
     /// the dimensions and size of the Fenestration

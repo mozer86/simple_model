@@ -36,6 +36,9 @@ pub struct ElectricHeater {
     /// The name of the system
     pub name: String,
     
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// The [`Space`] that this [`ElectricHeater`] heats and/or
     /// cools
     target_space: Option<Rc<Space>>,
@@ -64,6 +67,12 @@ impl HVAC for ElectricHeater{
     fn as_any(&self) -> &dyn Any{
         self
     }   
+
+    fn as_mut_any(&mut self) -> &mut dyn Any{
+        self
+    }  
+
+    
 
 }
 

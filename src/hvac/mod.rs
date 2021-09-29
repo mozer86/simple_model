@@ -23,7 +23,6 @@ pub mod ideal_heater_cooler;
 pub mod electric_heater;
 
 
-// use crate::space::Space;
 use crate::model::SimpleModel;
 use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
 use crate::hvac::electric_heater::ElectricHeater;
@@ -31,8 +30,9 @@ use crate::scanner::{Scanner, TokenType};
 use building_state_macro::GroupInputOutput;
 use std::any::Any;
 
+
 /// A collection of elements heating and cooling systems
-#[derive(GroupInputOutput)]
+#[derive(Debug, GroupInputOutput)]
 pub enum HVACKind{
     /// An ideal heating/cooling device.
     /// Heats and Cools with an efficiency of
@@ -46,7 +46,26 @@ pub enum HVACKind{
 
 
 
+pub fn cast_hvac<T>(system: &dyn HVAC)->Result<&T,String>
+where T: HVAC + 'static
+{
+    if let Some(h) = system.as_any().downcast_ref::<T>() {                    
+        Ok(h)
+    } else {
+        Err(format!("Invalid casting HVAC type... found type is {:?}", system.kind()))
+    }
+}
 
+pub fn cast_mut_hvac<T>(system: &mut dyn HVAC)->Result<&mut T,String>
+where T: HVAC + 'static
+{   
+    let kind = system.kind();
+    if let Some(h) = system.as_mut_any().downcast_mut::<T>() {                    
+        Ok(h)
+    } else {
+        Err(format!("Invalid mut casting HVAC type... found type is {:?}", kind))
+    }
+}
 
 /// Shared functions for all objects in the [`HVAC`] group
 pub trait HVAC {
@@ -64,8 +83,29 @@ pub trait HVAC {
     /// downcasting to the different kinds of [`HVAC`] 
     fn as_any(&self) -> &dyn Any;
 
-    
-    
+    fn as_mut_any(&mut self) -> &mut dyn Any;
+
+
+    /// Sets the index of 
+    fn set_index(&mut self, index: usize){
+        match self.kind(){
+            HVACKind::ElectricHeater=>{
+                // cast_mut_hvac::<ElectricHeater>(&mut self).expect("When setting index of ElectricHeater HVAC").set_index(index);
+                if let Some(h) = self.as_mut_any().downcast_mut::<ElectricHeater>() {                    
+                    h.set_index(index);
+                } else {
+                    panic!("Invalid casting HVAC type... found type is {:?}", self.kind())
+                }
+            },
+            HVACKind::IdealHeaterCooler=>{
+                if let Some(h) = self.as_mut_any().downcast_mut::<IdealHeaterCooler>() {                    
+                    h.set_index(index);
+                } else {
+                    panic!("Invalid casting HVAC type... found type is {:?}", self.kind())
+                }
+            }
+        }
+    }
 }
 
 

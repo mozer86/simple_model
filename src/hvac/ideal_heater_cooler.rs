@@ -25,7 +25,7 @@ use std::rc::Rc;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element:: StateElementField;
 use crate::space::Space;
-use crate::hvac::{HVAC, HVACKind};
+use crate::hvac::*;
 use crate::scanner::{Scanner,TokenType};
 use crate::model::SimpleModel;
 
@@ -39,6 +39,9 @@ pub struct IdealHeaterCooler {
     /// The name of the system
     pub name: String,
     
+    /// The position of this object in its contaner Vector
+    index: Option<usize>,
+
     /// The `Space`s that this [`IdealHeaterCooler`] heats and/or
     /// cools
     pub target_spaces: Vec<Rc<Space>>,
@@ -71,4 +74,13 @@ impl HVAC for IdealHeaterCooler{
     fn as_any(&self) -> &dyn Any{
         self
     }   
+
+    fn as_mut_any(&mut self) -> &mut dyn Any{
+        self
+    }   
+
+    
+        
+
+    
 }
