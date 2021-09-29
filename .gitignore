@@ -2,3 +2,4 @@
 Cargo.lock
 ioreference/book/*
 .DS_Store
+check*
