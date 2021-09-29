@@ -1,2 +1,0 @@
-    Checking simple_model v0.1.0 (/Users/german/Documents/simple/simple_model)
-    Finished dev [unoptimized + debuginfo] target(s) in 1.54s
