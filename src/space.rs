@@ -25,7 +25,7 @@ use crate::model::SimpleModel;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
 use crate::scanner::{Scanner, TokenType};
-
+use crate::infiltration::Infiltration;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
@@ -39,6 +39,9 @@ pub struct Space {
 
     /// Volume of the space
     pub volume: Option<Float>,
+
+    /// The infiltration in the space
+    infiltration: Option<Infiltration>,
 
     /*
     /// The indices of the surrounding Surfaces in the
@@ -85,6 +88,12 @@ pub struct Space {
 mod testing {
     use super::*;
 
+    #[cfg(feature = "float")]
+    const EPSILON : f32 = std::f32::EPSILON;
+
+    #[cfg(not(feature = "float"))]
+    const EPSILON : f64 = std::f64::EPSILON;
+
     #[test]
     fn test_new() {
         let space_name = "the_space".to_string();
@@ -117,5 +126,25 @@ mod testing {
         space.set_loudness_index(i);
         assert!(space.loudness.borrow().is_some());
         assert_eq!(space.loudness_index().unwrap(), i);
+    }
+
+    #[test]
+    fn test_space_from_bytes(){
+        let bytes = b" {
+            name : \"A Space\",            
+            volume : 1.2,
+            infiltration : Infiltration::Constant(2.2)
+        }";
+
+        let mut building = SimpleModel::new("the building".to_string());
+
+        let space = Space::from_bytes(bytes, &mut building).unwrap();
+
+        assert_eq!(space.name, "A Space".to_string());
+        assert!((1.2 - space.volume.unwrap()).abs()<EPSILON);
+        if let Some(Infiltration::Constant(v)) = space.infiltration{
+            assert!((2.2 - v).abs()<EPSILON);
+        }
+
     }
 }

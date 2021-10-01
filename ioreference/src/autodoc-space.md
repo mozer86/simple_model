@@ -8,6 +8,7 @@
 Space {
 	name : string
 	volume : number   // Optional
+	infiltration : Infiltration   // Optional
 }
 ```
 
@@ -25,6 +26,13 @@ Space {
 ### volume  (*optional*)
 
   Volume of the space
+
+
+
+
+### infiltration  (*optional*)
+
+  The infiltration in the space
 
 
 

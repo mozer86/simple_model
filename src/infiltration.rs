@@ -18,32 +18,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/// The kind of Floating point number used in the
-/// library... the `"float"` feature means it becomes `f32`
-/// and `f64` is used otherwise.
-#[cfg(feature = "float")]
-type Float = f32;
+use crate::Float;
+use building_state_macro::SimpleInputOutput;
+use crate::scanner::{Scanner, TokenType};
+use crate::model::SimpleModel;
 
-#[cfg(not(feature = "float"))]
-type Float = f64;
-
-
-pub mod scanner;
-pub mod simulation_state;
-pub mod simulation_state_element;
-
-pub mod model;
-
-pub mod construction;
-pub mod material;
-pub mod substance;
-
-pub mod boundary;
-pub mod fenestration;
-pub mod hvac;
-pub mod luminaire;
-pub mod space;
-pub mod surface;
-pub mod infiltration;
-
-//pub mod shading;
+/// An infiltration rate for a `Space`
+#[derive(Clone, SimpleInputOutput)]
+pub enum Infiltration {
+    
+    /// A contant infiltration, specified in `m3/s`
+    Constant(Float),    
+}

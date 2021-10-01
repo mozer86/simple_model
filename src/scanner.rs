@@ -440,12 +440,7 @@ impl <'a>Scanner<'a> {
         // If not a keyword, but the next two are ':', this 
         // is an EnumName (e.g., Infiltration::Blast)        
         if self.peek() == ':' && self.peek_next()==':'{
-            let ret = self.make_token(TokenType::TokenEnumName);
-            self.advance();
-            self.advance();            
-
-            ret                      
-
+            self.make_token(TokenType::TokenEnumName)                
         }else{
             self.make_token(TokenType::Identifier)
         }
@@ -672,12 +667,21 @@ impl <'a>Scanner<'a> {
     pub fn get_object_slice(&mut self)->(usize,usize){
         let mut levels = 0;
         let mut started = false;
-        while levels > 0 || !started  {            
-            if self.peek() == '{'{
+        // Check if we are solving an Enum or an Object
+        let (open,close) = if self.peek() == ':' && self.peek_next()==':'{
+            // If we start with Colon Colon, then it is an enum
+            ('(',')')
+        }else{
+            // Otherwise, it is  an object
+            ('{','}')
+        };        
+
+        while levels > 0 || !started  {                        
+            if self.peek() == open {
                 levels += 1;
                 started = true;
             }
-            if self.peek() == '}'{
+            if self.peek() == close {
                 levels -= 1;
             }
             self.current_index +=1;
@@ -686,10 +690,13 @@ impl <'a>Scanner<'a> {
                 self.finished = true;
                 break;
             }
-        }
+        }        
+        
         // return
         (self.start_index, self.current_index)        
     }
+
+
 
 
     pub fn scan_field(&mut self)->Result<(Token,Token),String>{

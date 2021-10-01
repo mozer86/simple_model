@@ -29,10 +29,10 @@ use crate::scanner::{Scanner, TokenType};
 
 use std::rc::Rc;
 
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 /// A Luminaire
 /// 
 /// Please fill this doc
+#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,

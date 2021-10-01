@@ -37,7 +37,6 @@ pub enum Boundary {
 
     /// The Surface leads to another surface
     Space(Rc<Space>),
-
 }
 
 
