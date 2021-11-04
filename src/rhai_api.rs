@@ -22,8 +22,12 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use rhai::{Engine, EvalAltResult};
 use crate::Float;
-use crate::simulation_state::SimulationState;
-use crate::model::SimpleModel;
+use crate::{
+    SimulationState,
+    SimpleModel,
+    Space
+};
+
 
 
 fn as_usize(v: i64) -> Result<usize,Box<EvalAltResult>> {
@@ -33,12 +37,18 @@ fn as_usize(v: i64) -> Result<usize,Box<EvalAltResult>> {
     Ok(v as usize)
 }
 
+
+
+
 /// Registers the functions used to operate the building
 pub fn register_control_api(engine : &mut Engine, model: &Rc<SimpleModel>, state: &Rc<RefCell<SimulationState>>){
 
-
+    /************ */
+    /*  Space API */
+    /************ */
+    
+    
     let new_mod = Rc::clone(model);
-    // let new_state = Rc::clone(state);
     engine.register_fn("count_spaces", move || {
         new_mod.spaces.len() as i32
     });
