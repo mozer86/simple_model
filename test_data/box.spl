@@ -1,0 +1,33 @@
+Substance {
+    name: "the substance",  
+    thermal_conductivity: 12
+}
+
+Material {
+    name: "the material",
+    substance : "the substance",
+    thickness: 0.1
+}
+
+Material {
+    name: "another material",
+    substance : "the substance",
+    thickness: 0.01
+}
+
+
+Construction {
+    name: "the construction" ,
+    materials : ["the material", "another material"]
+}
+
+Surface {
+    name: "the surface",
+    construction:"the construction",
+    vertices: [
+        0, 0, 0,
+        1, 0, 0,
+        1, 1, 0,
+        0, 1, 0
+    ]
+}

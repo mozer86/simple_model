@@ -18,28 +18,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 use crate::Float;
-
-use building_state_macro::SimpleObjectBehaviour;
-use geometry3d::polygon3d::Polygon3D;
 use std::rc::Rc;
-use crate::boundary::*;
-use crate::construction::Construction;
+
+use geometry3d::{
+    Polygon3D,
+    Point3D,
+    Loop3D
+};
+use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+
+use crate::{
+    SimpleModel,
+    Boundary,
+    Construction,
+    SimulationState
+};
+
 use crate::simulation_state_element::StateElementField;
-use crate::simulation_state::SimulationState;
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive(SimpleObjectBehaviour)]
+#[derive(SimpleObjectBehaviour, SimpleInputOutput)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,
 
     /// The position of this object in its contaner Vector
-    index: Option<usize>,
+    index : Option<usize>,
 
-    /// The Polygon3D that represents
-    /// the dimensions and size of the Surface
-    pub polygon: Polygon3D,
+    /// An array of Numbers representing the vertices of the 
+    /// surface. The length of this array must be divisible by 3.
+    pub vertices : Polygon3D,
 
     /// The index of the construction in the SimpleModel's
     /// Construction array    
@@ -65,7 +75,19 @@ impl Surface {
     /// Returns the area of the [`Surface`] (calculated
     /// based on the [`Polygon3D`] that represents it)
     pub fn area(&self) -> Float {
-        self.polygon.area()
+        self.vertices.area()
+    }
+}
+
+
+impl SimpleModel {
+
+    /// Adds a [`Surface`] to the [`SimpleModel`]
+    pub fn add_surface(&mut self, mut add : Surface) -> Rc<Surface>{
+        add.set_index(self.surfaces.len());
+        let add = Rc::new(add);
+        self.surfaces.push(Rc::clone(&add));
+        add
     }
 }
 
@@ -76,9 +98,9 @@ impl Surface {
 #[cfg(test)]
 mod testing {
     use super::*;
-    use geometry3d::loop3d::Loop3D;
-    use geometry3d::point3d::Point3D;
-    use geometry3d::polygon3d::Polygon3D;
+
+    
+
 
     #[test]
     fn test_surface_basic() {

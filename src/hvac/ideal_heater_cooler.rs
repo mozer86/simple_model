@@ -26,7 +26,7 @@ use crate::simulation_state::SimulationState;
 use crate::simulation_state_element:: StateElementField;
 use crate::space::Space;
 use crate::hvac::*;
-use crate::scanner::{Scanner,TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::model::SimpleModel;
 
 use std::any::Any;
@@ -42,7 +42,7 @@ pub struct IdealHeaterCooler {
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
-    /// The `Space`s that this [`IdealHeaterCooler`] heats and/or
+    /// The `Space`s that this `IdealHeaterCooler` heats and/or
     /// cools
     pub target_spaces: Vec<Rc<Space>>,
     

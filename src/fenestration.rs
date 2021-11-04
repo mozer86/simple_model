@@ -19,17 +19,25 @@ SOFTWARE.
 */
 use crate::Float;
 
-use building_state_macro::{SimpleObjectBehaviour};
-use geometry3d::loop3d::Loop3D;
-use geometry3d::polygon3d::Polygon3D;
+use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
+
+use geometry3d::{
+    Loop3D,
+    Polygon3D,
+    Point3D
+};
+
+
 use std::rc::Rc;
 
+use crate::model::SimpleModel;
 use crate::boundary::Boundary;
 use crate::construction::Construction;
-use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::StateElementField;
+use crate::simulation_state::{SimulationStateHeader, SimulationState};
+use crate::simulation_state_element::{StateElementField, SimulationStateElement};
 
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, SimpleInputOutput)]
 pub enum FenestrationPositions {
     FixedClosed,
     FixedOpen,
@@ -37,7 +45,7 @@ pub enum FenestrationPositions {
     Binary,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, SimpleInputOutput)]
 pub enum FenestrationType {
     Window,
     Door,
@@ -46,7 +54,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive(SimpleObjectBehaviour)]
+#[derive(SimpleObjectBehaviour, SimpleInputOutput)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
@@ -54,9 +62,9 @@ pub struct Fenestration {
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
-    /// The Polygon3D that represents
-    /// the dimensions and size of the Fenestration
-    pub polygon: Polygon3D,
+    /// An array of Numbers representing the vertices of the 
+    /// surface. The length of this array must be divisible by 3.
+    pub vertices: Polygon3D,
 
     /// The index of the Construction object in the
     /// constructions property of the SimpleModel object    
@@ -93,13 +101,13 @@ pub struct Fenestration {
 impl Fenestration {
     /// Clones the outer [`Loop3D`] of the [`Fenestration`]
     pub fn clone_loop(&self) -> Loop3D {
-        self.polygon.outer().clone()
+        self.vertices.outer().clone()
     }
 
     /// Gets the area, based on the [`Polygon3D`] that represents
     /// this [`Fenestration`]
     pub fn area(&self) -> Float {
-        self.polygon.area()
+        self.vertices.area()
     }
 
     // fn sub_class_name(&self) -> &str {
@@ -120,39 +128,28 @@ impl Fenestration {
         }
     }
 
-    // pub fn set_open_fraction(
-    //     &self,
-    //     state: &mut SimulationState,
-    //     new_open: Float,
-    // ) -> Result<(), String> {
-    //     match self.operation_type {
-    //         FenestrationPositions::FixedClosed | FenestrationPositions::FixedOpen => Err(format!(
-    //             "Trying to operate a {}::{}: '{}'",
-    //             self.object_type(),
-    //             self.sub_class_name(),
-    //             self.name
-    //         )),
-    //         FenestrationPositions::Continuous => {
-    //             let i = self.open_fraction_index()?;
-    //             state.update_value(i, SimulationStateElement::FenestrationOpenFraction(self.index, new_open));
-    //             Ok(())
-    //         }
-    //         FenestrationPositions::Binary => {
-    //             if new_open.abs() > Float::EPSILON && (new_open - 1.0).abs()>Float::EPSILON {
-    //                 return Err(format!(
-    //                     "Trying leave '{}',  a {} {}, half-opened",
-    //                     self.name,
-    //                     self.sub_class_name(),
-    //                     self.object_type()
-    //                 ));
-    //             } else {
-    //                 let i = self.open_fraction_index()?;
-    //                 state.update_value(i, SimulationStateElement::FenestrationOpenFraction(self.index, new_open));
-    //                 Ok(())
-    //             }
-    //         }
-    //     }
-    // }
+   
+}
+
+
+
+impl SimpleModel {
+
+    /// Adds a [`Fenestration`] to the [`SimpleModel`]
+    pub fn add_fenestration(&mut self, mut add : Fenestration, state: &mut SimulationStateHeader ) -> Rc<Fenestration>{
+        // Check the index of this object
+        let fen_index = self.fenestrations.len();
+        add.set_index(fen_index);
+
+        // Push the OpenFraction state, and map into the object
+        let state_index = state.push( SimulationStateElement::FenestrationOpenFraction(fen_index), 0.);
+        add.set_open_fraction_index(state_index);
+
+        // Add to model, and return a reference
+        let add = Rc::new(add);
+        self.fenestrations.push(Rc::clone(&add));
+        add
+    }
 }
 
 
@@ -160,36 +157,10 @@ impl Fenestration {
 /* TESTING */
 /***********/
 
-// #[cfg(test)]
-// mod testing {
+#[cfg(test)]
+mod testing {
 
-//     use super::*;
+    // use super::*;
 
-//     #[test]
-//     #[should_panic]
-//     fn test_ground_boundary_front() {
-//         let mut state: SimulationState = SimulationState::new();
-//         let mut f = Fenestration::new(
-//             &mut state,
-//             format!("A"),
-//             12,
-//             FenestrationPositions::FixedOpen,
-//             FenestrationType::Window,
-//         );
-//         f.set_front_boundary(Boundary::Ground).unwrap();
-//     }
 
-//     #[test]
-//     #[should_panic]
-//     fn test_ground_boundary_back() {
-//         let mut state: SimulationState = SimulationState::new();
-//         let mut f = Fenestration::new(
-//             &mut state,
-//             format!("A"),
-//             12,
-//             FenestrationPositions::FixedOpen,
-//             FenestrationType::Window,
-//         );
-//         f.set_back_boundary(Boundary::Ground).unwrap();
-//     }
-// }
+}

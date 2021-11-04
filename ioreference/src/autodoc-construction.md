@@ -8,7 +8,7 @@
 ```rs
 Construction {
 	name : string
-	layers : [ Material, ...] 
+	materials : [ Material, ...] 
 }
 ```
 
@@ -24,7 +24,7 @@ Construction {
 
 
 
-### layers
+### materials
 
   The indices of the Material objects in the
   materials property of the SimpleModel object

@@ -26,10 +26,10 @@ pub mod electric_heater;
 use crate::model::SimpleModel;
 use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
 use crate::hvac::electric_heater::ElectricHeater;
-use crate::scanner::{Scanner, TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use building_state_macro::GroupInputOutput;
 use std::any::Any;
-
+use std::rc::Rc;
 
 /// A collection of elements heating and cooling systems
 #[derive(Debug, GroupInputOutput)]
@@ -86,28 +86,47 @@ pub trait HVAC {
     fn as_mut_any(&mut self) -> &mut dyn Any;
 
 
-    /// Sets the index of 
-    fn set_index(&mut self, index: usize){
-        match self.kind(){
+}
+
+
+use crate::simulation_state_element::SimulationStateElement;
+use crate::simulation_state::SimulationStateHeader;
+
+impl SimpleModel {
+
+    /// Adds a [`HVAC`] to the [`SimpleModel`]
+    pub fn add_hvac(&mut self, mut add : Rc<dyn HVAC>, state: &mut SimulationStateHeader ) -> Rc<dyn HVAC> {
+
+        // Check the index of this object
+        let obj_index = self.hvacs.len();
+        match add.kind(){
             HVACKind::ElectricHeater=>{
-                // cast_mut_hvac::<ElectricHeater>(&mut self).expect("When setting index of ElectricHeater HVAC").set_index(index);
-                if let Some(h) = self.as_mut_any().downcast_mut::<ElectricHeater>() {                    
-                    h.set_index(index);
+                let hvac = Rc::get_mut(&mut add).expect("Could not borrow ElectricHeater as mutable");
+                if let Some(h) = hvac.as_mut_any().downcast_mut::<ElectricHeater>() {                    
+                    h.set_index(obj_index);
+                    let state_index = state.push( SimulationStateElement::HeatingCoolingPowerConsumption(obj_index), 0.);
+                    h.set_heating_cooling_consumption_index(state_index);
                 } else {
-                    panic!("Invalid casting HVAC type... found type is {:?}", self.kind())
+                    panic!("Invalid casting HVAC type... found type is {:?}", add.kind())
                 }
             },
             HVACKind::IdealHeaterCooler=>{
-                if let Some(h) = self.as_mut_any().downcast_mut::<IdealHeaterCooler>() {                    
-                    h.set_index(index);
+                let hvac = Rc::get_mut(&mut add).expect("Could not borrow IdealHeaterCooler as mutable");
+                if let Some(h) = hvac.as_mut_any().downcast_mut::<IdealHeaterCooler>() {                    
+                    h.set_index(obj_index);
+                    let state_index = state.push( SimulationStateElement::HeatingCoolingPowerConsumption(obj_index), 0.);
+                    h.set_heating_cooling_consumption_index(state_index);
                 } else {
-                    panic!("Invalid casting HVAC type... found type is {:?}", self.kind())
+                    panic!("Invalid casting HVAC type... found type is {:?}", add.kind())
                 }
             }
         }
+                
+        // Add to model, and return a reference        
+        self.hvacs.push(Rc::clone(&add));
+        add
     }
 }
-
 
 
 
@@ -127,7 +146,7 @@ mod testing {
         let bytes = b"{
             name: \"the space\"
         }";
-        let space = Space::from_bytes(bytes, &mut building).unwrap();
+        let space = Space::from_bytes(1, bytes, &mut building).unwrap();
         assert_eq!(space.name, "the space".to_string());
         let space = building.add_space(space);
 
@@ -137,7 +156,7 @@ mod testing {
         }
         ";
 
-        let heater = HVACKind::from_bytes(bytes, &mut building).unwrap();
+        let heater = HVACKind::from_bytes(1, bytes, &mut building).unwrap();
         match &heater.kind(){
             HVACKind::ElectricHeater =>{
                 if let Some(h) = heater.as_any().downcast_ref::<ElectricHeater>() {                    

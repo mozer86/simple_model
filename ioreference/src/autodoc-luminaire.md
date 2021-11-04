@@ -1,8 +1,6 @@
 # Luminaire
 
   A Luminaire
-  
-  Please fill this doc
 
 
 ```rs

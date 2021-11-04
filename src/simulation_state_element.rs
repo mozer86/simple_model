@@ -43,7 +43,7 @@ pub enum SimulationStateElement {
     /// Represents the heating/cooling energy consumption of a Heating/Cooling system,
     /// in Watts
     ///
-    /// Contains the index of the HeaterCooler in the building's vector,
+    /// Contains the index of the HVAC in the building's vector,
     /// and the power.        
     #[operational]
     HeatingCoolingPowerConsumption(usize),
@@ -58,17 +58,17 @@ pub enum SimulationStateElement {
     //SpaceTotalSolarHeatGain(usize),
     //SpaceDirectSolarHeatGain(usize),
     //SpaceDiffuseSolarHeatGain(usize),
-    /// Represents the Brightness of a space.
-    ///
-    /// This perception is a placeholder. I need to
-    /// understand better what makes a space look "bright"
-    /// and how that relates to its attractiveness and
-    /// cleanliness and all.
-    ///
-    /// **This is written as a perception for now,
-    /// but it should be a physical quantity**
-    #[physical]
-    SpaceBrightness(usize),
+    // /// Represents the Brightness of a space.
+    // ///
+    // /// This perception is a placeholder. I need to
+    // /// understand better what makes a space look "bright"
+    // /// and how that relates to its attractiveness and
+    // /// cleanliness and all.
+    // ///
+    // /// **This is written as a perception for now,
+    // /// but it should be a physical quantity**
+    // #[physical]
+    // SpaceBrightness(usize),
 
     // Surface
     //SurfaceFrontTotalSolarIrradiance(usize),
@@ -132,87 +132,14 @@ pub enum SimulationStateElement {
 
     /* ACOUSTIC */
     // Space
-    /// Represents the loudness in a certain space
-    ///
-    /// **This is written as a perception for now,
-    /// but it should be a physical quantity**
-    #[physical]
-    SpaceLoudness(usize),
+    // /// Represents the loudness in a certain space
+    // ///
+    // /// **This is written as a perception for now,
+    // /// but it should be a physical quantity**
+    // #[physical]
+    // SpaceLoudness(usize),
 }
 
-impl SimulationStateElement {
-    /*
-    pub fn safe_get_value(&self, pattern: Self) -> Float {
-        match self.differ_only_in_value(pattern) {
-            Ok(()) => self.get_value(),
-            Err(e) => {
-                panic!(
-                    "Corrupt Simulation State : '{}' Looking for pattern '{:?}', found '{:?}'",
-                    e, pattern, self
-                )
-            }
-        }
-    }
-    */
-
-    // /// Transforms a StateElement into a String
-    // pub fn to_string(&self) -> String {
-    //     match self {
-    //         // Individual ones
-    //         Self::Clothing(_) => format!("Clothing"),
-
-    //         // Operational ones
-    //         Self::FenestrationOpenFraction(fenestration_index, _) => {
-    //             format!("Fenestration {} - OpenFraction [-]", fenestration_index)
-    //         }
-    //         Self::HeatingCoolingPowerConsumption(space_index, _) => {
-    //             format!("Heating/Cooling {} - Power Consumption [W]", space_index)
-    //         }
-    //         Self::LuminairePowerConsumption(space_index, _) => {
-    //             format!("Luminaire {} - Lighting Power Consumption [W]", space_index)
-    //         }
-    //         Self::SpaceInfiltrationVolume(space_index, _) => {
-    //             format!("Space {} - Infiltration Volume [m3/s]", space_index)
-    //         }
-    //         Self::SpaceInfiltrationTemperature(space_index, _) => {
-    //             format!("Space {} - Infiltration [C]", space_index)
-    //         }
-    //         Self::SpaceVentilationVolume(space_index, _) => {
-    //             format!("Space {} - Ventilation Volume [m3/s]", space_index)
-    //         }
-    //         Self::SpaceVentilationTemperature(space_index, _) => {
-    //             format!("Space {} - Ventilation Temperature [C]", space_index)
-    //         }
-    //         Self::SpaceAirExchangeVolume(origin, target, _) => {
-    //             format!("Space {} to Space {} - Air Exchange [m3/s]", origin, target)
-    //         }
-
-    //         // Physical ones
-    //         Self::SpaceDryBulbTemperature(space_index, _) => {
-    //             format!("Space {} Dry Bulb Temperature [C]", space_index)
-    //         }
-
-    //         Self::SurfaceNodeTemperature(surface_index, node_index, _) => {
-    //             format!(
-    //                 "Surface {} - Node {} Temperature [C]",
-    //                 surface_index, node_index
-    //             )
-    //         }
-    //         Self::FenestrationNodeTemperature(fen_index, node_index, _) => {
-    //             format!(
-    //                 "Fenestration {} - Node {} Temperature [C]",
-    //                 fen_index, node_index
-    //             )
-    //         }
-    //         Self::SpaceBrightness(space_index, _) => {
-    //             format!("Space {} - Brightness", space_index)
-    //         }
-    //         Self::SpaceLoudness(space_index, _) => {
-    //             format!("Space {} - Loudness", space_index)
-    //         }
-    //     }
-    // }
-}
 
 /***********/
 /* TESTING */

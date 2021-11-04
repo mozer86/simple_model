@@ -23,7 +23,7 @@ use crate::model::SimpleModel;
 use crate::material::Material;
 use std::rc::Rc;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
-use crate::scanner::{Scanner, TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 
 /// An object representing a multilayer
@@ -40,7 +40,7 @@ pub struct Construction {
 
     /// The indices of the Material objects in the
     /// materials property of the SimpleModel object
-    pub layers: Vec<Rc<Material>>,
+    pub materials: Vec<Rc<Material>>,
     
     // front finishing
     // back finishing
@@ -52,7 +52,7 @@ impl Construction {
 
         let mut r = 0.0;
 
-        for material in self.layers.iter() {                        
+        for material in self.materials.iter() {                        
             let lambda = material.substance.thermal_conductivity()?;
             r += material.thickness / lambda;
         }
@@ -61,6 +61,17 @@ impl Construction {
     }
 }
 
+
+impl SimpleModel {
+
+    /// Adds a [`Construction`] to the [`SimpleModel`]
+    pub fn add_construction(&mut self, mut add : Construction) -> Rc<Construction>{
+        add.set_index(self.constructions.len());
+        let add = Rc::new(add);
+        self.constructions.push(Rc::clone(&add));
+        add
+    }
+}
 
 /***********/
 /* TESTING */
@@ -76,7 +87,7 @@ mod testing {
         let c_name = "The construction".to_string();
 
         let mut c = Construction::new(c_name.clone());
-        assert_eq!(0, c.layers.len());
+        assert_eq!(0, c.materials.len());
         assert_eq!(c_name, c.name);
 
         // Create substance
@@ -92,10 +103,10 @@ mod testing {
             mat_1_thickness,
         ));
 
-        c.layers.push(mat_1);
-        assert_eq!(1, c.layers.len());
-        assert_eq!(mat_1_name, c.layers[0].name);
-        assert_eq!(mat_1_thickness, c.layers[0].thickness);
+        c.materials.push(mat_1);
+        assert_eq!(1, c.materials.len());
+        assert_eq!(mat_1_name, c.materials[0].name);
+        assert_eq!(mat_1_thickness, c.materials[0].thickness);
 
         let mat_2_name = "mat_2".to_string();
         let mat_2_thickness = 1.12312;
@@ -105,10 +116,10 @@ mod testing {
             mat_2_thickness,
         ));
 
-        c.layers.push(mat_2);
-        assert_eq!(2, c.layers.len());
-        assert_eq!(mat_2_name, c.layers[1].name);
-        assert_eq!(mat_2_thickness, c.layers[1].thickness);
+        c.materials.push(mat_2);
+        assert_eq!(2, c.materials.len());
+        assert_eq!(mat_2_name, c.materials[1].name);
+        assert_eq!(mat_2_thickness, c.materials[1].thickness);
     }
 
     #[test]
@@ -128,20 +139,20 @@ mod testing {
         
 
         let mut building = SimpleModel::new("the building".to_string());
-        let mat = Material::from_bytes(bytes, &mut building).unwrap();
+        let mat = Material::from_bytes(1, bytes, &mut building).unwrap();
 
         let mat = building.add_material(mat);
 
         let bytes = b" {
             name : \"The Construction\",            
-            layers: [
+            materials : [
                 \"A Material\"
             ]            
         }
         ";
 
-        let construction = Construction::from_bytes(bytes, &mut building).unwrap();
-        assert!(Rc::ptr_eq(&mat, &construction.layers[0]));
+        let construction = Construction::from_bytes(1, bytes, &mut building).unwrap();
+        assert!(Rc::ptr_eq(&mat, &construction.materials[0]));
 
     }
 }

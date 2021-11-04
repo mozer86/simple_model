@@ -18,20 +18,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 use crate::Float;
-
 use crate::model::SimpleModel;
-use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::StateElementField;
+use crate::simulation_state::{SimulationState, SimulationStateHeader};
+use crate::simulation_state_element::{StateElementField, SimulationStateElement};
 use crate::space::Space;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 
-use crate::scanner::{Scanner, TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 use std::rc::Rc;
 
 /// A Luminaire
-/// 
-/// Please fill this doc
 #[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct Luminaire {
     /// The name of the Luminaire
@@ -59,3 +56,23 @@ pub struct Luminaire {
     power_consumption: StateElementField,
 }
 
+
+
+impl SimpleModel {
+
+    /// Adds a [`Luminaire`] to the [`SimpleModel`]
+    pub fn add_luminaire(&mut self, mut add : Luminaire, state: &mut SimulationStateHeader ) -> Rc<Luminaire>{
+        // Check the index of this object
+        let obj_index = self.fenestrations.len();
+        add.set_index(obj_index);
+
+        // Push the state, and map into the object
+        let state_index = state.push( SimulationStateElement::LuminairePowerConsumption(obj_index), 0.);
+        add.set_power_consumption_index(state_index);
+
+        // Add to model, and return a reference
+        let add = Rc::new(add);
+        self.luminaires.push(Rc::clone(&add));
+        add
+    }
+}

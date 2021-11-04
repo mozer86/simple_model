@@ -20,7 +20,7 @@ SOFTWARE.
 
 use std::rc::Rc;
 use building_state_macro::SimpleInputOutput;
-use crate::scanner::{Scanner, TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::space::Space;
 use crate::model::SimpleModel;
 
@@ -57,7 +57,7 @@ mod testing {
         /* Ground */
         let mut building = SimpleModel::new("the building".to_string());
         let bytes = b" ::Ground,";
-        let bound = Boundary::from_bytes(bytes, &mut building).unwrap();
+        let bound = Boundary::from_bytes(1, bytes, &mut building).unwrap();
         if let Boundary::Ground = bound{
             assert!(true)
         }else{
@@ -70,7 +70,7 @@ mod testing {
         let space = building.add_space(space);
 
         let bytes = b" ::Space(\"the space\"),";
-        let bound = Boundary::from_bytes(bytes, &mut building).unwrap();
+        let bound = Boundary::from_bytes(1, bytes, &mut building).unwrap();
         if let Boundary::Space(s) = &bound{
             assert!(Rc::ptr_eq(s, &space));
         }else{
@@ -82,7 +82,7 @@ mod testing {
         let bytes = b" ::Space(Space{
             name: \"Some Space\"
         }),";
-        let bound = Boundary::from_bytes(bytes, &mut building).unwrap();
+        let bound = Boundary::from_bytes(1, bytes, &mut building).unwrap();
         if let Boundary::Space(s) = &bound{
             assert_eq!(s.name, "Some Space");
         }else{

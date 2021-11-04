@@ -18,9 +18,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 use crate::Float;
+use std::rc::Rc;
 
 // use std::cell::RefCell;
-use crate::scanner::{Scanner,TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 use crate::model::SimpleModel;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
@@ -61,6 +62,16 @@ impl Substance {
     }
 }
 
+impl SimpleModel {
+
+    /// Adds a [`Subtance`] to the [`SimpleModel`]
+    pub fn add_substance(&mut self, mut add : Substance) -> Rc<Substance>{
+        add.set_index(self.substances.len());
+        let add = Rc::new(add);
+        self.substances.push(Rc::clone(&add));
+        add
+    }
+}
 
 /***********/
 /* TESTING */
@@ -110,7 +121,7 @@ mod testing {
 
         let mut building = SimpleModel::new("the building".to_string());
 
-        let sub = Substance::from_bytes(bytes, &mut building).unwrap();
+        let sub = Substance::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(sub.name, "A substance".to_string());
         assert!((1.2 - sub.thermal_conductivity.unwrap()).abs()<EPSILON);

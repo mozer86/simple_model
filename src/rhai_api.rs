@@ -18,61 +18,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use crate::Float;
-
-
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 use std::rc::Rc;
-use crate::space::Space;
+use std::cell::RefCell;
+use rhai::{Engine, EvalAltResult};
+use crate::Float;
 use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::StateElementField;
-use crate::hvac::{HVAC, HVACKind};
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::model::SimpleModel;
-use std::any::Any;
 
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
-pub struct ElectricHeater {
-    /// The name of the system
-    pub name: String,
-    
-    /// The position of this object in its contaner Vector
-    index: Option<usize>,
 
-    /// The [`Space`] that this [`ElectricHeater`] heats and/or
-    /// cools
-    target_space: Option<Rc<Space>>,
-    
-    /// Max heating power
-    max_heating_power: Option<Float>,
-
-    #[state]
-    heating_cooling_consumption: StateElementField,
+fn as_usize(v: i64) -> Result<usize,Box<EvalAltResult>> {
+    if v < 0 {
+        return Err("Expecting a positive number".into());
+    }
+    Ok(v as usize)
 }
 
-impl HVAC for ElectricHeater{
-    
-    fn kind(&self)->HVACKind{
-        HVACKind::ElectricHeater
-    }
+/// Registers the functions used to operate the building
+pub fn register_control_api(engine : &mut Engine, model: &Rc<SimpleModel>, state: &Rc<RefCell<SimulationState>>){
 
-    fn can_heat(&self)->bool{
-        true
-    }
 
-    fn can_cool(&self)->bool{
-        false
-    }
+    let new_mod = Rc::clone(model);
+    // let new_state = Rc::clone(state);
+    engine.register_fn("count_spaces", move || {
+        new_mod.spaces.len() as i32
+    });
 
-    fn as_any(&self) -> &dyn Any{
-        self
-    }   
+    let new_mod = Rc::clone(model);
+    let new_state = Rc::clone(state);
+    engine.register_result_fn("set_space_infiltration_volume", move |i: i64, v: Float| {
+        let i = as_usize(i)?;
+        if i >= new_mod.spaces.len(){
+            return Err(format!("Trying to retreive space {}, but model only has {}", i, new_mod.spaces.len()).into());
+        }
+        let space = &new_mod.spaces[i];
+        let state_ptr = &mut *new_state.borrow_mut();
+        space.set_infiltration_volume(state_ptr, v);
 
-    fn as_mut_any(&mut self) -> &mut dyn Any{
-        self
-    }  
-
-    
+        Ok(())
+    });
 
 }
-

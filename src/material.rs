@@ -19,11 +19,11 @@ SOFTWARE.
 */
 use crate::Float;
 
+use std::rc::Rc;
 use crate::model::SimpleModel;
 use crate::substance::Substance;
-use std::rc::Rc;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
-use crate::scanner::{Scanner, TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 
 
@@ -46,6 +46,17 @@ pub struct Material {
     pub thickness: Float,
 
     
+}
+
+impl SimpleModel {
+
+    /// Adds a [`Material`] to the [`SimpleModel`]
+    pub fn add_material(&mut self, mut add : Material) -> Rc<Material>{
+        add.set_index(self.materials.len());
+        let add = Rc::new(add);
+        self.materials.push(Rc::clone(&add));
+        add
+    }
 }
 
 
@@ -97,7 +108,7 @@ mod testing {
 
         let mut building = SimpleModel::new("the building".to_string());
 
-        let sub = Substance::from_bytes(bytes, &mut building).unwrap();
+        let sub = Substance::from_bytes(1, bytes, &mut building).unwrap();
         let sub = building.add_substance(sub);
 
         let bytes = b"{ 
@@ -107,7 +118,7 @@ mod testing {
         }
         ";
 
-        let mat = Material::from_bytes(bytes, &mut building).unwrap();
+        let mat = Material::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());
         assert!((0.1 - mat.thickness).abs()<EPSILON);
@@ -130,7 +141,7 @@ mod testing {
         
 
         let mut building = SimpleModel::new("the building".to_string());
-        let mat = Material::from_bytes(bytes, &mut building).unwrap();
+        let mat = Material::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());
         assert!((0.1  - mat.thickness).abs()<EPSILON);
@@ -142,3 +153,5 @@ mod testing {
 
     }
 }
+
+

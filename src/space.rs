@@ -19,12 +19,12 @@ SOFTWARE.
 */
 
 use crate::Float;
-
+use std::rc::Rc;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 use crate::model::SimpleModel;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
-use crate::scanner::{Scanner, TokenType};
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::infiltration::Infiltration;
 
 /// Represents a space within a building. This will
@@ -77,6 +77,19 @@ pub struct Space {
 
     #[state]
     ventilation_temperature: StateElementField,
+}
+
+
+
+impl SimpleModel {
+
+    /// Adds a [`Space`] to the [`SimpleModel`]
+    pub fn add_space(&mut self, mut add : Space) -> Rc<Space>{
+        add.set_index(self.spaces.len());
+        let add = Rc::new(add);
+        self.spaces.push(Rc::clone(&add));
+        add
+    }
 }
 
 
@@ -138,7 +151,7 @@ mod testing {
 
         let mut building = SimpleModel::new("the building".to_string());
 
-        let space = Space::from_bytes(bytes, &mut building).unwrap();
+        let space = Space::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(space.name, "A Space".to_string());
         assert!((1.2 - space.volume.unwrap()).abs()<EPSILON);

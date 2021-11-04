@@ -18,9 +18,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use crate::Float;
 use building_state_macro::SimpleInputOutput;
-use crate::scanner::{Scanner, TokenType};
+use crate::Float;
+use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::model::SimpleModel;
 
 /// An infiltration rate for a `Space`
@@ -29,4 +29,24 @@ pub enum Infiltration {
     
     /// A contant infiltration, specified in `m3/s`
     Constant(Float),    
+
+    /// Sets the infiltration to the `DesignFlowRate` values using the 
+    /// default from BLAST as described in the EnergyPlus' Input Output reference
+    Blast(Float),
+
+    /// Sets the infiltration to the `DesignFlowRate` values using the 
+    /// default from DOE-2 as described in the EnergyPlus' Input Output reference
+    Doe2(Float),
+
+    /// Sets the infiltration to the `DesignFlowRate` values using an 
+    /// arbitrary set of values. This option is based on EnergyPlus'
+    /// object of the same name
+    DesignFlowRate(Float, Float, Float, Float, Float),
+
+    /// Sets the infiltration based on `EffectiveLeakageArea` as 
+    /// described in the EnergyPlus' Input Output reference.
+    /// 
+    /// The area is in cm2 estimated for a pressure differencial 
+    /// of 4Pa
+    EffectiveAirLeakageArea(Float),
 }

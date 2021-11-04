@@ -27,7 +27,7 @@ IdealHeaterCooler {
 
 ### target_spaces
 
-  The `Space`s that this [`IdealHeaterCooler`] heats and/or
+  The `Space`s that this `IdealHeaterCooler` heats and/or
   cools
 
 
