@@ -26,7 +26,6 @@ use crate::simulation_state::SimulationState;
 use crate::simulation_state_element:: StateElementField;
 use crate::space::Space;
 use crate::hvac::*;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::model::SimpleModel;
 
 use std::any::Any;

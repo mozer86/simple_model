@@ -20,51 +20,25 @@ SOFTWARE.
 
 use std::rc::Rc;
 use std::cell::RefCell;
-use rhai::{Engine, EvalAltResult};
-use crate::Float;
 use crate::{
     SimulationState,
     SimpleModel,
-    Space
+    Space,
+    Surface,
+    Fenestration,
+    Luminaire
 };
 
 
-
-fn as_usize(v: i64) -> Result<usize,Box<EvalAltResult>> {
-    if v < 0 {
-        return Err("Expecting a positive number".into());
-    }
-    Ok(v as usize)
-}
 
 
 
 
 /// Registers the functions used to operate the building
-pub fn register_control_api(engine : &mut Engine, model: &Rc<SimpleModel>, state: &Rc<RefCell<SimulationState>>){
+pub fn register_control_api(engine : &mut rhai::Engine, model: &Rc<SimpleModel>, state: &Rc<RefCell<SimulationState>>, research_mode: bool){
 
-    /************ */
-    /*  Space API */
-    /************ */
-    
-    
-    let new_mod = Rc::clone(model);
-    engine.register_fn("count_spaces", move || {
-        new_mod.spaces.len() as i32
-    });
-
-    let new_mod = Rc::clone(model);
-    let new_state = Rc::clone(state);
-    engine.register_result_fn("set_space_infiltration_volume", move |i: i64, v: Float| {
-        let i = as_usize(i)?;
-        if i >= new_mod.spaces.len(){
-            return Err(format!("Trying to retreive space {}, but model only has {}", i, new_mod.spaces.len()).into());
-        }
-        let space = &new_mod.spaces[i];
-        let state_ptr = &mut *new_state.borrow_mut();
-        space.set_infiltration_volume(state_ptr, v);
-
-        Ok(())
-    });
-
+    Space::register_api(engine, model, state, research_mode);
+    Surface::register_api(engine, model, state, research_mode);
+    Fenestration::register_api(engine, model, state, research_mode);
+    Luminaire::register_api(engine, model, state, research_mode);
 }

@@ -14,14 +14,14 @@ ElectricHeater {
 
 
 
-### name
+#### name
 
   The name of the system
 
 
 
 
-### target_space  (*optional*)
+#### target_space  (*optional*)
 
   The [`Space`] that this [`ElectricHeater`] heats and/or
   cools
@@ -29,7 +29,7 @@ ElectricHeater {
 
 
 
-### max_heating_power  (*optional*)
+#### max_heating_power  (*optional*)
 
   Max heating power
 

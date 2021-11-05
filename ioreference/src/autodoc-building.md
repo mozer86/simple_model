@@ -18,21 +18,21 @@ Building {
 
 
 
-### name
+#### name
 
   The name of the Building
 
 
 
 
-### storeys  (*optional*)
+#### storeys  (*optional*)
 
   The number of storeys of this building
 
 
 
 
-### stack_coefficient  (*optional*)
+#### stack_coefficient  (*optional*)
 
   The stack coefficient of this building, used for 
 
@@ -49,7 +49,7 @@ Building {
 
 
 
-### wind_coefficient  (*optional*)
+#### wind_coefficient  (*optional*)
 
   The wind coefficient of this building, used for 
 

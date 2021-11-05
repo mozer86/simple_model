@@ -26,13 +26,12 @@ pub mod electric_heater;
 use crate::model::SimpleModel;
 use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
 use crate::hvac::electric_heater::ElectricHeater;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
-use building_state_macro::GroupInputOutput;
+use building_state_macro::SimpleGroupInputOutput;
 use std::any::Any;
 use std::rc::Rc;
 
 /// A collection of elements heating and cooling systems
-#[derive(Debug, GroupInputOutput)]
+#[derive(Debug, SimpleGroupInputOutput)]
 pub enum HVACKind{
     /// An ideal heating/cooling device.
     /// Heats and Cools with an efficiency of

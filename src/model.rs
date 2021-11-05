@@ -99,17 +99,32 @@ mod testing {
         // Add automatic documentation
         let dir = "./ioreference/src";
         Boundary::print_doc(&dir, &mut summary).unwrap();
+        
         Building::print_doc(&dir, &mut summary).unwrap();
+        
         Construction::print_doc(&dir, &mut summary).unwrap();
+        
         Fenestration::print_doc(&dir, &mut summary).unwrap();
+        Fenestration::print_api_doc(&dir, &mut summary).unwrap();
+        
         HVACKind::print_doc(&dir, &mut summary).unwrap();
+        
         Infiltration::print_doc(&dir, &mut summary).unwrap();
+        
         Luminaire::print_doc(&dir, &mut summary).unwrap();
+        Luminaire::print_api_doc(&dir, &mut summary).unwrap();
+
         Material::print_doc(&dir, &mut summary).unwrap();
+        
         Space::print_doc(&dir, &mut summary).unwrap();
+        Space::print_api_doc(&dir, &mut summary).unwrap();
+        
         Substance::print_doc(&dir, &mut summary).unwrap();
+        
         ShelterClass::print_doc(&dir, &mut summary).unwrap();
+        
         Surface::print_doc(&dir, &mut summary).unwrap();
+        Surface::print_api_doc(&dir, &mut summary).unwrap();
         // assert!(false)
 
         let summary_file = format!("{}/SUMMARY.md", dir);
@@ -176,20 +191,16 @@ mod testing {
     
 
 
-    use crate::simulation_state::{SimulationStateHeader, SimulationState};
+    use crate::simulation_state::{SimulationStateHeader};
+    
     use crate::simulation_state_element::SimulationStateElement;
     use std::cell::RefCell;
-    use crate::rhai_api::*;
+    use crate::rhai_api::*;    
     #[test]
     fn test_api(){
 
         
-        fn sim_model_trait(model: &SimpleModel, state: &mut SimulationState) {
-            println!("Model is == {}", model.name);
-            for (i,v) in state.iter().enumerate(){
-                println!("value {} is {}", i, v)
-            }
-        }
+        
 
         let mut model = SimpleModel::new("The Model".to_string());
         
@@ -207,18 +218,21 @@ mod testing {
         let model = Rc::new(model);
         let mut engine = rhai::Engine::new();
 
-        register_control_api(&mut engine, &model, &state);
+        register_control_api(&mut engine, &model, &state, true);
 
         let ast = engine.compile("
-            let n_spaces = count_spaces();
-            print(`spaces are = ${n_spaces}`);
-            set_space_infiltration_volume(0, 4.5);            
+            
+            let temp = space_infiltration_volume(\"some space\");
+            print(`Infiltration volume is ${temp} `);
+            set_space_infiltration_volume(\"some space\", 3.1415);
+            let temp = space_infiltration_volume(0);
+            print(`Infiltration volume is ${temp} `);
+            
         ").unwrap();
 
         let _result : () = engine.eval_ast(&ast).unwrap();
 
-        let state_ptr = &mut *state.borrow_mut();
-        sim_model_trait(&*model, state_ptr);
+        
 
 
 

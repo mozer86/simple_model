@@ -21,7 +21,7 @@ Substance {
 
 
 
-### name
+#### name
 
   The name of the Substance. Should be unique for each
   Material in the SimpleModel object    
@@ -29,21 +29,21 @@ Substance {
 
 
 
-### thermal_conductivity  (*optional*)
+#### thermal_conductivity  (*optional*)
 
   The thermal conductivity of the substance in W/m.K
 
 
 
 
-### specific_heat_capacity  (*optional*)
+#### specific_heat_capacity  (*optional*)
 
   The specific heat capacity of the substance in J/kg.K
 
 
 
 
-### density  (*optional*)
+#### density  (*optional*)
 
   The density of the substance in kg/m3
 

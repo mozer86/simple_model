@@ -20,7 +20,6 @@ SOFTWARE.
 use crate::Float;
 use crate::model::SimpleModel;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 
 

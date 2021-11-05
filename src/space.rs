@@ -18,18 +18,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+
+
 use crate::Float;
 use std::rc::Rc;
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+use building_state_macro::{
+    SimpleInputOutput, 
+    SimpleObjectBehaviour,
+    SimpleRhaiAPI
+};
+
 use crate::model::SimpleModel;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::infiltration::Infiltration;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI)]
 pub struct Space {
     /// The name of the space
     pub name: String,
@@ -43,39 +49,36 @@ pub struct Space {
     /// The infiltration in the space
     infiltration: Option<Infiltration>,
 
-    /*
-    /// The indices of the surrounding Surfaces in the
-    /// SimpleModel's Surfaces array
-    pub surfaces: Vec<Rc<RefCell<Surface>>>,
-
-    /// The indices of the surrounding Fenestration in the
-    /// SimpleModel's Surfaces array
-    pub fenestrations: Vec<Rc<RefCell<Fenestration>>>,
-    */
-
     /// The importance of this space over time
     // importance : Option<Box<dyn Schedule<Float>>>,
     
 
     #[state]
+    #[physical]
     dry_bulb_temperature: StateElementField,
 
     #[state]
+    #[physical]
     brightness: StateElementField,
 
     #[state]
+    #[physical]
     loudness: StateElementField,
 
     #[state]
+    #[physical]
     infiltration_volume: StateElementField,
 
     #[state]
+    #[physical]
     infiltration_temperature: StateElementField,
 
     #[state]
+    #[physical]
     ventilation_volume: StateElementField,
 
     #[state]
+    #[physical]
     ventilation_temperature: StateElementField,
 }
 
@@ -99,7 +102,7 @@ impl SimpleModel {
 
 #[cfg(test)]
 mod testing {
-    use super::*;
+    use super::*;    
 
     #[cfg(feature = "float")]
     const EPSILON : f32 = std::f32::EPSILON;

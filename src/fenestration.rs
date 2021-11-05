@@ -19,8 +19,11 @@ SOFTWARE.
 */
 use crate::Float;
 
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
+use building_state_macro::{
+    SimpleInputOutput, 
+    SimpleObjectBehaviour,
+    SimpleRhaiAPI
+};
 
 use geometry3d::{
     Loop3D,
@@ -54,7 +57,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive(SimpleObjectBehaviour, SimpleInputOutput)]
+#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
@@ -87,14 +90,17 @@ pub struct Fenestration {
     back_boundary: Option<Boundary>,
 
     #[state]
+    #[physical("front_temperature")]
     first_node_temperature: StateElementField,
 
     #[state]
+    #[physical("back_temperature")]
     last_node_temperature: StateElementField,
 
     /// Index of the SimulationStateElement representing
     /// the fraction open in the SimulationState
     #[state]
+    #[operational]
     open_fraction: StateElementField,
 }
 

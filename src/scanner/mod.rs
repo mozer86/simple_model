@@ -20,7 +20,7 @@ SOFTWARE.
 
 
 pub mod simple_scanner;
-pub mod markdown_scanner;
+// pub mod markdown_scanner;
 mod tokens;
 
 

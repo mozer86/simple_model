@@ -20,8 +20,6 @@ SOFTWARE.
 use crate::Float;
 use std::rc::Rc;
 
-// use std::cell::RefCell;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 use crate::model::SimpleModel;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};

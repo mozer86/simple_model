@@ -17,14 +17,14 @@ Material {
 
 
 
-### name
+#### name
 
   The name of the material object
 
 
 
 
-### substance
+#### substance
 
   A reference to the [`Substance`] of which this
   [`Material`] is made of    
@@ -32,7 +32,7 @@ Material {
 
 
 
-### thickness
+#### thickness
 
   The thickness of the [`Material`]
 

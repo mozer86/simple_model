@@ -20,7 +20,6 @@ SOFTWARE.
 
 use std::rc::Rc;
 use building_state_macro::SimpleInputOutput;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::space::Space;
 use crate::model::SimpleModel;
 

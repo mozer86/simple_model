@@ -25,7 +25,13 @@ use geometry3d::{
     Point3D,
     Loop3D
 };
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+
+use building_state_macro::{
+    SimpleInputOutput, 
+    SimpleObjectBehaviour,
+    SimpleRhaiAPI
+};
+
 
 use crate::{
     SimpleModel,
@@ -35,11 +41,10 @@ use crate::{
 };
 
 use crate::simulation_state_element::StateElementField;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive(SimpleObjectBehaviour, SimpleInputOutput)]
+#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,
@@ -63,9 +68,11 @@ pub struct Surface {
     
     /* STATE */
     #[state]
+    #[physical("front_temperature")]
     first_node_temperature: StateElementField,
 
     #[state]
+    #[physical("back_temperature")]
     last_node_temperature: StateElementField,
 }
 

@@ -28,6 +28,7 @@ type Float = f32;
 type Float = f64;
 
 
+pub mod rhai_api;
 pub mod scanner;
 
 mod simulation_state;
@@ -57,10 +58,6 @@ pub use boundary::Boundary;
 mod fenestration;
 pub use fenestration::Fenestration;
 
-// Trait... better to leave this
-pub mod hvac;
-
-
 mod luminaire;
 pub use luminaire::Luminaire;
 
@@ -73,6 +70,8 @@ pub use surface::Surface;
 mod infiltration;
 pub use infiltration::Infiltration;
 
+// Trait... better to leave this
+pub mod hvac;
 
-pub mod rhai_api;
-//pub mod shading;
+
+

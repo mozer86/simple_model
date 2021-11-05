@@ -23,7 +23,6 @@ use std::rc::Rc;
 use crate::model::SimpleModel;
 use crate::substance::Substance;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 
 

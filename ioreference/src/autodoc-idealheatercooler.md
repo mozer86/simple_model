@@ -18,14 +18,14 @@ IdealHeaterCooler {
 
 
 
-### name
+#### name
 
   The name of the system
 
 
 
 
-### target_spaces
+#### target_spaces
 
   The `Space`s that this `IdealHeaterCooler` heats and/or
   cools
@@ -33,14 +33,14 @@ IdealHeaterCooler {
 
 
 
-### max_heating_power  (*optional*)
+#### max_heating_power  (*optional*)
 
   Max heating power
 
 
 
 
-### max_cooling_power  (*optional*)
+#### max_cooling_power  (*optional*)
 
   Max cooling power
 

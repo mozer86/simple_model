@@ -23,7 +23,6 @@ use crate::model::SimpleModel;
 use crate::material::Material;
 use std::rc::Rc;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 
 
 /// An object representing a multilayer

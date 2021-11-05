@@ -20,7 +20,6 @@ SOFTWARE.
 
 use building_state_macro::SimpleInputOutput;
 use crate::Float;
-use crate::scanner::{SimpleScanner,TokenType, make_error_msg};
 use crate::model::SimpleModel;
 
 /// An infiltration rate for a `Space`
