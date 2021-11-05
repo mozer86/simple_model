@@ -78,34 +78,11 @@ Fenestration {
 
 ## API
 
-The following functions are available for simulating control algorithms
-### Standard use
+The following properties are available for simulating control algorithms
 
-#### `fenestration_open_fraction(i : int)`
- Gets the `open_fraction` of the Fenestration in index `i`
-#### `fenestration_open_fraction(name : string)`
- Gets the `open_fraction` of the Fenestration called `name`
 
-#### `set_fenestration_open_fraction(i : int, v: number)`
- Sets the `open_fraction` of the Fenestration in index `i` to a value of `v`
-#### `set_fenestration_open_fraction(name : string, v: number)`
- Sets the `open_fraction` of the Fenestration called `name` to a value of `v`
-
-#### `fenestration_front_temperature(i : int)`
- Gets the `front_temperature` of the Fenestration in index `i`
-#### `fenestration_front_temperature(name : string)`
- Gets the `front_temperature` of the Fenestration called `name`
-#### `fenestration_back_temperature(i : int)`
- Gets the `back_temperature` of the Fenestration in index `i`
-#### `fenestration_back_temperature(name : string)`
- Gets the `back_temperature` of the Fenestration called `name`
-### Research mode only
-
-#### `set_fenestration_front_temperature(i : int, v: number)`
- Sets the `front_temperature` of the Fenestration in index `i` to a value of `v`
-#### `set_fenestration_front_temperature(name : string, v: number)`
- Sets the `front_temperature` of the Fenestration called `name` to a value of `v`
-#### `set_fenestration_back_temperature(i : int, v: number)`
- Sets the `back_temperature` of the Fenestration in index `i` to a value of `v`
-#### `set_fenestration_back_temperature(name : string, v: number)`
- Sets the `back_temperature` of the Fenestration called `name` to a value of `v`
+| Property | Getter | Setter |
+|----------|--------|--------|
+| `open_fraction` | Yes   | Yes |
+| `front_temperature` | Yes   | Research mode |
+| `back_temperature` | Yes   | Research mode |

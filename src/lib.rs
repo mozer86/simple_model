@@ -56,7 +56,7 @@ mod boundary;
 pub use boundary::Boundary;
 
 mod fenestration;
-pub use fenestration::Fenestration;
+pub use fenestration::{Fenestration, FenestrationPositions, FenestrationType};
 
 mod luminaire;
 pub use luminaire::Luminaire;

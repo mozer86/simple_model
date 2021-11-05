@@ -20,7 +20,6 @@ SOFTWARE.
 
 use crate::Float;
 
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 use std::rc::Rc;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element:: StateElementField;
@@ -30,9 +29,15 @@ use crate::model::SimpleModel;
 
 use std::any::Any;
 
+
+use building_state_macro::{
+    SimpleInputOutput, 
+    SimpleObjectBehaviour,
+    // SimpleRhaiAPI
+};
+
 /// An ideal Heating and Cooling device, with a COP of 1.
 /// 
-/// asd
 #[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct IdealHeaterCooler {
     /// The name of the system
@@ -52,6 +57,7 @@ pub struct IdealHeaterCooler {
     max_cooling_power: Option<Float>,
 
     #[state]
+    // #[operational("consumed_power")]
     heating_cooling_consumption: StateElementField,
 }
 

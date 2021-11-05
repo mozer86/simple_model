@@ -35,7 +35,7 @@ use crate::infiltration::Infiltration;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
-#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI, Clone)]
 pub struct Space {
     /// The name of the space
     pub name: String,

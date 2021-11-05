@@ -33,7 +33,7 @@ use building_state_macro::{
 use std::rc::Rc;
 
 /// A Luminaire
-#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI, Clone)]
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,

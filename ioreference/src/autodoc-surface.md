@@ -61,26 +61,10 @@ Surface {
 
 ## API
 
-The following functions are available for simulating control algorithms
-### Standard use
+The following properties are available for simulating control algorithms
 
 
-
-#### `surface_front_temperature(i : int)`
- Gets the `front_temperature` of the Surface in index `i`
-#### `surface_front_temperature(name : string)`
- Gets the `front_temperature` of the Surface called `name`
-#### `surface_back_temperature(i : int)`
- Gets the `back_temperature` of the Surface in index `i`
-#### `surface_back_temperature(name : string)`
- Gets the `back_temperature` of the Surface called `name`
-### Research mode only
-
-#### `set_surface_front_temperature(i : int, v: number)`
- Sets the `front_temperature` of the Surface in index `i` to a value of `v`
-#### `set_surface_front_temperature(name : string, v: number)`
- Sets the `front_temperature` of the Surface called `name` to a value of `v`
-#### `set_surface_back_temperature(i : int, v: number)`
- Sets the `back_temperature` of the Surface in index `i` to a value of `v`
-#### `set_surface_back_temperature(name : string, v: number)`
- Sets the `back_temperature` of the Surface called `name` to a value of `v`
+| Property | Getter | Setter |
+|----------|--------|--------|
+| `front_temperature` | Yes   | Research mode |
+| `back_temperature` | Yes   | Research mode |

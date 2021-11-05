@@ -43,66 +43,15 @@ Space {
 
 ## API
 
-The following functions are available for simulating control algorithms
-### Standard use
+The following properties are available for simulating control algorithms
 
 
-
-#### `space_dry_bulb_temperature(i : int)`
- Gets the `dry_bulb_temperature` of the Space in index `i`
-#### `space_dry_bulb_temperature(name : string)`
- Gets the `dry_bulb_temperature` of the Space called `name`
-#### `space_brightness(i : int)`
- Gets the `brightness` of the Space in index `i`
-#### `space_brightness(name : string)`
- Gets the `brightness` of the Space called `name`
-#### `space_loudness(i : int)`
- Gets the `loudness` of the Space in index `i`
-#### `space_loudness(name : string)`
- Gets the `loudness` of the Space called `name`
-#### `space_infiltration_volume(i : int)`
- Gets the `infiltration_volume` of the Space in index `i`
-#### `space_infiltration_volume(name : string)`
- Gets the `infiltration_volume` of the Space called `name`
-#### `space_infiltration_temperature(i : int)`
- Gets the `infiltration_temperature` of the Space in index `i`
-#### `space_infiltration_temperature(name : string)`
- Gets the `infiltration_temperature` of the Space called `name`
-#### `space_ventilation_volume(i : int)`
- Gets the `ventilation_volume` of the Space in index `i`
-#### `space_ventilation_volume(name : string)`
- Gets the `ventilation_volume` of the Space called `name`
-#### `space_ventilation_temperature(i : int)`
- Gets the `ventilation_temperature` of the Space in index `i`
-#### `space_ventilation_temperature(name : string)`
- Gets the `ventilation_temperature` of the Space called `name`
-### Research mode only
-
-#### `set_space_dry_bulb_temperature(i : int, v: number)`
- Sets the `dry_bulb_temperature` of the Space in index `i` to a value of `v`
-#### `set_space_dry_bulb_temperature(name : string, v: number)`
- Sets the `dry_bulb_temperature` of the Space called `name` to a value of `v`
-#### `set_space_brightness(i : int, v: number)`
- Sets the `brightness` of the Space in index `i` to a value of `v`
-#### `set_space_brightness(name : string, v: number)`
- Sets the `brightness` of the Space called `name` to a value of `v`
-#### `set_space_loudness(i : int, v: number)`
- Sets the `loudness` of the Space in index `i` to a value of `v`
-#### `set_space_loudness(name : string, v: number)`
- Sets the `loudness` of the Space called `name` to a value of `v`
-#### `set_space_infiltration_volume(i : int, v: number)`
- Sets the `infiltration_volume` of the Space in index `i` to a value of `v`
-#### `set_space_infiltration_volume(name : string, v: number)`
- Sets the `infiltration_volume` of the Space called `name` to a value of `v`
-#### `set_space_infiltration_temperature(i : int, v: number)`
- Sets the `infiltration_temperature` of the Space in index `i` to a value of `v`
-#### `set_space_infiltration_temperature(name : string, v: number)`
- Sets the `infiltration_temperature` of the Space called `name` to a value of `v`
-#### `set_space_ventilation_volume(i : int, v: number)`
- Sets the `ventilation_volume` of the Space in index `i` to a value of `v`
-#### `set_space_ventilation_volume(name : string, v: number)`
- Sets the `ventilation_volume` of the Space called `name` to a value of `v`
-#### `set_space_ventilation_temperature(i : int, v: number)`
- Sets the `ventilation_temperature` of the Space in index `i` to a value of `v`
-#### `set_space_ventilation_temperature(name : string, v: number)`
- Sets the `ventilation_temperature` of the Space called `name` to a value of `v`
+| Property | Getter | Setter |
+|----------|--------|--------|
+| `dry_bulb_temperature` | Yes   | Research mode |
+| `brightness` | Yes   | Research mode |
+| `loudness` | Yes   | Research mode |
+| `infiltration_volume` | Yes   | Research mode |
+| `infiltration_temperature` | Yes   | Research mode |
+| `ventilation_volume` | Yes   | Research mode |
+| `ventilation_temperature` | Yes   | Research mode |

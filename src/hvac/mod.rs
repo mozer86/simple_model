@@ -19,13 +19,14 @@ SOFTWARE.
 */
 
 
-pub mod ideal_heater_cooler;
-pub mod electric_heater;
+mod ideal_heater_cooler;
+mod electric_heater;
 
+
+pub use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
+pub use crate::hvac::electric_heater::ElectricHeater;
 
 use crate::model::SimpleModel;
-use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
-use crate::hvac::electric_heater::ElectricHeater;
 use building_state_macro::SimpleGroupInputOutput;
 use std::any::Any;
 use std::rc::Rc;

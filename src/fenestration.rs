@@ -57,7 +57,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI)]
+#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI, Clone)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,

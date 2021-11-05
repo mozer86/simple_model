@@ -44,7 +44,7 @@ use crate::simulation_state_element::StateElementField;
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI)]
+#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI, Clone)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,

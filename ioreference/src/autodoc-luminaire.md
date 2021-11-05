@@ -49,17 +49,9 @@ Luminaire {
 
 ## API
 
-The following functions are available for simulating control algorithms
-### Standard use
+The following properties are available for simulating control algorithms
 
-#### `luminaire_power_consumption(i : int)`
- Gets the `power_consumption` of the Luminaire in index `i`
-#### `luminaire_power_consumption(name : string)`
- Gets the `power_consumption` of the Luminaire called `name`
 
-#### `set_luminaire_power_consumption(i : int, v: number)`
- Sets the `power_consumption` of the Luminaire in index `i` to a value of `v`
-#### `set_luminaire_power_consumption(name : string, v: number)`
- Sets the `power_consumption` of the Luminaire called `name` to a value of `v`
-
-### Research mode only
+| Property | Getter | Setter |
+|----------|--------|--------|
+| `power_consumption` | Yes   | Yes |

@@ -84,7 +84,10 @@ impl SimpleModel{
 #[cfg(test)]
 mod testing {
     use super::*;
-    use crate::hvac::electric_heater::ElectricHeater;
+    use crate::hvac::{
+        ElectricHeater,
+        IdealHeaterCooler
+    };
     
 
     use crate::boundary::Boundary;
@@ -107,8 +110,17 @@ mod testing {
         Fenestration::print_doc(&dir, &mut summary).unwrap();
         Fenestration::print_api_doc(&dir, &mut summary).unwrap();
         
+        /* HVAC GROUP */
         HVACKind::print_doc(&dir, &mut summary).unwrap();
         
+        summary.push_str(&format!("\t"));
+        ElectricHeater::print_doc(&dir, &mut summary).unwrap();
+        // ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
+        
+        summary.push_str(&format!("\t"));
+        IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
+        // IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
+
         Infiltration::print_doc(&dir, &mut summary).unwrap();
         
         Luminaire::print_doc(&dir, &mut summary).unwrap();
@@ -222,11 +234,17 @@ mod testing {
 
         let ast = engine.compile("
             
-            let temp = space_infiltration_volume(\"some space\");
-            print(`Infiltration volume is ${temp} `);
-            set_space_infiltration_volume(\"some space\", 3.1415);
-            let temp = space_infiltration_volume(0);
-            print(`Infiltration volume is ${temp} `);
+            let some_space = space(\"some space\");
+            let vol = some_space.infiltration_volume;
+            print(`Infiltration volume is ${vol} `);
+            some_space.infiltration_volume = 3.1415;
+            let vol = some_space.infiltration_volume;
+            print(`Infiltration volume is ${vol} `);
+
+            let vol = space(0).infiltration_volume;
+            print(`Infiltration volume is ${vol} `);
+
+            // some_space.dry_bulb_temperature = 22;
             
         ").unwrap();
 

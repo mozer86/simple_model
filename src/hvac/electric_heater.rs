@@ -21,7 +21,6 @@ SOFTWARE.
 use crate::Float;
 
 
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 use std::rc::Rc;
 use crate::space::Space;
 use crate::simulation_state::SimulationState;
@@ -29,6 +28,12 @@ use crate::simulation_state_element::StateElementField;
 use crate::hvac::{HVAC, HVACKind};
 use crate::model::SimpleModel;
 use std::any::Any;
+
+use building_state_macro::{
+    SimpleInputOutput, 
+    SimpleObjectBehaviour,
+    // SimpleRhaiAPI
+};
 
 #[derive(SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct ElectricHeater {
@@ -46,6 +51,7 @@ pub struct ElectricHeater {
     max_heating_power: Option<Float>,
 
     #[state]
+    // #[operational("consumed_power")]
     heating_cooling_consumption: StateElementField,
 }
 

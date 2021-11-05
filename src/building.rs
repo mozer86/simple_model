@@ -47,7 +47,7 @@ pub enum ShelterClass{
 /// This object is utilized to group `Space` objects together for 
 /// metering and/or shared values. For example, the number of storeys
 /// and the `ShelterClass` will help defining the `Infiltrations`
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(SimpleInputOutput, SimpleObjectBehaviour, Clone)]
 pub struct Building {
     
     /// The name of the Building

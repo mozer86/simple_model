@@ -2,7 +2,6 @@
 
   An ideal Heating and Cooling device, with a COP of 1.
   
-  asd
 
 
 ```rs
