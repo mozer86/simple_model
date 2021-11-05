@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Chapter 1 - SIMPLE Simulation Input Output reference</title>
+        <title>Surface - SIMPLE Simulation Input Output reference</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html" class="active"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,14 +134,57 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="chapter-1"><a class="header" href="#chapter-1">Chapter 1</a></h1>
+                        <h1 id="surface"><a class="header" href="#surface">Surface</a></h1>
+<p>A fixed surface in the building (or surroundings). This can be of
+any Construction, transparent or not.</p>
+<pre><code class="language-rs">Surface {
+	name : string
+	vertices : [ number, ...]
+	construction : Construction
+	front_boundary : Boundary   // Optional
+	back_boundary : Boundary   // Optional
+}
+</code></pre>
+<h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
+<h4 id="name"><a class="header" href="#name">name</a></h4>
+<p>The name of the surface</p>
+<h4 id="vertices"><a class="header" href="#vertices">vertices</a></h4>
+<p>An array of Numbers representing the vertices of the 
+surface. The length of this array must be divisible by 3.</p>
+<h4 id="construction"><a class="header" href="#construction">construction</a></h4>
+<p>The index of the construction in the SimpleModel's
+Construction array</p>
+<h4 id="front_boundary--optional"><a class="header" href="#front_boundary--optional">front_boundary  (<em>optional</em>)</a></h4>
+<p>A reference to the Boundary in front of the Surface</p>
+<h4 id="back_boundary--optional"><a class="header" href="#back_boundary--optional">back_boundary  (<em>optional</em>)</a></h4>
+<p>A reference to the Boundary in back of the Surface</p>
+<h2 id="api"><a class="header" href="#api">API</a></h2>
+<p>The following functions are available for simulating control algorithms</p>
+<h3 id="standard-use"><a class="header" href="#standard-use">Standard use</a></h3>
+<h4 id="surface_front_temperaturei--int"><a class="header" href="#surface_front_temperaturei--int"><code>surface_front_temperature(i : int)</code></a></h4>
+<p>Gets the <code>front_temperature</code> of the Surface in index <code>i</code></p>
+<h4 id="surface_front_temperaturename--string"><a class="header" href="#surface_front_temperaturename--string"><code>surface_front_temperature(name : string)</code></a></h4>
+<p>Gets the <code>front_temperature</code> of the Surface called <code>name</code></p>
+<h4 id="surface_back_temperaturei--int"><a class="header" href="#surface_back_temperaturei--int"><code>surface_back_temperature(i : int)</code></a></h4>
+<p>Gets the <code>back_temperature</code> of the Surface in index <code>i</code></p>
+<h4 id="surface_back_temperaturename--string"><a class="header" href="#surface_back_temperaturename--string"><code>surface_back_temperature(name : string)</code></a></h4>
+<p>Gets the <code>back_temperature</code> of the Surface called <code>name</code></p>
+<h3 id="research-mode-only"><a class="header" href="#research-mode-only">Research mode only</a></h3>
+<h4 id="set_surface_front_temperaturei--int-v-number"><a class="header" href="#set_surface_front_temperaturei--int-v-number"><code>set_surface_front_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>front_temperature</code> of the Surface in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_surface_front_temperaturename--string-v-number"><a class="header" href="#set_surface_front_temperaturename--string-v-number"><code>set_surface_front_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>front_temperature</code> of the Surface called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_surface_back_temperaturei--int-v-number"><a class="header" href="#set_surface_back_temperaturei--int-v-number"><code>set_surface_back_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>back_temperature</code> of the Surface in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_surface_back_temperaturename--string-v-number"><a class="header" href="#set_surface_back_temperaturename--string-v-number"><code>set_surface_back_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>back_temperature</code> of the Surface called <code>name</code> to a value of <code>v</code></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="next" href="autodoc-boundary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                            <a rel="prev" href="autodoc-shelterclass.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
                             </a>
                         <div style="clear: both"></div>
                     </nav>
@@ -149,8 +192,8 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="next" href="autodoc-boundary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                    <a rel="prev" href="autodoc-shelterclass.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
                     </a>
             </nav>
 

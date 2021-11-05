@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">3.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">4.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">4.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">4.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">5.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">6.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html" class="active"><strong aria-hidden="true">7.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">8.</strong> Substance</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html" class="active"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -144,12 +144,72 @@ often be a room, but it might also be half a room</p>
 }
 </code></pre>
 <h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
-<h3 id="name"><a class="header" href="#name">name</a></h3>
+<h4 id="name"><a class="header" href="#name">name</a></h4>
 <p>The name of the space</p>
-<h3 id="volume--optional"><a class="header" href="#volume--optional">volume  (<em>optional</em>)</a></h3>
+<h4 id="volume--optional"><a class="header" href="#volume--optional">volume  (<em>optional</em>)</a></h4>
 <p>Volume of the space</p>
-<h3 id="infiltration--optional"><a class="header" href="#infiltration--optional">infiltration  (<em>optional</em>)</a></h3>
+<h4 id="infiltration--optional"><a class="header" href="#infiltration--optional">infiltration  (<em>optional</em>)</a></h4>
 <p>The infiltration in the space</p>
+<h2 id="api"><a class="header" href="#api">API</a></h2>
+<p>The following functions are available for simulating control algorithms</p>
+<h3 id="standard-use"><a class="header" href="#standard-use">Standard use</a></h3>
+<h4 id="space_dry_bulb_temperaturei--int"><a class="header" href="#space_dry_bulb_temperaturei--int"><code>space_dry_bulb_temperature(i : int)</code></a></h4>
+<p>Gets the <code>dry_bulb_temperature</code> of the Space in index <code>i</code></p>
+<h4 id="space_dry_bulb_temperaturename--string"><a class="header" href="#space_dry_bulb_temperaturename--string"><code>space_dry_bulb_temperature(name : string)</code></a></h4>
+<p>Gets the <code>dry_bulb_temperature</code> of the Space called <code>name</code></p>
+<h4 id="space_brightnessi--int"><a class="header" href="#space_brightnessi--int"><code>space_brightness(i : int)</code></a></h4>
+<p>Gets the <code>brightness</code> of the Space in index <code>i</code></p>
+<h4 id="space_brightnessname--string"><a class="header" href="#space_brightnessname--string"><code>space_brightness(name : string)</code></a></h4>
+<p>Gets the <code>brightness</code> of the Space called <code>name</code></p>
+<h4 id="space_loudnessi--int"><a class="header" href="#space_loudnessi--int"><code>space_loudness(i : int)</code></a></h4>
+<p>Gets the <code>loudness</code> of the Space in index <code>i</code></p>
+<h4 id="space_loudnessname--string"><a class="header" href="#space_loudnessname--string"><code>space_loudness(name : string)</code></a></h4>
+<p>Gets the <code>loudness</code> of the Space called <code>name</code></p>
+<h4 id="space_infiltration_volumei--int"><a class="header" href="#space_infiltration_volumei--int"><code>space_infiltration_volume(i : int)</code></a></h4>
+<p>Gets the <code>infiltration_volume</code> of the Space in index <code>i</code></p>
+<h4 id="space_infiltration_volumename--string"><a class="header" href="#space_infiltration_volumename--string"><code>space_infiltration_volume(name : string)</code></a></h4>
+<p>Gets the <code>infiltration_volume</code> of the Space called <code>name</code></p>
+<h4 id="space_infiltration_temperaturei--int"><a class="header" href="#space_infiltration_temperaturei--int"><code>space_infiltration_temperature(i : int)</code></a></h4>
+<p>Gets the <code>infiltration_temperature</code> of the Space in index <code>i</code></p>
+<h4 id="space_infiltration_temperaturename--string"><a class="header" href="#space_infiltration_temperaturename--string"><code>space_infiltration_temperature(name : string)</code></a></h4>
+<p>Gets the <code>infiltration_temperature</code> of the Space called <code>name</code></p>
+<h4 id="space_ventilation_volumei--int"><a class="header" href="#space_ventilation_volumei--int"><code>space_ventilation_volume(i : int)</code></a></h4>
+<p>Gets the <code>ventilation_volume</code> of the Space in index <code>i</code></p>
+<h4 id="space_ventilation_volumename--string"><a class="header" href="#space_ventilation_volumename--string"><code>space_ventilation_volume(name : string)</code></a></h4>
+<p>Gets the <code>ventilation_volume</code> of the Space called <code>name</code></p>
+<h4 id="space_ventilation_temperaturei--int"><a class="header" href="#space_ventilation_temperaturei--int"><code>space_ventilation_temperature(i : int)</code></a></h4>
+<p>Gets the <code>ventilation_temperature</code> of the Space in index <code>i</code></p>
+<h4 id="space_ventilation_temperaturename--string"><a class="header" href="#space_ventilation_temperaturename--string"><code>space_ventilation_temperature(name : string)</code></a></h4>
+<p>Gets the <code>ventilation_temperature</code> of the Space called <code>name</code></p>
+<h3 id="research-mode-only"><a class="header" href="#research-mode-only">Research mode only</a></h3>
+<h4 id="set_space_dry_bulb_temperaturei--int-v-number"><a class="header" href="#set_space_dry_bulb_temperaturei--int-v-number"><code>set_space_dry_bulb_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>dry_bulb_temperature</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_dry_bulb_temperaturename--string-v-number"><a class="header" href="#set_space_dry_bulb_temperaturename--string-v-number"><code>set_space_dry_bulb_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>dry_bulb_temperature</code> of the Space called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_space_brightnessi--int-v-number"><a class="header" href="#set_space_brightnessi--int-v-number"><code>set_space_brightness(i : int, v: number)</code></a></h4>
+<p>Sets the <code>brightness</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_brightnessname--string-v-number"><a class="header" href="#set_space_brightnessname--string-v-number"><code>set_space_brightness(name : string, v: number)</code></a></h4>
+<p>Sets the <code>brightness</code> of the Space called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_space_loudnessi--int-v-number"><a class="header" href="#set_space_loudnessi--int-v-number"><code>set_space_loudness(i : int, v: number)</code></a></h4>
+<p>Sets the <code>loudness</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_loudnessname--string-v-number"><a class="header" href="#set_space_loudnessname--string-v-number"><code>set_space_loudness(name : string, v: number)</code></a></h4>
+<p>Sets the <code>loudness</code> of the Space called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_space_infiltration_volumei--int-v-number"><a class="header" href="#set_space_infiltration_volumei--int-v-number"><code>set_space_infiltration_volume(i : int, v: number)</code></a></h4>
+<p>Sets the <code>infiltration_volume</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_infiltration_volumename--string-v-number"><a class="header" href="#set_space_infiltration_volumename--string-v-number"><code>set_space_infiltration_volume(name : string, v: number)</code></a></h4>
+<p>Sets the <code>infiltration_volume</code> of the Space called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_space_infiltration_temperaturei--int-v-number"><a class="header" href="#set_space_infiltration_temperaturei--int-v-number"><code>set_space_infiltration_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>infiltration_temperature</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_infiltration_temperaturename--string-v-number"><a class="header" href="#set_space_infiltration_temperaturename--string-v-number"><code>set_space_infiltration_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>infiltration_temperature</code> of the Space called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_space_ventilation_volumei--int-v-number"><a class="header" href="#set_space_ventilation_volumei--int-v-number"><code>set_space_ventilation_volume(i : int, v: number)</code></a></h4>
+<p>Sets the <code>ventilation_volume</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_ventilation_volumename--string-v-number"><a class="header" href="#set_space_ventilation_volumename--string-v-number"><code>set_space_ventilation_volume(name : string, v: number)</code></a></h4>
+<p>Sets the <code>ventilation_volume</code> of the Space called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_space_ventilation_temperaturei--int-v-number"><a class="header" href="#set_space_ventilation_temperaturei--int-v-number"><code>set_space_ventilation_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>ventilation_temperature</code> of the Space in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_space_ventilation_temperaturename--string-v-number"><a class="header" href="#set_space_ventilation_temperaturename--string-v-number"><code>set_space_ventilation_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>ventilation_temperature</code> of the Space called <code>name</code> to a value of <code>v</code></p>
 
                     </main>
 

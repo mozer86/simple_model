@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Material - SIMPLE Simulation Input Output reference</title>
+        <title>Fenestration - SIMPLE Simulation Input Output reference</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html" class="active"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html" class="active"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,33 +134,74 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="material"><a class="header" href="#material">Material</a></h1>
-<p>The representation of a physical layer-Material.
-That is to say, a layer of a certain thickness
-made of a certain Substance</p>
-<pre><code class="language-rs">Material {
+                        <h1 id="fenestration"><a class="header" href="#fenestration">Fenestration</a></h1>
+<p>A surface that can potentially be opened and closed.
+It can be of any Construction and it does not need to be
+a hole in another surface.</p>
+<pre><code class="language-rs">Fenestration {
 	name : string
-	substance : Substance
-	thickness : number
+	vertices : [ number, ...]
+	construction : Construction
+	operation_type : FenestrationPositions
+	fenestration_type : FenestrationType
+	front_boundary : Boundary   // Optional
+	back_boundary : Boundary   // Optional
 }
 </code></pre>
 <h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
 <h4 id="name"><a class="header" href="#name">name</a></h4>
-<p>The name of the material object</p>
-<h4 id="substance"><a class="header" href="#substance">substance</a></h4>
-<p>A reference to the [<code>Substance</code>] of which this
-[<code>Material</code>] is made of</p>
-<h4 id="thickness"><a class="header" href="#thickness">thickness</a></h4>
-<p>The thickness of the [<code>Material</code>]</p>
+<p>The name of the sub surface</p>
+<h4 id="vertices"><a class="header" href="#vertices">vertices</a></h4>
+<p>An array of Numbers representing the vertices of the 
+surface. The length of this array must be divisible by 3.</p>
+<h4 id="construction"><a class="header" href="#construction">construction</a></h4>
+<p>The index of the Construction object in the
+constructions property of the SimpleModel object</p>
+<h4 id="operation_type"><a class="header" href="#operation_type">operation_type</a></h4>
+<p>The opportunity for operating the Fenestration</p>
+<h4 id="fenestration_type"><a class="header" href="#fenestration_type">fenestration_type</a></h4>
+<p>It it a window or a door, or...?</p>
+<h4 id="front_boundary--optional"><a class="header" href="#front_boundary--optional">front_boundary  (<em>optional</em>)</a></h4>
+<p>A reference to the Boundary in front of the Fenestration</p>
+<h4 id="back_boundary--optional"><a class="header" href="#back_boundary--optional">back_boundary  (<em>optional</em>)</a></h4>
+<p>A reference to the Boundary in back of the Fenestration</p>
+<h2 id="api"><a class="header" href="#api">API</a></h2>
+<p>The following functions are available for simulating control algorithms</p>
+<h3 id="standard-use"><a class="header" href="#standard-use">Standard use</a></h3>
+<h4 id="fenestration_open_fractioni--int"><a class="header" href="#fenestration_open_fractioni--int"><code>fenestration_open_fraction(i : int)</code></a></h4>
+<p>Gets the <code>open_fraction</code> of the Fenestration in index <code>i</code></p>
+<h4 id="fenestration_open_fractionname--string"><a class="header" href="#fenestration_open_fractionname--string"><code>fenestration_open_fraction(name : string)</code></a></h4>
+<p>Gets the <code>open_fraction</code> of the Fenestration called <code>name</code></p>
+<h4 id="set_fenestration_open_fractioni--int-v-number"><a class="header" href="#set_fenestration_open_fractioni--int-v-number"><code>set_fenestration_open_fraction(i : int, v: number)</code></a></h4>
+<p>Sets the <code>open_fraction</code> of the Fenestration in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_fenestration_open_fractionname--string-v-number"><a class="header" href="#set_fenestration_open_fractionname--string-v-number"><code>set_fenestration_open_fraction(name : string, v: number)</code></a></h4>
+<p>Sets the <code>open_fraction</code> of the Fenestration called <code>name</code> to a value of <code>v</code></p>
+<h4 id="fenestration_front_temperaturei--int"><a class="header" href="#fenestration_front_temperaturei--int"><code>fenestration_front_temperature(i : int)</code></a></h4>
+<p>Gets the <code>front_temperature</code> of the Fenestration in index <code>i</code></p>
+<h4 id="fenestration_front_temperaturename--string"><a class="header" href="#fenestration_front_temperaturename--string"><code>fenestration_front_temperature(name : string)</code></a></h4>
+<p>Gets the <code>front_temperature</code> of the Fenestration called <code>name</code></p>
+<h4 id="fenestration_back_temperaturei--int"><a class="header" href="#fenestration_back_temperaturei--int"><code>fenestration_back_temperature(i : int)</code></a></h4>
+<p>Gets the <code>back_temperature</code> of the Fenestration in index <code>i</code></p>
+<h4 id="fenestration_back_temperaturename--string"><a class="header" href="#fenestration_back_temperaturename--string"><code>fenestration_back_temperature(name : string)</code></a></h4>
+<p>Gets the <code>back_temperature</code> of the Fenestration called <code>name</code></p>
+<h3 id="research-mode-only"><a class="header" href="#research-mode-only">Research mode only</a></h3>
+<h4 id="set_fenestration_front_temperaturei--int-v-number"><a class="header" href="#set_fenestration_front_temperaturei--int-v-number"><code>set_fenestration_front_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>front_temperature</code> of the Fenestration in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_fenestration_front_temperaturename--string-v-number"><a class="header" href="#set_fenestration_front_temperaturename--string-v-number"><code>set_fenestration_front_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>front_temperature</code> of the Fenestration called <code>name</code> to a value of <code>v</code></p>
+<h4 id="set_fenestration_back_temperaturei--int-v-number"><a class="header" href="#set_fenestration_back_temperaturei--int-v-number"><code>set_fenestration_back_temperature(i : int, v: number)</code></a></h4>
+<p>Sets the <code>back_temperature</code> of the Fenestration in index <code>i</code> to a value of <code>v</code></p>
+<h4 id="set_fenestration_back_temperaturename--string-v-number"><a class="header" href="#set_fenestration_back_temperaturename--string-v-number"><code>set_fenestration_back_temperature(name : string, v: number)</code></a></h4>
+<p>Sets the <code>back_temperature</code> of the Fenestration called <code>name</code> to a value of <code>v</code></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="autodoc-luminaire.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="autodoc-construction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="autodoc-space.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="autodoc-hvac.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -169,10 +210,10 @@ made of a certain Substance</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="autodoc-luminaire.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="autodoc-construction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="autodoc-space.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="autodoc-hvac.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

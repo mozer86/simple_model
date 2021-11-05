@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Chapter 1 - SIMPLE Simulation Input Output reference</title>
+        <title>Infiltration - SIMPLE Simulation Input Output reference</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html" class="active"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,13 +134,44 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="chapter-1"><a class="header" href="#chapter-1">Chapter 1</a></h1>
+                        <h1 id="infiltration"><a class="header" href="#infiltration">Infiltration</a></h1>
+<p>An infiltration rate for a <code>Space</code></p>
+<h2 id="constant"><a class="header" href="#constant">Constant</a></h2>
+<p>A contant infiltration, specified in <code>m3/s</code></p>
+<pre><code>Constant(number)
+</code></pre>
+<h2 id="blast"><a class="header" href="#blast">Blast</a></h2>
+<p>Sets the infiltration to the <code>DesignFlowRate</code> values using the </p>
+<p>default from BLAST as described in the EnergyPlus' Input Output reference</p>
+<pre><code>Blast(number)
+</code></pre>
+<h2 id="doe2"><a class="header" href="#doe2">Doe2</a></h2>
+<p>Sets the infiltration to the <code>DesignFlowRate</code> values using the </p>
+<p>default from DOE-2 as described in the EnergyPlus' Input Output reference</p>
+<pre><code>Doe2(number)
+</code></pre>
+<h2 id="designflowrate"><a class="header" href="#designflowrate">DesignFlowRate</a></h2>
+<p>Sets the infiltration to the <code>DesignFlowRate</code> values using an 
+arbitrary set of values. This option is based on EnergyPlus'
+object of the same name</p>
+<pre><code>DesignFlowRate(number,number,number,number,number)
+</code></pre>
+<h2 id="effectiveairleakagearea"><a class="header" href="#effectiveairleakagearea">EffectiveAirLeakageArea</a></h2>
+<p>Sets the infiltration based on <code>EffectiveLeakageArea</code> as 
+described in the EnergyPlus' Input Output reference.</p>
+<p>The area is in cm2 estimated for a pressure differencial 
+of 4Pa</p>
+<pre><code>EffectiveAirLeakageArea(number)
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="next" href="autodoc-boundary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="prev" href="autodoc-electricheater.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="autodoc-luminaire.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -149,7 +180,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="next" href="autodoc-boundary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="prev" href="autodoc-electricheater.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="autodoc-luminaire.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
