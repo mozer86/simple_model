@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.1.</strong> IdealHeaterCooler</a></li><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.2.</strong> ElectricHeater</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html" class="active"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="autodoc-boundary.html"><strong aria-hidden="true">2.</strong> Boundary</a></li><li class="chapter-item expanded "><a href="autodoc-building.html"><strong aria-hidden="true">3.</strong> Building</a></li><li class="chapter-item expanded "><a href="autodoc-construction.html"><strong aria-hidden="true">4.</strong> Construction</a></li><li class="chapter-item expanded "><a href="autodoc-fenestration.html"><strong aria-hidden="true">5.</strong> Fenestration</a></li><li class="chapter-item expanded "><a href="autodoc-hvac.html"><strong aria-hidden="true">6.</strong> HVAC</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="autodoc-electricheater.html"><strong aria-hidden="true">6.1.</strong> ElectricHeater</a></li><li class="chapter-item expanded "><a href="autodoc-idealheatercooler.html"><strong aria-hidden="true">6.2.</strong> IdealHeaterCooler</a></li></ol></li><li class="chapter-item expanded "><a href="autodoc-infiltration.html"><strong aria-hidden="true">7.</strong> Infiltration</a></li><li class="chapter-item expanded "><a href="autodoc-luminaire.html"><strong aria-hidden="true">8.</strong> Luminaire</a></li><li class="chapter-item expanded "><a href="autodoc-material.html"><strong aria-hidden="true">9.</strong> Material</a></li><li class="chapter-item expanded "><a href="autodoc-space.html"><strong aria-hidden="true">10.</strong> Space</a></li><li class="chapter-item expanded "><a href="autodoc-substance.html"><strong aria-hidden="true">11.</strong> Substance</a></li><li class="chapter-item expanded "><a href="autodoc-shelterclass.html"><strong aria-hidden="true">12.</strong> ShelterClass</a></li><li class="chapter-item expanded "><a href="autodoc-surface.html" class="active"><strong aria-hidden="true">13.</strong> Surface</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -159,25 +159,11 @@ Construction array</p>
 <h4 id="back_boundary--optional"><a class="header" href="#back_boundary--optional">back_boundary  (<em>optional</em>)</a></h4>
 <p>A reference to the Boundary in back of the Surface</p>
 <h2 id="api"><a class="header" href="#api">API</a></h2>
-<p>The following functions are available for simulating control algorithms</p>
-<h3 id="standard-use"><a class="header" href="#standard-use">Standard use</a></h3>
-<h4 id="surface_front_temperaturei--int"><a class="header" href="#surface_front_temperaturei--int"><code>surface_front_temperature(i : int)</code></a></h4>
-<p>Gets the <code>front_temperature</code> of the Surface in index <code>i</code></p>
-<h4 id="surface_front_temperaturename--string"><a class="header" href="#surface_front_temperaturename--string"><code>surface_front_temperature(name : string)</code></a></h4>
-<p>Gets the <code>front_temperature</code> of the Surface called <code>name</code></p>
-<h4 id="surface_back_temperaturei--int"><a class="header" href="#surface_back_temperaturei--int"><code>surface_back_temperature(i : int)</code></a></h4>
-<p>Gets the <code>back_temperature</code> of the Surface in index <code>i</code></p>
-<h4 id="surface_back_temperaturename--string"><a class="header" href="#surface_back_temperaturename--string"><code>surface_back_temperature(name : string)</code></a></h4>
-<p>Gets the <code>back_temperature</code> of the Surface called <code>name</code></p>
-<h3 id="research-mode-only"><a class="header" href="#research-mode-only">Research mode only</a></h3>
-<h4 id="set_surface_front_temperaturei--int-v-number"><a class="header" href="#set_surface_front_temperaturei--int-v-number"><code>set_surface_front_temperature(i : int, v: number)</code></a></h4>
-<p>Sets the <code>front_temperature</code> of the Surface in index <code>i</code> to a value of <code>v</code></p>
-<h4 id="set_surface_front_temperaturename--string-v-number"><a class="header" href="#set_surface_front_temperaturename--string-v-number"><code>set_surface_front_temperature(name : string, v: number)</code></a></h4>
-<p>Sets the <code>front_temperature</code> of the Surface called <code>name</code> to a value of <code>v</code></p>
-<h4 id="set_surface_back_temperaturei--int-v-number"><a class="header" href="#set_surface_back_temperaturei--int-v-number"><code>set_surface_back_temperature(i : int, v: number)</code></a></h4>
-<p>Sets the <code>back_temperature</code> of the Surface in index <code>i</code> to a value of <code>v</code></p>
-<h4 id="set_surface_back_temperaturename--string-v-number"><a class="header" href="#set_surface_back_temperaturename--string-v-number"><code>set_surface_back_temperature(name : string, v: number)</code></a></h4>
-<p>Sets the <code>back_temperature</code> of the Surface called <code>name</code> to a value of <code>v</code></p>
+<p>The following properties are available for simulating control algorithms</p>
+<table><thead><tr><th>Property</th><th>Getter</th><th>Setter</th></tr></thead><tbody>
+<tr><td><code>front_temperature</code></td><td>Yes</td><td>Research mode</td></tr>
+<tr><td><code>back_temperature</code></td><td>Yes</td><td>Research mode</td></tr>
+</tbody></table>
 
                     </main>
 
