@@ -72,6 +72,7 @@ pub use infiltration::Infiltration;
 
 // Trait... better to leave this
 pub mod hvac;
+pub use hvac::HVAC;
 
 
 
