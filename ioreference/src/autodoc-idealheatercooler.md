@@ -46,3 +46,15 @@ IdealHeaterCooler {
 
 
 
+
+
+
+
+## API
+
+The following properties are available for simulating control algorithms
+
+
+| Property | Getter | Setter |
+|----------|--------|--------|
+| `power_consumption` | Yes   | Yes |

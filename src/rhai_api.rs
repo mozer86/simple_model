@@ -26,7 +26,12 @@ use crate::{
     Space,
     Surface,
     Fenestration,
-    Luminaire
+    Luminaire,    
+    hvac::{ 
+        HVAC, 
+        ElectricHeater, 
+        IdealHeaterCooler        
+    }
 };
 
 
@@ -41,4 +46,34 @@ pub fn register_control_api(engine : &mut rhai::Engine, model: &Rc<SimpleModel>,
     Surface::register_api(engine, model, state, research_mode);
     Fenestration::register_api(engine, model, state, research_mode);
     Luminaire::register_api(engine, model, state, research_mode);
+
+    // engine.register_type_with_name::<std::rc::Rc<dyn HVAC>>("HVAC");
+    ElectricHeater::register_api(engine, model, state, research_mode);
+    IdealHeaterCooler::register_api(engine, model, state, research_mode);
+    
+
+    let new_mod = std::rc::Rc::clone(model);  
+    // let new_state = std::rc::Rc::clone(state);      
+    engine.register_result_fn("hvac", move |name: &str | {
+        for s in new_mod.hvacs.iter(){  
+            match s {
+                HVAC::ElectricHeater(s) =>{
+                    if s.name == name {
+                        let d = rhai::Dynamic::from(Rc::clone(s));
+                        return Ok(d)
+                    }
+                },
+                HVAC::IdealHeaterCooler(s)=>{
+                    if s.name == name {
+                        let d = rhai::Dynamic::from(Rc::clone(s));
+                        return Ok(d)
+                    }
+                }
+            }                      
+        }
+        return Err(format!("Could not find hvac '{}'", name).into());
+    });
+
+    
+
 }

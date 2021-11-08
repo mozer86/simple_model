@@ -25,17 +25,16 @@ use std::rc::Rc;
 use crate::space::Space;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
-use crate::hvac::{HVAC, HVACKind};
 use crate::model::SimpleModel;
-use std::any::Any;
+
 
 use building_state_macro::{
     SimpleInputOutput, 
     SimpleObjectBehaviour,
-    // SimpleRhaiAPI
+    GroupMemberSimpleRhaiAPI
 };
 
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(Clone, SimpleInputOutput, SimpleObjectBehaviour, GroupMemberSimpleRhaiAPI)]
 pub struct ElectricHeater {
     /// The name of the system
     pub name: String,
@@ -51,33 +50,12 @@ pub struct ElectricHeater {
     max_heating_power: Option<Float>,
 
     #[state]
-    // #[operational("consumed_power")]
+    #[operational("power_consumption")]
     heating_cooling_consumption: StateElementField,
 }
 
-impl HVAC for ElectricHeater{
-    
-    fn kind(&self)->HVACKind{
-        HVACKind::ElectricHeater
+impl ElectricHeater {
+    pub fn wrap(self)-> crate::hvac::HVAC {
+        crate::hvac::HVAC::ElectricHeater(std::rc::Rc::new(self))
     }
-
-    fn can_heat(&self)->bool{
-        true
-    }
-
-    fn can_cool(&self)->bool{
-        false
-    }
-
-    fn as_any(&self) -> &dyn Any{
-        self
-    }   
-
-    fn as_mut_any(&mut self) -> &mut dyn Any{
-        self
-    }  
-
-    
-
 }
-

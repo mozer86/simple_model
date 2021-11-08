@@ -24,21 +24,17 @@ use std::rc::Rc;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element:: StateElementField;
 use crate::space::Space;
-use crate::hvac::*;
 use crate::model::SimpleModel;
-
-use std::any::Any;
-
 
 use building_state_macro::{
     SimpleInputOutput, 
     SimpleObjectBehaviour,
-    // SimpleRhaiAPI
+    GroupMemberSimpleRhaiAPI
 };
 
 /// An ideal Heating and Cooling device, with a COP of 1.
 /// 
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(Clone, SimpleInputOutput, SimpleObjectBehaviour, GroupMemberSimpleRhaiAPI)]
 pub struct IdealHeaterCooler {
     /// The name of the system
     pub name: String,
@@ -57,35 +53,12 @@ pub struct IdealHeaterCooler {
     max_cooling_power: Option<Float>,
 
     #[state]
-    // #[operational("consumed_power")]
+    #[operational("power_consumption")]
     heating_cooling_consumption: StateElementField,
 }
 
-
-impl HVAC for IdealHeaterCooler{
-    
-    fn kind(&self)->HVACKind{
-        HVACKind::IdealHeaterCooler
+impl IdealHeaterCooler {
+    pub fn wrap(self)-> crate::hvac::HVAC {
+        crate::hvac::HVAC::IdealHeaterCooler(std::rc::Rc::new(self))
     }
-
-    fn can_heat(&self)->bool{
-        true
-    }
-
-    fn can_cool(&self)->bool{
-        true
-    }
-
-    fn as_any(&self) -> &dyn Any{
-        self
-    }   
-
-    fn as_mut_any(&mut self) -> &mut dyn Any{
-        self
-    }   
-
-    
-        
-
-    
 }

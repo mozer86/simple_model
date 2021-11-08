@@ -55,7 +55,7 @@ pub struct SimpleModel {
     pub fenestrations: Vec<Rc<Fenestration>>,
 
     /// The Heating/Cooling devices in the space
-    pub hvacs: Vec<Rc<dyn HVAC>>,
+    pub hvacs: Vec<HVAC>,
 
     /// Luminaires
     pub luminaires: Vec<Rc<Luminaire>>,
@@ -111,15 +111,15 @@ mod testing {
         Fenestration::print_api_doc(&dir, &mut summary).unwrap();
         
         /* HVAC GROUP */
-        HVACKind::print_doc(&dir, &mut summary).unwrap();
+        HVAC::print_doc(&dir, &mut summary).unwrap();
         
         summary.push_str(&format!("\t"));
         ElectricHeater::print_doc(&dir, &mut summary).unwrap();
-        // ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
+        ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
         
         summary.push_str(&format!("\t"));
         IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
-        // IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
+        IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
 
         Infiltration::print_doc(&dir, &mut summary).unwrap();
         
@@ -189,15 +189,17 @@ mod testing {
         let heater_name = "Heater".to_string();
         let heater = ElectricHeater::new(heater_name.clone());
 
-        let h0 = building.add_hvac(Rc::new(heater), &mut state_header);
+        let h0 = building.add_hvac(heater.wrap(), &mut state_header);
 
-        let h = cast_hvac::<ElectricHeater>(&*h0).unwrap();        
-        assert_eq!(heater_name, h.name);        
-        assert_eq!(*h.index().unwrap(), 0);
+        if let HVAC::ElectricHeater(h) = h0{
+            assert_eq!(heater_name, h.name);        
+            assert_eq!(*h.index().unwrap(), 0);
+        }
 
-        let h = cast_hvac::<ElectricHeater>(&*building.hvacs[0]).unwrap();        
-        assert_eq!(heater_name, h.name);        
-        assert_eq!(*h.index().unwrap(), 0);
+        if let HVAC::ElectricHeater(h) = &building.hvacs[0]{
+            assert_eq!(heater_name, h.name);        
+            assert_eq!(*h.index().unwrap(), 0);
+        }
     }
 
     
@@ -211,20 +213,29 @@ mod testing {
     #[test]
     fn test_api(){
 
-        
-        
-
         let mut model = SimpleModel::new("The Model".to_string());
-        
         let mut state_header = SimulationStateHeader::new();
+        
+        let electric = ElectricHeater::new("electric heater".to_string());
+        let electric = model.add_hvac(electric.wrap(), &mut state_header);
+        let ideal = IdealHeaterCooler::new("ideal hvac".to_string());
+        let ideal = model.add_hvac(ideal.wrap(), &mut state_header);
+        
         let state_index = state_header.push(SimulationStateElement::SpaceInfiltrationVolume(0), 2.1);
         let space = Space::new("some space".to_string());
         space.set_infiltration_volume_index(state_index);
         model.add_space(space);
+
+        let mut state = state_header.take_values().unwrap();        
         
-
-        let state = state_header.take_values().unwrap();
-
+        if let HVAC::ElectricHeater(hvac) = electric{
+            hvac.set_heating_cooling_consumption(&mut state, 91.2);
+        }
+        
+        if let HVAC::IdealHeaterCooler(hvac) = ideal{
+            hvac.set_heating_cooling_consumption(&mut state, 23.14);
+        }
+        
         // Wrap and send to the Heap
         let state = Rc::new(RefCell::new(state));
         let model = Rc::new(model);
@@ -244,7 +255,25 @@ mod testing {
             let vol = space(0).infiltration_volume;
             print(`Infiltration volume is ${vol} `);
 
+            print(\"NEXT ---->\");
+
             // some_space.dry_bulb_temperature = 22;
+
+            // Ideal
+            let ideal = hvac(\"ideal hvac\");
+            let power = ideal.power_consumption;
+            print(`Ideal power consumption is ${power} W`);
+            ideal.power_consumption = 1;
+            let power = ideal.power_consumption;
+            print(`Ideal power consumption is ${power} W`);
+
+            // Electric
+            let electric = hvac(\"electric heater\");
+            let power = electric.power_consumption;
+            print(`Electric power consumption is ${power} W`);
+            electric.power_consumption = 99.;
+            let power = electric.power_consumption;
+            print(`Electric power consumption is ${power} W`);
             
         ").unwrap();
 
