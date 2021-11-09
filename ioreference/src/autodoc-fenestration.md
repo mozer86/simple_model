@@ -74,6 +74,15 @@ Fenestration {
 
 
 
+## API Access
+
+```rs
+// by name
+let my_fenestration = fenestration(string);
+// by index
+let my_fenestration = fenestration(int);
+```
+
 
 
 ## API

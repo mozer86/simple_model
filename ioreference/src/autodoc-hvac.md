@@ -10,3 +10,13 @@
 * **ElectricHeater**:   An electric heater, it can only
   heat.
 
+
+
+## API Access
+
+```rs
+// by name
+let my_hvac = hvac(string);
+// by index
+let my_hvac = hvac(int);
+```

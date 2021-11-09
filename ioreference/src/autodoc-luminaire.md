@@ -45,6 +45,15 @@ Luminaire {
 
 
 
+## API Access
+
+```rs
+// by name
+let my_luminaire = luminaire(string);
+// by index
+let my_luminaire = luminaire(int);
+```
+
 
 
 ## API

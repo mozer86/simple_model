@@ -47,6 +47,15 @@ Space {
 
 
 
+## API Access
+
+```rs
+// by name
+let my_space = space(string);
+// by index
+let my_space = space(int);
+```
+
 
 
 ## API

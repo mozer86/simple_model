@@ -57,6 +57,15 @@ Surface {
 
 
 
+## API Access
+
+```rs
+// by name
+let my_surface = surface(string);
+// by index
+let my_surface = surface(int);
+```
+
 
 
 ## API

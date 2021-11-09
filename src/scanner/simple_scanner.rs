@@ -183,7 +183,7 @@ impl <'a>SimpleScanner<'a> {
     }
 
     /// Consumes a string (i.e., a term in "quotes")
-    fn string(&mut self)->Token<'a>{        
+    fn string(&mut self, delimiter: char )->Token<'a>{        
         // Token will have this line reported
         let start_line = self.line;
                       
@@ -191,7 +191,7 @@ impl <'a>SimpleScanner<'a> {
         
 
         // Advance as much as possible
-        while next != '"' && !self.finished{                        
+        while next != delimiter && !self.finished{                        
             if next == '\n' {
                 self.line +=1 ;                
             }            
@@ -369,7 +369,8 @@ impl <'a>SimpleScanner<'a> {
                     self.make_token(TokenType::Colon)
                 }
             },                        
-            '"' => { self.string() },
+            '"' => { self.string('"') },
+            '\'' => { self.string('\'') },
             '`' =>{
                 if self.peek() == '`' && self.peek_next() == '`'{
                     self.advance().unwrap();

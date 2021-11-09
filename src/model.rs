@@ -257,23 +257,39 @@ mod testing {
 
             print(\"NEXT ---->\");
 
-            // some_space.dry_bulb_temperature = 22;
-
-            // Ideal
-            let ideal = hvac(\"ideal hvac\");
-            let power = ideal.power_consumption;
-            print(`Ideal power consumption is ${power} W`);
-            ideal.power_consumption = 1;
-            let power = ideal.power_consumption;
-            print(`Ideal power consumption is ${power} W`);
+            
 
             // Electric
             let electric = hvac(\"electric heater\");
             let power = electric.power_consumption;
             print(`Electric power consumption is ${power} W`);
-            electric.power_consumption = 99.;
+            electric.power_consumption = 99.1;
             let power = electric.power_consumption;
             print(`Electric power consumption is ${power} W`);
+
+            // Ideal
+            let ideal = hvac(\"ideal hvac\");
+            let power = ideal.power_consumption;
+            print(`Ideal power consumption is ${power} W`);
+            ideal.power_consumption = 912.1;
+            let power = ideal.power_consumption;
+            print(`Ideal power consumption is ${power} W`);
+
+            print(\"BY INDEX NOW ---->\");
+
+            
+
+            // Electric
+            let electric = hvac(0);
+            let power = electric.power_consumption;
+            print(`Electric power consumption is ${power} W`);
+            
+            // Ideal
+            let ideal = hvac(1);
+            let power = ideal.power_consumption;
+            print(`Ideal power consumption is ${power} W`);
+            
+
             
         ").unwrap();
 

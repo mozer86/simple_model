@@ -4,41 +4,41 @@
 
 ## NoObstructions
 
-  No obstructions or local shielding
-
-
 ```
 NoObstructions
 ```
+  No obstructions or local shielding
+
+
 ## IsolatedRural
-
-  Typical shelter for an isolated rural house
-
 
 ```
 IsolatedRural
 ```
+  Typical shelter for an isolated rural house
+
+
 ## Urban
-
-  Typical shelter caused by other buildings across the street
-
 
 ```
 Urban
 ```
+  Typical shelter caused by other buildings across the street
+
+
 ## LargeLotUrban
-
-  Typical shelter for urban buildings on larger lots
-
 
 ```
 LargeLotUrban
 ```
+  Typical shelter for urban buildings on larger lots
+
+
 ## SmallLotUrban
-
-  Typical shelter produced by buildings that are immediately adjacent.
-
 
 ```
 SmallLotUrban
 ```
+  Typical shelter produced by buildings that are immediately adjacent.
+
+
