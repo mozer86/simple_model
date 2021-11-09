@@ -25,7 +25,7 @@ use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 
 use std::rc::Rc;
 
-#[derive(SimpleInputOutput)]
+#[derive(Clone, SimpleInputOutput)]
 pub enum ShelterClass{
     
     /// No obstructions or local shielding
@@ -41,7 +41,7 @@ pub enum ShelterClass{
     LargeLotUrban,
 
     /// Typical shelter produced by buildings that are immediately adjacent.
-    SmallLotUrban,
+    SmallLotUrban,    
 }
 
 /// This object is utilized to group `Space` objects together for 
@@ -51,7 +51,7 @@ pub enum ShelterClass{
 pub struct Building {
     
     /// The name of the Building
-    name: String,
+    pub name: String,
 
     /// The index of the building in the SimpleModel's buildings array
     index : Option<usize>,
@@ -80,6 +80,9 @@ pub struct Building {
     /// > **Note:** The `EffectiveAirLeakageArea` object is appropriate for buildings
     /// > of 3 storeys or less. 
     wind_coefficient : Option<Float>,
+
+    /// The `ShelterClass` of this building. 
+    shelter_class: Option<ShelterClass>,
 }
 
 

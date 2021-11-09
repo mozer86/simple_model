@@ -11,6 +11,7 @@ Building {
 	storeys : integer   // Optional
 	stack_coefficient : number   // Optional
 	wind_coefficient : number   // Optional
+	shelter_class : ShelterClass   // Optional
 }
 ```
 
@@ -62,6 +63,13 @@ Building {
 
  > **Note:** The `EffectiveAirLeakageArea` object is appropriate for buildings
   > of 3 storeys or less. 
+
+
+
+
+#### shelter_class  (*optional*)
+
+  The `ShelterClass` of this building. 
 
 
 

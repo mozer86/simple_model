@@ -32,6 +32,7 @@ use crate::model::SimpleModel;
 use crate::simulation_state::SimulationState;
 use crate::simulation_state_element::StateElementField;
 use crate::infiltration::Infiltration;
+use crate::building::Building;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
@@ -51,6 +52,7 @@ pub struct Space {
 
     /// The importance of this space over time
     // importance : Option<Box<dyn Schedule<Float>>>,
+    building: Option<Rc<Building>>,
     
 
     #[state]

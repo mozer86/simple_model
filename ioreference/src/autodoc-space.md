@@ -9,6 +9,7 @@ Space {
 	name : string
 	volume : number   // Optional
 	infiltration : Infiltration   // Optional
+	building : Building   // Optional
 }
 ```
 
@@ -33,6 +34,13 @@ Space {
 #### infiltration  (*optional*)
 
   The infiltration in the space
+
+
+
+
+#### building  (*optional*)
+
+  The importance of this space over time
 
 
 
