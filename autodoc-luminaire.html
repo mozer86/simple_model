@@ -164,6 +164,12 @@ thermal simulations, in which the heat disipated by
 a luminaire will be disipated into the air of a thermal
 zone. So, if this is an exterior luminaire or if no thermal
 calculation is performed, this can be left empty.</p>
+<h2 id="api-access"><a class="header" href="#api-access">API Access</a></h2>
+<pre><code class="language-rs">// by name
+let my_luminaire = luminaire(string);
+// by index
+let my_luminaire = luminaire(int);
+</code></pre>
 <h2 id="api"><a class="header" href="#api">API</a></h2>
 <p>The following properties are available for simulating control algorithms</p>
 <table><thead><tr><th>Property</th><th>Getter</th><th>Setter</th></tr></thead><tbody>

@@ -149,17 +149,34 @@ metering and/or shared values. For example, the number of storeys
 and the <code>ShelterClass</code> will help defining the <code>Infiltrations</code></p>
 <pre><code class="language-rs">Building {
 	name : string
-	storeys : integer   // Optional
+	n_storeys : integer   // Optional
+	shelter_class : ShelterClass   // Optional
 	stack_coefficient : number   // Optional
 	wind_coefficient : number   // Optional
-	shelter_class : ShelterClass   // Optional
 }
 </code></pre>
 <h2 id="fields"><a class="header" href="#fields">Fields</a></h2>
 <h4 id="name"><a class="header" href="#name">name</a></h4>
 <p>The name of the Building</p>
-<h4 id="storeys--optional"><a class="header" href="#storeys--optional">storeys  (<em>optional</em>)</a></h4>
-<p>The number of storeys of this building</p>
+<h4 id="n_storeys--optional"><a class="header" href="#n_storeys--optional">n_storeys  (<em>optional</em>)</a></h4>
+<p>The number of storeys of this building.</p>
+<p>This value use used by the <code>AirFlow</code> module when a <code>Space</code> associated
+to this <code>Building</code> has been assigned an <code>EffectiveAirLeakageArea</code> 
+infiltration. This value is required for calculating the Stack 
+Coefficient (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) and the Wind Coefficient (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) of the 
+<code>EffectiveAirLeakageArea</code> infiltration. <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> can be inputed
+directly by assigning values to the <code>stack_coefficient</code> and 
+<code>wind_coefficient</code> fields, in which case the <code>n_storeys</code> field will
+be ignored.</p>
+<h4 id="shelter_class--optional"><a class="header" href="#shelter_class--optional">shelter_class  (<em>optional</em>)</a></h4>
+<p>The <code>ShelterClass</code> of this building. </p>
+<p>This value use used by the <code>AirFlow</code> module when a <code>Space</code> associated
+to this <code>Building</code> has been assigned an <code>EffectiveAirLeakageArea</code> 
+infiltration. This value is required for calculating the Wind 
+Coefficient (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) of the 
+<code>EffectiveAirLeakageArea</code> infiltration.  <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> can be inputed
+directly by assigning values to the <code>wind_coefficient</code> field, in 
+which case the <code>shelter_class</code> field will be ignored.</p>
 <h4 id="stack_coefficient--optional"><a class="header" href="#stack_coefficient--optional">stack_coefficient  (<em>optional</em>)</a></h4>
 <p>The stack coefficient of this building, used for </p>
 <p>calculating infiltrations in <code>Spaces</code> that utilize the <code>EffectiveAirLeakageArea</code>
@@ -180,8 +197,6 @@ this values (based on EnergyPlus' Engineering Reference). </p>
 <p><strong>Note:</strong> The <code>EffectiveAirLeakageArea</code> object is appropriate for buildings
 of 3 storeys or less. </p>
 </blockquote>
-<h4 id="shelter_class--optional"><a class="header" href="#shelter_class--optional">shelter_class  (<em>optional</em>)</a></h4>
-<p>The <code>ShelterClass</code> of this building. </p>
 
                     </main>
 
