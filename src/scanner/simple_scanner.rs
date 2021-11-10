@@ -332,7 +332,7 @@ impl <'a>SimpleScanner<'a> {
 
     
 
-    /// Scans a [`Token`] in `SimpleBuilding` read mode
+    /// Scans a `Token` in `SimpleBuilding` read mode
     pub fn scan_token(&mut self)->Token<'a>{
         self.skip_white_space();        
         self.start_index = self.current_index;

@@ -62,7 +62,7 @@ impl Substance {
 
 impl SimpleModel {
 
-    /// Adds a [`Subtance`] to the [`SimpleModel`]
+    /// Adds a [`Substance`] to the [`SimpleModel`]
     pub fn add_substance(&mut self, mut add : Substance) -> Rc<Substance>{
         add.set_index(self.substances.len());
         let add = Rc::new(add);

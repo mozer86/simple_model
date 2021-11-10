@@ -3,3 +3,5 @@ Cargo.lock
 ioreference/book/*
 .DS_Store
 check*
+ioreference/src/doc
+ioreference/src/*.json

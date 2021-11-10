@@ -22,6 +22,8 @@ jobs:
       run: cargo install mdbook-katex
     - name: Build Book
       run: mdbook build ioreference
+    - name: Build docs
+      run: cargo doc --document-private-items --no-deps --target-dir ./ioreference/src
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:

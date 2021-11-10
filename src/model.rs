@@ -97,7 +97,7 @@ mod testing {
     fn write_io_doc(){
         let mut summary = "# Summary\n\n".to_string();
         // Add manually written chapters
-        summary.push_str("- [Chapter 1](./chapter_1.md)\n");
+        summary.push_str("- [Introduction](./introduction.md)\n");
 
         // Add automatic documentation
         let dir = "./ioreference/src";
