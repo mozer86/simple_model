@@ -66,10 +66,10 @@ impl SimpleModel{
 
     pub fn from_file(filename: String)->Result<(Self, SimulationStateHeader), String>{
         
-        let bytes = match fs::read(filename){
+        let bytes = match fs::read(filename.clone()){
             Ok(v)=>v,
-            Err(e)=>{
-                return Err(format!("{}", e))
+            Err(_)=>{
+                return Err(format!("Could not read SIMPLE file '{}'", filename))
             }
         };
         let mut scanner = SimpleScanner::new(&bytes, 1);
