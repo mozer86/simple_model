@@ -95,12 +95,10 @@ mod testing {
     use crate::infiltration::Infiltration;
     #[test]
     fn write_io_doc(){
-        let mut summary = "# Summary\n\n".to_string();
-        // Add manually written chapters
-        summary.push_str("- [Introduction](./introduction.md)\n");
-
+        let mut summary = "# Input/Output reference guide\n\n".to_string();
+        
         // Add automatic documentation
-        let dir = "./ioreference/src";
+        let dir = "../src";
         Boundary::print_doc(&dir, &mut summary).unwrap();
         
         Building::print_doc(&dir, &mut summary).unwrap();
@@ -137,10 +135,12 @@ mod testing {
         
         Surface::print_doc(&dir, &mut summary).unwrap();
         Surface::print_api_doc(&dir, &mut summary).unwrap();
-        // assert!(false)
+        
 
         let summary_file = format!("{}/SUMMARY.md", dir);
-        std::fs::write(summary_file, summary.as_bytes()).unwrap();
+        let current_summary = fs::read_to_string(summary_file.clone()).expect("Could not read summary file");
+        let whole_summary = format!("{}\n\n{}", current_summary, summary);
+        std::fs::write(summary_file, whole_summary.as_bytes()).unwrap();
 
     }
 
