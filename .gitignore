@@ -5,3 +5,4 @@ ioreference/book/*
 check*
 ioreference/src/doc
 ioreference/src/*.json
+ioreference/src/debug
