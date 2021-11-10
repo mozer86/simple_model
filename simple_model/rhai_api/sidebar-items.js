@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["register_control_api","Registers the functions used to operate the building"]]});
