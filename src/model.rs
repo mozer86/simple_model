@@ -99,6 +99,12 @@ mod testing {
         
         // Add automatic documentation
         let dir = "../src";
+        let summary_file = format!("{}/SUMMARY.md", dir);
+
+        if !std::path::Path::new(&summary_file).exists(){
+            return;
+        }
+
         Boundary::print_doc(&dir, &mut summary).unwrap();
         
         Building::print_doc(&dir, &mut summary).unwrap();
@@ -137,7 +143,7 @@ mod testing {
         Surface::print_api_doc(&dir, &mut summary).unwrap();
         
 
-        let summary_file = format!("{}/SUMMARY.md", dir);
+        
         let current_summary = fs::read_to_string(summary_file.clone()).expect("Could not read summary file");
         let whole_summary = format!("{}\n\n{}", current_summary, summary);
         std::fs::write(summary_file, whole_summary.as_bytes()).unwrap();
