@@ -169,6 +169,9 @@ mod testing {
         assert_eq!(model.surfaces[0].name, "the surface");
         assert!(Rc::ptr_eq(&model.surfaces[0].construction, &model.constructions[0]));
 
+        assert_eq!(model.spaces.len(), 1);
+        assert_eq!(model.spaces[0].name, "Bedroom");        
+
         
     }
 

@@ -25,6 +25,10 @@ use crate::material::Material;
 use crate::construction::Construction;
 use crate::surface::Surface;
 use crate::fenestration::Fenestration;
+use crate::luminaire::Luminaire;
+use crate::hvac::HVAC;
+use crate::space::Space;
+use crate::building::Building;
 
 use crate::scanner::tokens::*;
 
@@ -524,12 +528,12 @@ impl <'a>SimpleScanner<'a> {
                 b"Construction"=>{
                     constructions.push((line, start, end));
                 },
-                b"Surface"=>{
-                    surfaces.push((line, start, end));
-                },                
                 b"Space"=>{
                     spaces.push((line, start, end));
                 },
+                b"Surface"=>{
+                    surfaces.push((line, start, end));
+                },                
                 b"Fenestration"=>{
                     fenestrations.push((line, start, end));
                 },
@@ -552,13 +556,20 @@ impl <'a>SimpleScanner<'a> {
         let mut model = SimpleModel::new("the_model".to_string());
         let  mut state_header = SimulationStateHeader::new();
         
+        for (line, start,end) in buildings{
+            let bytes = self.borrow_slice(start,end);
+            match Building::from_bytes(line, bytes, &model){
+                Ok(s)=>{model.add_building(s);},
+                Err(e)=>eprintln!("{}", e)
+            };            
+        }
+
         for (line, start,end) in substances{
             let bytes = self.borrow_slice(start,end);
             match Substance::from_bytes(line, bytes, &model){
                 Ok(s)=>{model.add_substance(s);},
                 Err(e)=>eprintln!("{}", e)
-            };
-            
+            };            
         }
 
         for (line, start,end) in materials{
@@ -573,6 +584,14 @@ impl <'a>SimpleScanner<'a> {
             let bytes = self.borrow_slice(start,end);            
             match Construction::from_bytes(line, bytes, &model){
                 Ok(s)=>{model.add_construction(s);},
+                Err(e)=>eprintln!("{}", e)
+            };
+        }
+
+        for (line, start,end) in spaces {
+            let bytes = self.borrow_slice(start,end);            
+            match Space::from_bytes(line, bytes, &model){
+                Ok(s)=>{model.add_space(s);},
                 Err(e)=>eprintln!("{}", e)
             };
         }
@@ -592,6 +611,24 @@ impl <'a>SimpleScanner<'a> {
                 Err(e)=>eprintln!("{}", e)
             };
         }
+        
+
+        for (line, start,end) in hvacs {
+            let bytes = self.borrow_slice(start,end);            
+            match HVAC::from_bytes(line, bytes, &model){
+                Ok(s)=>{model.add_hvac(s, &mut state_header);},
+                Err(e)=>eprintln!("{}", e)
+            };
+        }
+
+        for (line, start,end) in luminaires {
+            let bytes = self.borrow_slice(start,end);            
+            match Luminaire::from_bytes(line, bytes, &model){
+                Ok(s)=>{model.add_luminaire(s, &mut state_header);},
+                Err(e)=>eprintln!("{}", e)
+            };
+        }
+        
         
         
 

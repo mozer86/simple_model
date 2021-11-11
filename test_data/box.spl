@@ -16,6 +16,11 @@ Material {
 }
 
 
+Space {
+    name: "Bedroom",
+    volume: 42    
+}
+
 Construction {
     name: "the construction" ,
     materials : ["the material", "another material"]
