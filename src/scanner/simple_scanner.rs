@@ -508,7 +508,7 @@ impl <'a>SimpleScanner<'a> {
             // Handle case when token is not an identifier
             if identifier.token_type == TokenType::EOF{
                 break
-            }else if identifier.token_type != TokenType::Identifier {
+            }else if identifier.token_type != TokenType::Identifier && identifier.token_type != TokenType::TokenEnumName {
                 
                 return Err(make_error_msg(format!("Unexpected token of type {:?}", identifier.token_type), self.line));                
                 

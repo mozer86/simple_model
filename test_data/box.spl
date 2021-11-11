@@ -38,4 +38,11 @@ Surface {
 }
 
 
+HVAC::ElectricHeater {
+    name: "Bedrooms heater",
+    target_space: "Bedroom"
+}
+
+
+
 

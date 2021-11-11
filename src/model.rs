@@ -172,6 +172,16 @@ mod testing {
         assert_eq!(model.spaces.len(), 1);
         assert_eq!(model.spaces[0].name, "Bedroom");        
 
+
+        assert_eq!(model.hvacs.len(), 1);
+        if let HVAC::ElectricHeater(heater) = &model.hvacs[0] {
+            assert_eq!("Bedrooms heater", heater.name)
+        }else{
+            panic!("Was not an electric heater!");
+        }
+        
+
+
         
     }
 
@@ -230,9 +240,11 @@ mod testing {
         let ideal = IdealHeaterCooler::new("ideal hvac".to_string());
         let ideal = model.add_hvac(ideal.wrap(), &mut state_header);
         
-        let state_index = state_header.push(SimulationStateElement::SpaceInfiltrationVolume(0), 2.1);
         let space = Space::new("some space".to_string());
+        let state_index = state_header.push(SimulationStateElement::SpaceInfiltrationVolume(0), 2.1);
         space.set_infiltration_volume_index(state_index);
+        let state_index = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.2);
+        space.set_dry_bulb_temperature_index(state_index);
         model.add_space(space);
 
         let mut state = state_header.take_values().unwrap();        
@@ -299,6 +311,10 @@ mod testing {
             print(`Ideal power consumption is ${power} W`);
             
 
+            // Temperature
+            let the_space = space(\"some space\");
+            let temp = the_space.dry_bulb_temperature;
+            print(`Temp is ${temp}`)            
             
         ").unwrap();
 
