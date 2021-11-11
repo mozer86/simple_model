@@ -78,15 +78,16 @@ pub enum Infiltration {
     /// 
     /// ```rs
     /// Building {
-    ///     name: "main building",
-    ///     stack_coefficient : 0.01,
-    ///     wind_coefficient: 0.2
+    ///     name: "Main campus", 
+    ///     n_storeys: 2,
+    ///     shelter_class: ShelterClass::Urban
     /// }
-    /// 
+    ///
     /// Space {
-    ///     name: "bedroom",
-    ///     infiltration: EffectiveAirLeakageArea(1.2)
-    ///     building: "main building"
+    ///     name: "Bedroom",
+    ///     volume: 72.,
+    ///     building: "Main campus", 
+    ///     infiltration : Infiltration::EffectiveAirLeakageArea(300)
     /// }
     /// ```
     EffectiveAirLeakageArea(Float),
