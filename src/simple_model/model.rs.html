@@ -345,6 +345,22 @@
 <span id="311">311</span>
 <span id="312">312</span>
 <span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -519,6 +535,16 @@ SOFTWARE.
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Bedroom&quot;</span>);        
 
+
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">hvacs</span>.<span class="ident">len</span>(), <span class="number">1</span>);
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">heater</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">hvacs</span>[<span class="number">0</span>] {
+            <span class="macro">assert_eq!</span>(<span class="string">&quot;Bedrooms heater&quot;</span>, <span class="ident">heater</span>.<span class="ident">name</span>)
+        }<span class="kw">else</span>{
+            <span class="macro">panic!</span>(<span class="string">&quot;Was not an electric heater!&quot;</span>);
+        }
+        
+
+
         
     }
 
@@ -577,9 +603,11 @@ SOFTWARE.
         <span class="kw">let</span> <span class="ident">ideal</span> <span class="op">=</span> <span class="ident">IdealHeaterCooler::new</span>(<span class="string">&quot;ideal hvac&quot;</span>.<span class="ident">to_string</span>());
         <span class="kw">let</span> <span class="ident">ideal</span> <span class="op">=</span> <span class="ident">model</span>.<span class="ident">add_hvac</span>(<span class="ident">ideal</span>.<span class="ident">wrap</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">state_header</span>);
         
-        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceInfiltrationVolume</span>(<span class="number">0</span>), <span class="number">2.1</span>);
         <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
+        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceInfiltrationVolume</span>(<span class="number">0</span>), <span class="number">2.1</span>);
         <span class="ident">space</span>.<span class="ident">set_infiltration_volume_index</span>(<span class="ident">state_index</span>);
+        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceDryBulbTemperature</span>(<span class="number">0</span>), <span class="number">22.2</span>);
+        <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="ident">state_index</span>);
         <span class="ident">model</span>.<span class="ident">add_space</span>(<span class="ident">space</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">take_values</span>().<span class="ident">unwrap</span>();        
@@ -646,6 +674,10 @@ SOFTWARE.
             print(`Ideal power consumption is ${power} W`);
             
 
+            // Temperature
+            let the_space = space(\&quot;some space\&quot;);
+            let temp = the_space.dry_bulb_temperature;
+            print(`Temp is ${temp}`)            
             
         &quot;</span>).<span class="ident">unwrap</span>();
 
