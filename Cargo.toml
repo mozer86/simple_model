@@ -10,8 +10,8 @@ edition = "2018"
 calendar = { git = "https://github.com/SIMPLE-BuildingSimulation/calendar.git" }
 geometry3d = {git = "https://github.com/SIMPLE-BuildingSimulation/geometry3d.git"}
 schedule = { git = "https://github.com/SIMPLE-BuildingSimulation/schedule.git" }
-# building_state_macro = { git = "https://github.com/SIMPLE-BuildingSimulation/building_state_macro.git" }
-building_state_macro = { path = "../building_state_macro" }
+building_state_macro = { git = "https://github.com/SIMPLE-BuildingSimulation/building_state_macro.git" }
+# building_state_macro = { path = "../building_state_macro" }
 rhai = { version = "1.1.2" }
 
 
