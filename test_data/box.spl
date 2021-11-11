@@ -1,10 +1,10 @@
 Substance {
-    name: "the substance",  
-    thermal_conductivity: 12
+    thermal_conductivity: 12.,
+    name: "the substance"
 }
 
 Material {
-    name: 'the material',
+    name: "the material",
     substance : "the substance",
     thickness: 0.1
 }
@@ -31,3 +31,6 @@ Surface {
         0, 1, 0
     ]
 }
+
+
+

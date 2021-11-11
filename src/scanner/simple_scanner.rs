@@ -169,7 +169,7 @@ impl <'a>SimpleScanner<'a> {
         while self.peek().is_ascii_digit(){            
             self.advance();            
         }
-        if self.peek() == '.' && self.peek_next().is_ascii_digit(){            
+        if self.peek() == '.' && (self.peek_next().is_ascii_digit() || self.peek_next().is_ascii_whitespace() || self.peek_next() == ','){            
             // Consume the .            
             self.advance();
             while self.peek().is_ascii_digit() {                
@@ -273,13 +273,14 @@ impl <'a>SimpleScanner<'a> {
     /// Skips the white spaces and the comments and all 
     /// those things.
     pub fn skip_white_space(&mut self){
+        // println!("---> '{}'", self.peek());
         // Prevent segfault
-        if self.finished{
+        if self.finished {
             return;
         }
 
         loop {                                    
-            match self.peek(){
+            match self.peek(){                
                 ' '  => {self.advance().unwrap();},
                 '\r' => {self.advance().unwrap();},
                 '\t' => {self.advance().unwrap();},
@@ -497,14 +498,15 @@ impl <'a>SimpleScanner<'a> {
         let mut luminaires : Vec<(usize, usize,usize)> = Vec::new();
 
         while !self.finished {
-            let identifier = self.scan_token();
+            
+            let identifier = self.scan_token();            
             self.update_start_index();
-            // fail if it is not an identifier
-            if identifier.token_type != TokenType::Identifier {
+            // Handle case when token is not an identifier
+            if identifier.token_type == TokenType::EOF{
+                break
+            }else if identifier.token_type != TokenType::Identifier {
                 
-                eprintln!("{}",
-                    make_error_msg(format!("Unexpected token of type {:?}", identifier.token_type), self.line)
-                );    
+                return Err(make_error_msg(format!("Unexpected token of type {:?}", identifier.token_type), self.line));                
                 
             }
             let line = self.line;
