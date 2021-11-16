@@ -225,7 +225,7 @@ SOFTWARE.
                 <span class="kw">let</span> <span class="ident">hvac</span> <span class="op">=</span> <span class="ident">Rc::get_mut</span>(<span class="ident">hvac</span>).<span class="ident">expect</span>(<span class="string">&quot;Could not borrow IdealHeaterCooler as mut when adding&quot;</span>);
                 <span class="ident">hvac</span>.<span class="ident">set_index</span>(<span class="ident">obj_index</span>);
                 <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">push</span>( <span class="ident">SimulationStateElement::HeatingCoolingPowerConsumption</span>(<span class="ident">obj_index</span>), <span class="number">0.</span>);
-                <span class="ident">hvac</span>.<span class="ident">set_heating_cooling_consumption_index</span>(<span class="ident">state_index</span>);                
+                <span class="ident">hvac</span>.<span class="ident">set_heating_cooling_consumption_index</span>(<span class="ident">state_index</span>);                                               
             }
         }
                 

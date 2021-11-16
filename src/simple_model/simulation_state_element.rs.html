@@ -217,6 +217,25 @@
 <span id="183">183</span>
 <span id="184">184</span>
 <span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -289,15 +308,34 @@ SOFTWARE.
     <span class="comment">// #[physical]</span>
     <span class="comment">// SpaceBrightness(usize),</span>
 
-    <span class="comment">// Surface</span>
+    
+    <span class="doccomment">/// The convective heat transfer coefficient</span>
+    <span class="doccomment">/// at the front of a surface</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">SurfaceFrontConvectionCoefficient</span>(<span class="ident">usize</span>),
+
+    <span class="doccomment">/// The convective heat transfer coefficient</span>
+    <span class="doccomment">/// at the back of a surface</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">SurfaceBackConvectionCoefficient</span>(<span class="ident">usize</span>),
+
+    <span class="doccomment">/// The convective heat flow </span>
+    <span class="doccomment">/// at the front of a surface</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">SurfaceFrontConvectiveHeatFlow</span>(<span class="ident">usize</span>),
+
+    <span class="doccomment">/// The convective heat flow </span>
+    <span class="doccomment">/// at the back of a surface</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">SurfaceBackConvectiveHeatFlow</span>(<span class="ident">usize</span>),
+
     <span class="comment">//SurfaceFrontTotalSolarIrradiance(usize),</span>
     <span class="comment">//SurfaceBackTotalSolarIrradiance(usize),</span>
     <span class="comment">//SurfaceFrontDirectSolarIrradiance(usize),</span>
     <span class="comment">//SurfaceBackDirectSolarIrradiance(usize),</span>
     <span class="comment">//SurfaceFrontDiffuseSolarIrradiance(usize),</span>
     <span class="comment">//SurfaceBackDiffuseSolarIrradiance(usize),</span>
-
-    <span class="comment">/* THERMAL */</span>
+    
     <span class="doccomment">/// Space Air Temperature in C... The elements</span>
     <span class="doccomment">/// are the index of the Space in the Building mode</span>
     <span class="doccomment">/// and the temperature</span>

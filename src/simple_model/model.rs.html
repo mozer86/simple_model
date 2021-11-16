@@ -361,6 +361,10 @@
 <span id="327">327</span>
 <span id="328">328</span>
 <span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -534,6 +538,10 @@ SOFTWARE.
 
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Bedroom&quot;</span>);        
+
+
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">buildings</span>.<span class="ident">len</span>(), <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">buildings</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Main campus&quot;</span>);        
 
 
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">hvacs</span>.<span class="ident">len</span>(), <span class="number">1</span>);

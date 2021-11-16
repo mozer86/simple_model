@@ -132,6 +132,7 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -212,15 +213,16 @@ SOFTWARE.
     <span class="doccomment">/// </span>
     <span class="doccomment">/// ```rs</span>
     <span class="doccomment">/// Building {</span>
-    <span class="doccomment">///     name: &quot;main building&quot;,</span>
-    <span class="doccomment">///     stack_coefficient : 0.01,</span>
-    <span class="doccomment">///     wind_coefficient: 0.2</span>
+    <span class="doccomment">///     name: &quot;Main campus&quot;, </span>
+    <span class="doccomment">///     n_storeys: 2,</span>
+    <span class="doccomment">///     shelter_class: ShelterClass::Urban</span>
     <span class="doccomment">/// }</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// Space {</span>
-    <span class="doccomment">///     name: &quot;bedroom&quot;,</span>
-    <span class="doccomment">///     infiltration: EffectiveAirLeakageArea(1.2)</span>
-    <span class="doccomment">///     building: &quot;main building&quot;</span>
+    <span class="doccomment">///     name: &quot;Bedroom&quot;,</span>
+    <span class="doccomment">///     volume: 72.,</span>
+    <span class="doccomment">///     building: &quot;Main campus&quot;, </span>
+    <span class="doccomment">///     infiltration : Infiltration::EffectiveAirLeakageArea(300)</span>
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">EffectiveAirLeakageArea</span>(<span class="ident">Float</span>),
