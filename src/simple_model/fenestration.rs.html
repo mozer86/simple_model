@@ -204,6 +204,22 @@
 <span id="170">170</span>
 <span id="171">171</span>
 <span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -308,6 +324,22 @@ SOFTWARE.
     <span class="attribute">#[<span class="ident">state</span>]</span>
     <span class="attribute">#[<span class="ident">operational</span>]</span>
     <span class="ident">open_fraction</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">front_convection_coefficient</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">back_convection_coefficient</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">front_convective_heat_flow</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">back_convective_heat_flow</span>: <span class="ident">StateElementField</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Fenestration</span> {
