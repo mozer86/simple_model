@@ -70,15 +70,34 @@ pub enum SimulationStateElement {
     // #[physical]
     // SpaceBrightness(usize),
 
-    // Surface
+    
+    /// The convective heat transfer coefficient
+    /// at the front of a surface
+    #[physical]
+    SurfaceFrontConvectionCoefficient(usize),
+
+    /// The convective heat transfer coefficient
+    /// at the back of a surface
+    #[physical]
+    SurfaceBackConvectionCoefficient(usize),
+
+    /// The convective heat flow 
+    /// at the front of a surface
+    #[physical]
+    SurfaceFrontConvectiveHeatFlow(usize),
+
+    /// The convective heat flow 
+    /// at the back of a surface
+    #[physical]
+    SurfaceBackConvectiveHeatFlow(usize),
+
     //SurfaceFrontTotalSolarIrradiance(usize),
     //SurfaceBackTotalSolarIrradiance(usize),
     //SurfaceFrontDirectSolarIrradiance(usize),
     //SurfaceBackDirectSolarIrradiance(usize),
     //SurfaceFrontDiffuseSolarIrradiance(usize),
     //SurfaceBackDiffuseSolarIrradiance(usize),
-
-    /* THERMAL */
+    
     /// Space Air Temperature in C... The elements
     /// are the index of the Space in the Building mode
     /// and the temperature

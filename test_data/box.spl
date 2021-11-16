@@ -1,3 +1,9 @@
+Building {
+    name: "Main campus", 
+    n_storeys: 2,
+    shelter_class: ShelterClass::Urban()
+}
+
 Substance {
     thermal_conductivity: 12.,
     name: "the substance"

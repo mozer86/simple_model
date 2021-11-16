@@ -173,6 +173,10 @@ mod testing {
         assert_eq!(model.spaces[0].name, "Bedroom");        
 
 
+        assert_eq!(model.buildings.len(), 1);
+        assert_eq!(model.buildings[0].name, "Main campus");        
+
+
         assert_eq!(model.hvacs.len(), 1);
         if let HVAC::ElectricHeater(heater) = &model.hvacs[0] {
             assert_eq!("Bedrooms heater", heater.name)

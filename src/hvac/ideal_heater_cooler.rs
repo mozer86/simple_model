@@ -55,6 +55,7 @@ pub struct IdealHeaterCooler {
     #[state]
     #[operational("power_consumption")]
     heating_cooling_consumption: StateElementField,
+    
 }
 
 impl IdealHeaterCooler {

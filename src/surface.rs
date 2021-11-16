@@ -74,6 +74,22 @@ pub struct Surface {
     #[state]
     #[physical("back_temperature")]
     last_node_temperature: StateElementField,
+
+    #[state]
+    #[physical]
+    front_convection_coefficient: StateElementField,
+
+    #[state]
+    #[physical]
+    back_convection_coefficient: StateElementField,
+
+    #[state]
+    #[physical]
+    front_convective_heat_flow: StateElementField,
+
+    #[state]
+    #[physical]
+    back_convective_heat_flow: StateElementField,
 }
 
 /// A surface in the SimpleModel, separating two spaces,

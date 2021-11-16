@@ -556,7 +556,7 @@ impl <'a>SimpleScanner<'a> {
         let mut model = SimpleModel::new("the_model".to_string());
         let  mut state_header = SimulationStateHeader::new();
         
-        for (line, start,end) in buildings{
+        for (line, start, end) in buildings{
             let bytes = self.borrow_slice(start,end);
             match Building::from_bytes(line, bytes, &model){
                 Ok(s)=>{model.add_building(s);},

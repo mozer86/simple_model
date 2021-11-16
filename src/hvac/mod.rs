@@ -70,7 +70,7 @@ impl SimpleModel {
                 let hvac = Rc::get_mut(hvac).expect("Could not borrow IdealHeaterCooler as mut when adding");
                 hvac.set_index(obj_index);
                 let state_index = state.push( SimulationStateElement::HeatingCoolingPowerConsumption(obj_index), 0.);
-                hvac.set_heating_cooling_consumption_index(state_index);                
+                hvac.set_heating_cooling_consumption_index(state_index);                                               
             }
         }
                 
