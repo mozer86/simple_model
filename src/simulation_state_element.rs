@@ -91,6 +91,26 @@ pub enum SimulationStateElement {
     #[physical]
     SurfaceBackConvectiveHeatFlow(usize),
 
+    /// The convective heat transfer coefficient
+    /// at the front of a surface
+    #[physical]
+    FenestrationFrontConvectionCoefficient(usize),
+
+    /// The convective heat transfer coefficient
+    /// at the back of a surface
+    #[physical]
+    FenestrationBackConvectionCoefficient(usize),
+
+    /// The convective heat flow 
+    /// at the front of a surface
+    #[physical]
+    FenestrationFrontConvectiveHeatFlow(usize),
+
+    /// The convective heat flow 
+    /// at the back of a surface
+    #[physical]
+    FenestrationBackConvectiveHeatFlow(usize),
+
     //SurfaceFrontTotalSolarIrradiance(usize),
     //SurfaceBackTotalSolarIrradiance(usize),
     //SurfaceFrontDirectSolarIrradiance(usize),

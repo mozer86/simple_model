@@ -102,6 +102,22 @@ pub struct Fenestration {
     #[state]
     #[operational]
     open_fraction: StateElementField,
+
+    #[state]
+    #[physical]
+    front_convection_coefficient: StateElementField,
+
+    #[state]
+    #[physical]
+    back_convection_coefficient: StateElementField,
+
+    #[state]
+    #[physical]
+    front_convective_heat_flow: StateElementField,
+
+    #[state]
+    #[physical]
+    back_convective_heat_flow: StateElementField,
 }
 
 impl Fenestration {
