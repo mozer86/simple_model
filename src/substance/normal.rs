@@ -21,8 +21,7 @@ use crate::Float;
 
 use building_state_macro::{
     SimpleInputOutput, 
-    SimpleObjectBehaviour,
-    GroupMemberSimpleRhaiAPI
+    SimpleObjectBehaviour
 };
 
 use crate::model::SimpleModel;
@@ -33,7 +32,7 @@ use crate::model::SimpleModel;
 /// and other software's terminology (which does not include
 /// Substace, but it does include Material, which is essentially
 /// a Normal with a thickness).
-#[derive(Clone, SimpleInputOutput, SimpleObjectBehaviour, GroupMemberSimpleRhaiAPI)]
+#[derive(Clone, SimpleInputOutput, SimpleObjectBehaviour)]
 pub struct Normal {    
     /// The name of the Normal. Should be unique for each
     /// Material in the SimpleModel object    

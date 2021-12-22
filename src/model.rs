@@ -84,10 +84,8 @@ impl SimpleModel{
 #[cfg(test)]
 mod testing {
     use super::*;
-    use crate::hvac::{
-        ElectricHeater,
-        IdealHeaterCooler
-    };
+    use crate::hvac;
+    use crate::substance;
     
 
     use crate::boundary::Boundary;
@@ -99,43 +97,61 @@ mod testing {
         
         // Add automatic documentation
         let dir = "../src";
+        let dir = "./book/src";
         let summary_file = format!("{}/SUMMARY.md", dir);
 
         if !std::path::Path::new(&summary_file).exists(){
             return;
         }
 
+        // Boundary
         Boundary::print_doc(&dir, &mut summary).unwrap();
         
+        // Building
         Building::print_doc(&dir, &mut summary).unwrap();
         
+        // Construction
         Construction::print_doc(&dir, &mut summary).unwrap();
         
+        // Fenestration
         Fenestration::print_doc(&dir, &mut summary).unwrap();
         Fenestration::print_api_doc(&dir, &mut summary).unwrap();
         
-        /* HVAC GROUP */
+        // HVAC
         HVAC::print_doc(&dir, &mut summary).unwrap();
         
         summary.push_str(&format!("\t"));
-        ElectricHeater::print_doc(&dir, &mut summary).unwrap();
-        ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
+        hvac::ElectricHeater::print_doc(&dir, &mut summary).unwrap();
+        hvac::ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
         
         summary.push_str(&format!("\t"));
-        IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
-        IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
+        hvac::IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
+        hvac::IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
 
+        // Infiltration
         Infiltration::print_doc(&dir, &mut summary).unwrap();
         
+        // Luminaire
         Luminaire::print_doc(&dir, &mut summary).unwrap();
         Luminaire::print_api_doc(&dir, &mut summary).unwrap();
 
+        // Material
         Material::print_doc(&dir, &mut summary).unwrap();
         
+        // Space
         Space::print_doc(&dir, &mut summary).unwrap();
         Space::print_api_doc(&dir, &mut summary).unwrap();
         
+        // Substance
         Substance::print_doc(&dir, &mut summary).unwrap();
+                
+        summary.push_str(&format!("\t"));
+        substance::Normal::print_doc(&dir, &mut summary).unwrap();
+        // substance::Normal::print_api_doc(&dir, &mut summary).unwrap();
+        
+        
+
+
         
         ShelterClass::print_doc(&dir, &mut summary).unwrap();
         
