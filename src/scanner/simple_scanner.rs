@@ -407,16 +407,22 @@ impl <'a>SimpleScanner<'a> {
         let mut levels = 0;
         let mut started = false;
         // Check if we are solving an Enum or an Object
-        let (open,close) = if self.peek() == ':' && self.peek_next()==':'{
-            // If we start with Colon Colon, then it is an enum
-            ('(',')')
-        }else{
-            // Otherwise, it is  an object
-            ('{','}')
-        };        
+        // let (open,close) = if self.peek() == ':' && self.peek_next()==':'{
+        //     // If we start with Colon Colon, then it is an enum
+        //     ('(',')')
+        // }else{
+        //     // Otherwise, it is  an object
+        //     ('{','}')
+        // };    
+        let (mut open, mut close) = ('{','}');    
 
         while levels > 0 || !started  {        
             let next = self.peek();
+            if !started && next == '(' {
+                // We are opening with this.
+                open = '(';
+                close = ')';
+            }
 
             if next == open {
                 levels += 1;

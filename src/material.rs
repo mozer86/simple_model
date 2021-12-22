@@ -39,7 +39,7 @@ pub struct Material {
 
     /// A reference to the [`Substance`] of which this
     /// [`Material`] is made of    
-    pub substance: Rc<Substance>,
+    pub substance: Substance,
 
     /// The thickness of the [`Material`]
     pub thickness: Float,
@@ -65,6 +65,7 @@ impl SimpleModel {
 
 #[cfg(test)]
 mod testing {
+    use crate::substance::normal::Normal;
     use super::*;
 
     #[cfg(feature = "float")]
@@ -78,7 +79,7 @@ mod testing {
     fn test_material_basic() {
         // We need a substance
         let sub_name = "sub_name".to_string();
-        let substance = Rc::new(Substance::new(sub_name.clone()));
+        let substance = Normal::new(sub_name.clone()).wrap();
 
         // And a name
         let mat_name = "The material".to_string();
@@ -86,9 +87,9 @@ mod testing {
         // And a thickness
         let thickness = 123123.123;
 
-        let s = Material::new(mat_name.clone(), Rc::clone(&substance), thickness);
+        let s = Material::new(mat_name.clone(), substance.clone(), thickness);
         assert_eq!(mat_name, s.name);
-        assert_eq!(sub_name, s.substance.name);
+        assert_eq!(sub_name, s.substance.name().clone());
         assert_eq!(thickness, s.thickness);
     }
 
@@ -97,7 +98,7 @@ mod testing {
 
         /* BY NAME */
 
-        let bytes = b" {
+        let bytes = b" ::Normal {
             name : \"A substance\",            
             thermal_conductivity : 1.2,
             specific_heat_capacity : 2.2,    
@@ -121,13 +122,21 @@ mod testing {
 
         assert_eq!(mat.name, "A Material".to_string());
         assert!((0.1 - mat.thickness).abs()<EPSILON);
-        assert!(Rc::ptr_eq(&sub, &mat.substance));
+        if let Substance::Normal(s1) = &mat.substance{
+            if let Substance::Normal(s2) = &sub {
+                assert!(Rc::ptr_eq(s1, s2));
+            }else{
+                panic!("pre aasd");
+            }
+        }else{
+            panic!("asd")
+        }
 
         /* SELF-CONTAINED DEFAULT */
         
         let bytes = b" {
             name : \"A Material\",            
-            substance : Substance {          
+            substance : Substance::Normal {          
                     name: \"le substancia\", // some doc?
                     thermal_conductivity : 1.2,
                     specific_heat_capacity : 2.2,    
@@ -144,11 +153,14 @@ mod testing {
 
         assert_eq!(mat.name, "A Material".to_string());
         assert!((0.1  - mat.thickness).abs()<EPSILON);
-        let sub = &mat.substance;
-        assert_eq!(sub.name, "le substancia".to_string());
-        assert!((1.2 - sub.thermal_conductivity().unwrap()).abs()<EPSILON);
-        assert!((2.2 - sub.specific_heat_capacity().unwrap()).abs()<EPSILON);
-        assert!((3.2 - sub.density().unwrap()).abs()<EPSILON);
+        if let Substance::Normal(sub) = mat.substance{
+            assert_eq!(sub.name, "le substancia".to_string());
+            assert!((1.2 - sub.thermal_conductivity().unwrap()).abs()<EPSILON);
+            assert!((2.2 - sub.specific_heat_capacity().unwrap()).abs()<EPSILON);
+            assert!((3.2 - sub.density().unwrap()).abs()<EPSILON);
+        }else{
+            panic!("Panic!!!!")
+        }
 
     }
 }

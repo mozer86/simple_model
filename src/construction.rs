@@ -22,6 +22,7 @@ use crate::Float;
 use crate::model::SimpleModel;
 use crate::material::Material;
 use std::rc::Rc;
+use crate::substance::Substance;
 use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
 
 
@@ -45,15 +46,22 @@ pub struct Construction {
     // back finishing
 }
 
+
+
 impl Construction {
     /// Calculates the R-value of the Construction (not including surface coefficients).
     pub fn r_value(&self) -> Result<Float, String> {
 
         let mut r = 0.0;
 
-        for material in self.materials.iter() {                        
-            let lambda = material.substance.thermal_conductivity()?;
-            r += material.thickness / lambda;
+        for material in self.materials.iter() {  
+            match &material.substance{
+                Substance::Normal(s)=>{
+                    let lambda = s.thermal_conductivity()?;
+                    r += material.thickness / lambda;
+                }
+            }                      
+            
         }
 
         Ok(r)
@@ -79,7 +87,7 @@ impl SimpleModel {
 #[cfg(test)]
 mod testing {
     use super::*;
-    use crate::substance::Substance;
+    use crate::substance::normal::Normal;
 
     #[test]
     fn test_construction_basic() {
@@ -91,14 +99,14 @@ mod testing {
 
         // Create substance
         let sub_name = "the_sub".to_string();
-        let sub = Rc::new(Substance::new(sub_name.clone()));
+        let sub = Normal::new(sub_name.clone()).wrap();
 
         // Create a Material
         let mat_1_name = "mat_1".to_string();
         let mat_1_thickness = 0.12312;
         let mat_1 = Rc::new(Material::new(
             mat_1_name.clone(),
-            Rc::clone(&sub),
+            sub.clone(),
             mat_1_thickness,
         ));
 
@@ -111,7 +119,7 @@ mod testing {
         let mat_2_thickness = 1.12312;
         let mat_2 = Rc::new(Material::new(
             mat_2_name.clone(),
-            Rc::clone(&sub),
+            sub.clone(),
             mat_2_thickness,
         ));
 
@@ -125,7 +133,7 @@ mod testing {
     fn test_construction_from_bytes(){
         let bytes = b" {
             name : \"A Material\",            
-            substance : Substance {          
+            substance : Substance::Normal {          
                     name: \"le substancia\", // some doc?
                     thermal_conductivity : 1.2,
                     specific_heat_capacity : 2.2,    

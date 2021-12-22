@@ -4,7 +4,7 @@ Building {
     shelter_class: ShelterClass::Urban()
 }
 
-Substance {
+Substance::Normal {
     thermal_conductivity: 12.,
     name: "the substance"
 }

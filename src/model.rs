@@ -42,7 +42,7 @@ pub struct SimpleModel {
     pub name: String,
 
     // materiality
-    pub substances: Vec<Rc<Substance>>,
+    pub substances: Vec<Substance>,
     pub materials: Vec<Rc<Material>>,
     pub constructions: Vec<Rc<Construction>>,
 
@@ -155,7 +155,7 @@ mod testing {
         let (model, _state_header) = SimpleModel::from_file("./test_data/box.spl".to_string()).unwrap();
         
         assert_eq!(model.substances.len(), 1);
-        assert_eq!(model.substances[0].name, "the substance");
+        assert_eq!(model.substances[0].name().clone(), "the substance");
         
         assert_eq!(model.materials.len(), 2);
         assert_eq!(model.materials[0].name, "the material");        
@@ -189,19 +189,26 @@ mod testing {
         
     }
 
+    use crate::substance::normal::Normal;
+
     #[test]
     fn building_substance() {
         let mut building = SimpleModel::new("Test Model".to_string());
 
         let subs_name = "Substance 0".to_string();
-        let substance = Substance::new(subs_name.clone());
+        let substance = Normal::new(subs_name.clone()).wrap();
 
         let s0 = building.add_substance(substance);
 
         let s = &building.substances[0];        
-        assert_eq!(subs_name, s.name);
-        assert_eq!(subs_name, s0.name);
-        assert_eq!(*s0.index().unwrap(), 0);
+        assert_eq!(subs_name, s.name().clone());
+        assert_eq!(subs_name, s0.name().clone());
+        if let Substance::Normal(s) = &s0 {
+            assert_eq!(*s.index().unwrap(), 0);
+        }else{
+            panic!("asd")
+        }
+        
     }
 
     #[test]
