@@ -97,7 +97,7 @@ mod testing {
         
         // Add automatic documentation
         let dir = "../src";
-        let dir = "./book/src";
+        // let dir = "./book/src";
         let summary_file = format!("{}/SUMMARY.md", dir);
 
         if !std::path::Path::new(&summary_file).exists(){
