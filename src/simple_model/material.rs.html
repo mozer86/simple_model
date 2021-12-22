@@ -188,6 +188,18 @@
 <span id="154">154</span>
 <span id="155">155</span>
 <span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -229,7 +241,7 @@ SOFTWARE.
 
     <span class="doccomment">/// A reference to the [`Substance`] of which this</span>
     <span class="doccomment">/// [`Material`] is made of    </span>
-    <span class="kw">pub</span> <span class="ident">substance</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Substance</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">substance</span>: <span class="ident">Substance</span>,
 
     <span class="doccomment">/// The thickness of the [`Material`]</span>
     <span class="kw">pub</span> <span class="ident">thickness</span>: <span class="ident">Float</span>,
@@ -240,7 +252,7 @@ SOFTWARE.
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
 
     <span class="doccomment">/// Adds a [`Material`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_material</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Material</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Material</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_material</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Material</span>) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Material</span><span class="op">&gt;</span>{
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="self">self</span>.<span class="ident">materials</span>.<span class="ident">len</span>());
         <span class="kw">let</span> <span class="ident">add</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">add</span>);
         <span class="self">self</span>.<span class="ident">materials</span>.<span class="ident">push</span>(<span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">add</span>));
@@ -255,6 +267,7 @@ SOFTWARE.
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">testing</span> {
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::normal::Normal</span>;
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;float&quot;</span>)]</span>
@@ -268,7 +281,7 @@ SOFTWARE.
     <span class="kw">fn</span> <span class="ident">test_material_basic</span>() {
         <span class="comment">// We need a substance</span>
         <span class="kw">let</span> <span class="ident">sub_name</span> <span class="op">=</span> <span class="string">&quot;sub_name&quot;</span>.<span class="ident">to_string</span>();
-        <span class="kw">let</span> <span class="ident">substance</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">Substance::new</span>(<span class="ident">sub_name</span>.<span class="ident">clone</span>()));
+        <span class="kw">let</span> <span class="ident">substance</span> <span class="op">=</span> <span class="ident">Normal::new</span>(<span class="ident">sub_name</span>.<span class="ident">clone</span>()).<span class="ident">wrap</span>();
 
         <span class="comment">// And a name</span>
         <span class="kw">let</span> <span class="ident">mat_name</span> <span class="op">=</span> <span class="string">&quot;The material&quot;</span>.<span class="ident">to_string</span>();
@@ -276,9 +289,9 @@ SOFTWARE.
         <span class="comment">// And a thickness</span>
         <span class="kw">let</span> <span class="ident">thickness</span> <span class="op">=</span> <span class="number">123123.123</span>;
 
-        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">Material::new</span>(<span class="ident">mat_name</span>.<span class="ident">clone</span>(), <span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">substance</span>), <span class="ident">thickness</span>);
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">Material::new</span>(<span class="ident">mat_name</span>.<span class="ident">clone</span>(), <span class="ident">substance</span>.<span class="ident">clone</span>(), <span class="ident">thickness</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">mat_name</span>, <span class="ident">s</span>.<span class="ident">name</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">sub_name</span>, <span class="ident">s</span>.<span class="ident">substance</span>.<span class="ident">name</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">sub_name</span>, <span class="ident">s</span>.<span class="ident">substance</span>.<span class="ident">name</span>().<span class="ident">clone</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">thickness</span>, <span class="ident">s</span>.<span class="ident">thickness</span>);
     }
 
@@ -287,7 +300,7 @@ SOFTWARE.
 
         <span class="comment">/* BY NAME */</span>
 
-        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; {
+        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; ::Normal {
             name : \&quot;A substance\&quot;,            
             thermal_conductivity : 1.2,
             specific_heat_capacity : 2.2,    
@@ -311,13 +324,21 @@ SOFTWARE.
 
         <span class="macro">assert_eq!</span>(<span class="ident">mat</span>.<span class="ident">name</span>, <span class="string">&quot;A Material&quot;</span>.<span class="ident">to_string</span>());
         <span class="macro">assert!</span>((<span class="number">0.1</span> <span class="op">-</span> <span class="ident">mat</span>.<span class="ident">thickness</span>).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-        <span class="macro">assert!</span>(<span class="ident">Rc::ptr_eq</span>(<span class="kw-2">&amp;</span><span class="ident">sub</span>, <span class="kw-2">&amp;</span><span class="ident">mat</span>.<span class="ident">substance</span>));
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Substance::Normal</span>(<span class="ident">s1</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">mat</span>.<span class="ident">substance</span>{
+            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Substance::Normal</span>(<span class="ident">s2</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">sub</span> {
+                <span class="macro">assert!</span>(<span class="ident">Rc::ptr_eq</span>(<span class="ident">s1</span>, <span class="ident">s2</span>));
+            }<span class="kw">else</span>{
+                <span class="macro">panic!</span>(<span class="string">&quot;pre aasd&quot;</span>);
+            }
+        }<span class="kw">else</span>{
+            <span class="macro">panic!</span>(<span class="string">&quot;asd&quot;</span>)
+        }
 
         <span class="comment">/* SELF-CONTAINED DEFAULT */</span>
         
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; {
             name : \&quot;A Material\&quot;,            
-            substance : Substance {          
+            substance : Substance::Normal {          
                     name: \&quot;le substancia\&quot;, // some doc?
                     thermal_conductivity : 1.2,
                     specific_heat_capacity : 2.2,    
@@ -334,11 +355,14 @@ SOFTWARE.
 
         <span class="macro">assert_eq!</span>(<span class="ident">mat</span>.<span class="ident">name</span>, <span class="string">&quot;A Material&quot;</span>.<span class="ident">to_string</span>());
         <span class="macro">assert!</span>((<span class="number">0.1</span>  <span class="op">-</span> <span class="ident">mat</span>.<span class="ident">thickness</span>).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-        <span class="kw">let</span> <span class="ident">sub</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">mat</span>.<span class="ident">substance</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">sub</span>.<span class="ident">name</span>, <span class="string">&quot;le substancia&quot;</span>.<span class="ident">to_string</span>());
-        <span class="macro">assert!</span>((<span class="number">1.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">thermal_conductivity</span>().<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-        <span class="macro">assert!</span>((<span class="number">2.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">specific_heat_capacity</span>().<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-        <span class="macro">assert!</span>((<span class="number">3.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">density</span>().<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Substance::Normal</span>(<span class="ident">sub</span>) <span class="op">=</span> <span class="ident">mat</span>.<span class="ident">substance</span>{
+            <span class="macro">assert_eq!</span>(<span class="ident">sub</span>.<span class="ident">name</span>, <span class="string">&quot;le substancia&quot;</span>.<span class="ident">to_string</span>());
+            <span class="macro">assert!</span>((<span class="number">1.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">thermal_conductivity</span>().<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
+            <span class="macro">assert!</span>((<span class="number">2.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">specific_heat_capacity</span>().<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
+            <span class="macro">assert!</span>((<span class="number">3.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">density</span>().<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
+        }<span class="kw">else</span>{
+            <span class="macro">panic!</span>(<span class="string">&quot;Panic!!!!&quot;</span>)
+        }
 
     }
 }

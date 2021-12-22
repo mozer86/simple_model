@@ -189,6 +189,14 @@
 <span id="155">155</span>
 <span id="156">156</span>
 <span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -213,6 +221,7 @@ SOFTWARE.
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::SimpleModel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::material::Material</span>;
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::Substance</span>;
 <span class="kw">use</span> <span class="ident">building_state_macro</span>::{<span class="ident">SimpleInputOutput</span>, <span class="ident">SimpleObjectBehaviour</span>};
 
 
@@ -236,15 +245,22 @@ SOFTWARE.
     <span class="comment">// back finishing</span>
 }
 
+
+
 <span class="kw">impl</span> <span class="ident">Construction</span> {
     <span class="doccomment">/// Calculates the R-value of the Construction (not including surface coefficients).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">r_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">r_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>, <span class="ident">String</span><span class="op">&gt;</span> {
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r</span> <span class="op">=</span> <span class="number">0.0</span>;
 
-        <span class="kw">for</span> <span class="ident">material</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">materials</span>.<span class="ident">iter</span>() {                        
-            <span class="kw">let</span> <span class="ident">lambda</span> <span class="op">=</span> <span class="ident">material</span>.<span class="ident">substance</span>.<span class="ident">thermal_conductivity</span>()<span class="question-mark">?</span>;
-            <span class="ident">r</span> <span class="op">+</span><span class="op">=</span> <span class="ident">material</span>.<span class="ident">thickness</span> <span class="op">/</span> <span class="ident">lambda</span>;
+        <span class="kw">for</span> <span class="ident">material</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">materials</span>.<span class="ident">iter</span>() {  
+            <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">material</span>.<span class="ident">substance</span>{
+                <span class="ident">Substance::Normal</span>(<span class="ident">s</span>)=&gt;{
+                    <span class="kw">let</span> <span class="ident">lambda</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">thermal_conductivity</span>()<span class="question-mark">?</span>;
+                    <span class="ident">r</span> <span class="op">+</span><span class="op">=</span> <span class="ident">material</span>.<span class="ident">thickness</span> <span class="op">/</span> <span class="ident">lambda</span>;
+                }
+            }                      
+            
         }
 
         <span class="prelude-val">Ok</span>(<span class="ident">r</span>)
@@ -255,7 +271,7 @@ SOFTWARE.
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
 
     <span class="doccomment">/// Adds a [`Construction`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_construction</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Construction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Construction</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_construction</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Construction</span>) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Construction</span><span class="op">&gt;</span>{
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="self">self</span>.<span class="ident">constructions</span>.<span class="ident">len</span>());
         <span class="kw">let</span> <span class="ident">add</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">add</span>);
         <span class="self">self</span>.<span class="ident">constructions</span>.<span class="ident">push</span>(<span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">add</span>));
@@ -270,7 +286,7 @@ SOFTWARE.
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">testing</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::Substance</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::normal::Normal</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_construction_basic</span>() {
@@ -282,14 +298,14 @@ SOFTWARE.
 
         <span class="comment">// Create substance</span>
         <span class="kw">let</span> <span class="ident">sub_name</span> <span class="op">=</span> <span class="string">&quot;the_sub&quot;</span>.<span class="ident">to_string</span>();
-        <span class="kw">let</span> <span class="ident">sub</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">Substance::new</span>(<span class="ident">sub_name</span>.<span class="ident">clone</span>()));
+        <span class="kw">let</span> <span class="ident">sub</span> <span class="op">=</span> <span class="ident">Normal::new</span>(<span class="ident">sub_name</span>.<span class="ident">clone</span>()).<span class="ident">wrap</span>();
 
         <span class="comment">// Create a Material</span>
         <span class="kw">let</span> <span class="ident">mat_1_name</span> <span class="op">=</span> <span class="string">&quot;mat_1&quot;</span>.<span class="ident">to_string</span>();
         <span class="kw">let</span> <span class="ident">mat_1_thickness</span> <span class="op">=</span> <span class="number">0.12312</span>;
         <span class="kw">let</span> <span class="ident">mat_1</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">Material::new</span>(
             <span class="ident">mat_1_name</span>.<span class="ident">clone</span>(),
-            <span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">sub</span>),
+            <span class="ident">sub</span>.<span class="ident">clone</span>(),
             <span class="ident">mat_1_thickness</span>,
         ));
 
@@ -302,7 +318,7 @@ SOFTWARE.
         <span class="kw">let</span> <span class="ident">mat_2_thickness</span> <span class="op">=</span> <span class="number">1.12312</span>;
         <span class="kw">let</span> <span class="ident">mat_2</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">Material::new</span>(
             <span class="ident">mat_2_name</span>.<span class="ident">clone</span>(),
-            <span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">sub</span>),
+            <span class="ident">sub</span>.<span class="ident">clone</span>(),
             <span class="ident">mat_2_thickness</span>,
         ));
 
@@ -316,7 +332,7 @@ SOFTWARE.
     <span class="kw">fn</span> <span class="ident">test_construction_from_bytes</span>(){
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; {
             name : \&quot;A Material\&quot;,            
-            substance : Substance {          
+            substance : Substance::Normal {          
                     name: \&quot;le substancia\&quot;, // some doc?
                     thermal_conductivity : 1.2,
                     specific_heat_capacity : 2.2,    

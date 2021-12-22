@@ -183,7 +183,7 @@ SOFTWARE.
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
 
     <span class="doccomment">/// Adds a [`Luminaire`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_luminaire</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Luminaire</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationStateHeader</span> ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Luminaire</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_luminaire</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Luminaire</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationStateHeader</span> ) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Luminaire</span><span class="op">&gt;</span>{
         <span class="comment">// Check the index of this object</span>
         <span class="kw">let</span> <span class="ident">obj_index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fenestrations</span>.<span class="ident">len</span>();
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="ident">obj_index</span>);

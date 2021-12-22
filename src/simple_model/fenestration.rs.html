@@ -344,13 +344,13 @@ SOFTWARE.
 
 <span class="kw">impl</span> <span class="ident">Fenestration</span> {
     <span class="doccomment">/// Clones the outer [`Loop3D`] of the [`Fenestration`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clone_loop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Loop3D</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clone_loop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Loop3D</span> {
         <span class="self">self</span>.<span class="ident">vertices</span>.<span class="ident">outer</span>().<span class="ident">clone</span>()
     }
 
     <span class="doccomment">/// Gets the area, based on the [`Polygon3D`] that represents</span>
     <span class="doccomment">/// this [`Fenestration`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">area</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Float</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">area</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Float</span> {
         <span class="self">self</span>.<span class="ident">vertices</span>.<span class="ident">area</span>()
     }
 
@@ -363,12 +363,12 @@ SOFTWARE.
     <span class="comment">//     }</span>
     <span class="comment">// }</span>
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_operable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_operable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">operation_type</span> {
-            <span class="ident">FenestrationPositions::FixedClosed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
-            <span class="ident">FenestrationPositions::FixedOpen</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
-            <span class="ident">FenestrationPositions::Continuous</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
-            <span class="ident">FenestrationPositions::Binary</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+            <span class="ident">FenestrationPositions::FixedClosed</span> =&gt; <span class="bool-val">false</span>,
+            <span class="ident">FenestrationPositions::FixedOpen</span> =&gt; <span class="bool-val">false</span>,
+            <span class="ident">FenestrationPositions::Continuous</span> =&gt; <span class="bool-val">true</span>,
+            <span class="ident">FenestrationPositions::Binary</span> =&gt; <span class="bool-val">true</span>,
         }
     }
 
@@ -380,7 +380,7 @@ SOFTWARE.
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
 
     <span class="doccomment">/// Adds a [`Fenestration`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_fenestration</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Fenestration</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationStateHeader</span> ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Fenestration</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_fenestration</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Fenestration</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationStateHeader</span> ) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Fenestration</span><span class="op">&gt;</span>{
         <span class="comment">// Check the index of this object</span>
         <span class="kw">let</span> <span class="ident">fen_index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fenestrations</span>.<span class="ident">len</span>();
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="ident">fen_index</span>);

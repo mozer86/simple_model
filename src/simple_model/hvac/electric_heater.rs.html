@@ -150,7 +150,7 @@ SOFTWARE.
 }
 
 <span class="kw">impl</span> <span class="ident">ElectricHeater</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wrap</span>(<span class="self">self</span>)<span class="op">-</span><span class="op">&gt;</span> <span class="ident"><span class="kw">crate</span>::hvac::HVAC</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wrap</span>(<span class="self">self</span>)-&gt; <span class="ident"><span class="kw">crate</span>::hvac::HVAC</span> {
         <span class="ident"><span class="kw">crate</span>::hvac::HVAC::ElectricHeater</span>(<span class="ident">std::rc::Rc::new</span>(<span class="self">self</span>))
     }
 }

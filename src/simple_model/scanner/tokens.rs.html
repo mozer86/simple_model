@@ -265,77 +265,77 @@ SOFTWARE.
 }
 
 <span class="kw">impl</span> <span class="ident">std::fmt::Display</span> <span class="kw">for</span> <span class="ident">TokenType</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std::fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std::fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">std::fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span>{
             <span class="comment">// Single char</span>
-            <span class="ident">TokenType::Colon</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;:&quot;</span>),
-            <span class="ident">TokenType::Comma</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;,&quot;</span>),
-            <span class="ident">TokenType::LeftBrace</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{{&quot;</span>),
-            <span class="ident">TokenType::RightBrace</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;}}&quot;</span>),
-            <span class="ident">TokenType::LeftBracket</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;[&quot;</span>),
-            <span class="ident">TokenType::RightBracket</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;]&quot;</span>),
-            <span class="ident">TokenType::Hash</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;#&quot;</span>),
-            <span class="ident">TokenType::Underscore</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;_&quot;</span>),
-            <span class="ident">TokenType::Star</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;*&quot;</span>),
-            <span class="ident">TokenType::Bang</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;!&quot;</span>),
-            <span class="ident">TokenType::CodeBoundary</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;`&quot;</span>),
-            <span class="ident">TokenType::LeftParen</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;(&quot;</span>),
-            <span class="ident">TokenType::RightParen</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;)&quot;</span>),
+            <span class="ident">TokenType::Colon</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;:&quot;</span>),
+            <span class="ident">TokenType::Comma</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;,&quot;</span>),
+            <span class="ident">TokenType::LeftBrace</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{{&quot;</span>),
+            <span class="ident">TokenType::RightBrace</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;}}&quot;</span>),
+            <span class="ident">TokenType::LeftBracket</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;[&quot;</span>),
+            <span class="ident">TokenType::RightBracket</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;]&quot;</span>),
+            <span class="ident">TokenType::Hash</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;#&quot;</span>),
+            <span class="ident">TokenType::Underscore</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;_&quot;</span>),
+            <span class="ident">TokenType::Star</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;*&quot;</span>),
+            <span class="ident">TokenType::Bang</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;!&quot;</span>),
+            <span class="ident">TokenType::CodeBoundary</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;`&quot;</span>),
+            <span class="ident">TokenType::LeftParen</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;(&quot;</span>),
+            <span class="ident">TokenType::RightParen</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;)&quot;</span>),
 
             <span class="comment">// double char</span>
-            <span class="ident">TokenType::ColonColon</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;::&quot;</span>),
-            <span class="ident">TokenType::StarStar</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;**&quot;</span>),
+            <span class="ident">TokenType::ColonColon</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;::&quot;</span>),
+            <span class="ident">TokenType::StarStar</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;**&quot;</span>),
             
             <span class="comment">// triple char</span>
-            <span class="ident">TokenType::HorizontalRule</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;===&quot;</span>),
-            <span class="ident">TokenType::SimpleBuildingBlockLimit</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;```&quot;</span>),
+            <span class="ident">TokenType::HorizontalRule</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;===&quot;</span>),
+            <span class="ident">TokenType::SimpleBuildingBlockLimit</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;```&quot;</span>),
             
             <span class="comment">// keywords</span>
-            <span class="ident">TokenType::Use</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;use&quot;</span>),
+            <span class="ident">TokenType::Use</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;use&quot;</span>),
             
             <span class="comment">// mixed words</span>
-            <span class="ident">TokenType::TokenEnumName</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;EnumName&quot;</span>),
-            <span class="ident">TokenType::Identifier</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Identifier&quot;</span>),
-            <span class="ident">TokenType::TokenString</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;String&quot;</span>),
-            <span class="ident">TokenType::Number</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Number&quot;</span>),
-            <span class="ident">TokenType::Word</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Word&quot;</span>),
+            <span class="ident">TokenType::TokenEnumName</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;EnumName&quot;</span>),
+            <span class="ident">TokenType::Identifier</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Identifier&quot;</span>),
+            <span class="ident">TokenType::TokenString</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;String&quot;</span>),
+            <span class="ident">TokenType::Number</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Number&quot;</span>),
+            <span class="ident">TokenType::Word</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Word&quot;</span>),
             
             <span class="comment">// special</span>
-            <span class="ident">TokenType::ControlBlockLimit</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;ControlBlockLimit&quot;</span>),
+            <span class="ident">TokenType::ControlBlockLimit</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;ControlBlockLimit&quot;</span>),
                 
             <span class="comment">// other</span>
-            <span class="ident">TokenType::EOF</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;EOF&quot;</span>),
-            <span class="ident">TokenType::Error</span><span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Error&quot;</span>),
+            <span class="ident">TokenType::EOF</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;EOF&quot;</span>),
+            <span class="ident">TokenType::Error</span>=&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Error&quot;</span>),
         }
     }
 }
 
 <span class="kw">impl</span> <span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>{
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_as_float</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>,<span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_as_float</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>,<span class="ident">String</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">txt</span> <span class="op">=</span> <span class="ident">std::str::from_utf8</span>(<span class="self">self</span>.<span class="ident">txt</span>).<span class="ident">unwrap</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">TokenType::Number</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_type</span>{
              <span class="kw">match</span> <span class="ident">txt</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>(){
-                 <span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>)<span class="op">=</span><span class="op">&gt;</span><span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>),
-                 <span class="prelude-val">Err</span>(<span class="ident">e</span>)<span class="op">=</span><span class="op">&gt;</span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;This is a bug, please report it: {}&quot;</span>, <span class="ident">e</span>))
+                 <span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>)=&gt;<span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>),
+                 <span class="prelude-val">Err</span>(<span class="ident">e</span>)=&gt;<span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;This is a bug, please report it: {}&quot;</span>, <span class="ident">e</span>))
              }             
         }<span class="kw">else</span>{
             <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Token &#39;{}&#39; cannot be transformed into a float&quot;</span>, <span class="ident">txt</span>))
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_as_usize</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>,<span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_as_usize</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>,<span class="ident">String</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">txt</span> <span class="op">=</span> <span class="ident">std::str::from_utf8</span>(<span class="self">self</span>.<span class="ident">txt</span>).<span class="ident">unwrap</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">TokenType::Number</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_type</span>{
              <span class="kw">match</span> <span class="ident">txt</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>(){
-                 <span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>)<span class="op">=</span><span class="op">&gt;</span><span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>),
-                 <span class="prelude-val">Err</span>(<span class="kw">_</span>)<span class="op">=</span><span class="op">&gt;</span><span class="prelude-val">Err</span>(<span class="ident">make_error_msg</span>(<span class="macro">format!</span>(<span class="string">&quot;value &#39;{}&#39; does not seem to be a positive integer. Hint: remove dots, e.g., don&#39;t write &#39;12.&#39;, write &#39;12&#39;&quot;</span>, <span class="ident">txt</span>), <span class="self">self</span>.<span class="ident">line</span>))
+                 <span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>)=&gt;<span class="prelude-val">Ok</span>(<span class="ident">fvalue</span>),
+                 <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;<span class="prelude-val">Err</span>(<span class="ident">make_error_msg</span>(<span class="macro">format!</span>(<span class="string">&quot;value &#39;{}&#39; does not seem to be a positive integer. Hint: remove dots, e.g., don&#39;t write &#39;12.&#39;, write &#39;12&#39;&quot;</span>, <span class="ident">txt</span>), <span class="self">self</span>.<span class="ident">line</span>))
              }             
         }<span class="kw">else</span>{
             <span class="prelude-val">Err</span>(<span class="ident">make_error_msg</span>(<span class="macro">format!</span>(<span class="string">&quot;Token &#39;{}&#39; cannot be transformed into a positive integer&quot;</span>, <span class="ident">txt</span>), <span class="self">self</span>.<span class="ident">line</span>))
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_as_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>,<span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_as_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>,<span class="ident">String</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">txt</span> <span class="op">=</span> <span class="ident">std::str::from_utf8</span>(<span class="self">self</span>.<span class="ident">txt</span>).<span class="ident">unwrap</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">TokenType::TokenString</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_type</span>{
              <span class="prelude-val">Ok</span>(<span class="ident">txt</span>[<span class="number">1</span>..<span class="ident">txt</span>.<span class="ident">len</span>()<span class="op">-</span><span class="number">1</span>].<span class="ident">to_string</span>())         
