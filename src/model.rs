@@ -205,7 +205,7 @@ mod testing {
         
     }
 
-    use crate::substance::normal::Normal;
+    use crate::substance::Normal;
 
     #[test]
     fn building_substance() {

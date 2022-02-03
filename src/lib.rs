@@ -49,8 +49,10 @@ pub use construction::Construction;
 mod material;
 pub use material::Material;
 
-mod substance;
+pub mod substance;
 pub use substance::Substance;
+// pub use substance;
+
 
 mod boundary;
 pub use boundary::Boundary;

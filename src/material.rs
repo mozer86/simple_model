@@ -65,7 +65,7 @@ impl SimpleModel {
 
 #[cfg(test)]
 mod testing {
-    use crate::substance::normal::Normal;
+    use crate::substance::Normal;
     use super::*;
 
     #[cfg(feature = "float")]
