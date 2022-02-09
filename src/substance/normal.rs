@@ -49,6 +49,12 @@ pub struct Normal {
 
     /// The density of the substance in kg/m3
     density: Option<Float>,
+
+    /// Solar absorbtance (from 0 to 1)
+    solar_absorbtance: Option<Float>,
+
+    /// Thermal absorbtance (i.e., emissitivy; from 0 to 1)
+    thermal_absorbtance: Option<Float>
 }
 
 impl Normal {
