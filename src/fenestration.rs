@@ -118,6 +118,22 @@ pub struct Fenestration {
     #[state]
     #[physical]
     back_convective_heat_flow: StateElementField,
+
+    #[state]
+    #[physical]
+    front_incident_solar_irradiance: StateElementField,
+
+    #[state]
+    #[physical]
+    back_incident_solar_irradiance: StateElementField,
+
+    #[state]
+    #[physical]
+    front_ir_irradiance: StateElementField, 
+
+    #[state]
+    #[physical]
+    back_ir_irradiance: StateElementField,
 }
 
 impl Fenestration {

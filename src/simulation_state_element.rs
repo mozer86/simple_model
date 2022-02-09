@@ -91,6 +91,22 @@ pub enum SimulationStateElement {
     #[physical]
     SurfaceBackConvectiveHeatFlow(usize),
 
+    /// Incident solar irradiance at the front
+    #[physical]
+    SurfaceFrontSolarIrradiance(usize),
+
+    /// Incident solar irradiance at the back
+    #[physical]
+    SurfaceBackSolarIrradiance(usize),
+
+    /// Incident Infrared irradiance at the front
+    #[physical]
+    SurfaceFrontIRIrradiance(usize),
+
+    /// Incident Infrared irradiance at the back
+    #[physical]
+    SurfaceBackIRIrradiance(usize),
+
     /// The convective heat transfer coefficient
     /// at the front of a surface
     #[physical]
@@ -111,12 +127,22 @@ pub enum SimulationStateElement {
     #[physical]
     FenestrationBackConvectiveHeatFlow(usize),
 
-    //SurfaceFrontTotalSolarIrradiance(usize),
-    //SurfaceBackTotalSolarIrradiance(usize),
-    //SurfaceFrontDirectSolarIrradiance(usize),
-    //SurfaceBackDirectSolarIrradiance(usize),
-    //SurfaceFrontDiffuseSolarIrradiance(usize),
-    //SurfaceBackDiffuseSolarIrradiance(usize),
+    /// Incident solar irradiance at the front
+    #[physical]
+    FenestrationFrontSolarIrradiance(usize),
+
+    /// Incident solar irradiance at the back
+    #[physical]
+    FenestrationBackSolarIrradiance(usize),
+
+    /// Incident Infrared irradiance at the front
+    #[physical]
+    FenestrationFrontIRIrradiance(usize),
+
+    /// Incident Infrared irradiance at the back
+    #[physical]
+    FenestrationBackIRIrradiance(usize),
+
     
     /// Space Air Temperature in C... The elements
     /// are the index of the Space in the Building mode

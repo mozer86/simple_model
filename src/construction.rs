@@ -87,7 +87,7 @@ impl SimpleModel {
 #[cfg(test)]
 mod testing {
     use super::*;
-    use crate::substance::normal::Normal;
+    use crate::substance::Normal;
 
     #[test]
     fn test_construction_basic() {
