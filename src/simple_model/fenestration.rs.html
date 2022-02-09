@@ -221,6 +221,22 @@
 <span id="186">186</span>
 <span id="187">187</span>
 <span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -341,6 +357,22 @@ SOFTWARE.
     <span class="attribute">#[<span class="ident">state</span>]</span>
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">back_convective_heat_flow</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">front_incident_solar_irradiance</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">back_incident_solar_irradiance</span>: <span class="ident">StateElementField</span>,
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">front_ir_irradiance</span>: <span class="ident">StateElementField</span>, 
+
+    <span class="attribute">#[<span class="ident">state</span>]</span>
+    <span class="attribute">#[<span class="ident">physical</span>]</span>
+    <span class="ident">back_ir_irradiance</span>: <span class="ident">StateElementField</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Fenestration</span> {
