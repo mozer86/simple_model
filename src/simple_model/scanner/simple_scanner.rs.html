@@ -913,6 +913,57 @@
 <span id="878">878</span>
 <span id="879">879</span>
 <span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
+<span id="883">883</span>
+<span id="884">884</span>
+<span id="885">885</span>
+<span id="886">886</span>
+<span id="887">887</span>
+<span id="888">888</span>
+<span id="889">889</span>
+<span id="890">890</span>
+<span id="891">891</span>
+<span id="892">892</span>
+<span id="893">893</span>
+<span id="894">894</span>
+<span id="895">895</span>
+<span id="896">896</span>
+<span id="897">897</span>
+<span id="898">898</span>
+<span id="899">899</span>
+<span id="900">900</span>
+<span id="901">901</span>
+<span id="902">902</span>
+<span id="903">903</span>
+<span id="904">904</span>
+<span id="905">905</span>
+<span id="906">906</span>
+<span id="907">907</span>
+<span id="908">908</span>
+<span id="909">909</span>
+<span id="910">910</span>
+<span id="911">911</span>
+<span id="912">912</span>
+<span id="913">913</span>
+<span id="914">914</span>
+<span id="915">915</span>
+<span id="916">916</span>
+<span id="917">917</span>
+<span id="918">918</span>
+<span id="919">919</span>
+<span id="920">920</span>
+<span id="921">921</span>
+<span id="922">922</span>
+<span id="923">923</span>
+<span id="924">924</span>
+<span id="925">925</span>
+<span id="926">926</span>
+<span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -1145,11 +1196,21 @@ SOFTWARE.
         <span class="comment">// Check if this is a keyword</span>
         <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">source</span>[<span class="self">self</span>.<span class="ident">start_index</span>];
         <span class="kw">match</span> <span class="ident">c</span> <span class="kw">as</span> <span class="ident">char</span> {            
+            <span class="string">&#39;f&#39;</span>=&gt;{
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">check_keyword</span>(<span class="string">&quot;false&quot;</span>){
+                    <span class="kw">return</span> <span class="self">self</span>.<span class="ident">make_token</span>(<span class="ident">TokenType::False</span>);
+                }
+            },         
+            <span class="string">&#39;t&#39;</span>=&gt;{
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">check_keyword</span>(<span class="string">&quot;true&quot;</span>){
+                    <span class="kw">return</span> <span class="self">self</span>.<span class="ident">make_token</span>(<span class="ident">TokenType::True</span>);
+                }                
+            },
             <span class="string">&#39;u&#39;</span> =&gt;{
                 <span class="kw">if</span> <span class="self">self</span>.<span class="ident">check_keyword</span>(<span class="string">&quot;use&quot;</span>){
                     <span class="kw">return</span> <span class="self">self</span>.<span class="ident">make_token</span>(<span class="ident">TokenType::Use</span>);
-                }
-            },            
+                }                
+            },   
             <span class="kw">_</span> =&gt; {<span class="comment">/*JUST GET OUT OF THIS MATCH*/</span>}
         }
         
@@ -1268,7 +1329,7 @@ SOFTWARE.
         }  
 
         <span class="comment">// 0..9 allowed</span>
-        <span class="kw">if</span> <span class="ident">c</span>.<span class="ident">is_ascii_digit</span>(){
+        <span class="kw">if</span> <span class="ident">c</span>.<span class="ident">is_ascii_digit</span>() <span class="op">|</span><span class="op">|</span> (<span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;-&#39;</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">peek</span>().<span class="ident">is_ascii_digit</span>()) {
             <span class="kw">return</span> <span class="self">self</span>.<span class="ident">number</span>();
         }
 
@@ -1548,13 +1609,8 @@ SOFTWARE.
                 <span class="prelude-val">Ok</span>(<span class="ident">s</span>)=&gt;{<span class="ident">model</span>.<span class="ident">add_luminaire</span>(<span class="ident">s</span>, <span class="kw-2">&amp;mut</span> <span class="ident">state_header</span>);},
                 <span class="prelude-val">Err</span>(<span class="ident">e</span>)=&gt;<span class="macro">eprintln!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">e</span>)
             };
-        }
-        
-        
-        
-
-        <span class="comment">// Return        </span>
-        <span class="comment">// Ok(building)</span>
+        }        
+        <span class="comment">// Return      </span>
         <span class="prelude-val">Ok</span>((<span class="ident">model</span>, <span class="ident">state_header</span>))
     }
 
@@ -1662,11 +1718,57 @@ SOFTWARE.
         ).<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">scanner</span> <span class="op">=</span> <span class="ident">SimpleScanner::new</span>(<span class="ident">source</span>, <span class="number">1</span>);        
         <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
-        
-
-
     }<span class="comment">// End of test_single_char</span>
 
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_simplemode_scan_keyword</span>(){
+        
+        <span class="kw">let</span> <span class="ident">source</span> <span class="op">=</span> <span class="string">b&quot;true false&quot;</span>;
+        <span class="ident">check_token_types</span>(
+            <span class="ident">source</span>, 
+            <span class="macro">vec!</span>[<span class="ident">TokenType::True</span>, <span class="ident">TokenType::False</span>]
+        ).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">scanner</span> <span class="op">=</span> <span class="ident">SimpleScanner::new</span>(<span class="ident">source</span>, <span class="number">1</span>);        
+        <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+    }<span class="comment">// End of test_single_char</span>
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_scan_number</span>(){
+        <span class="kw">let</span> <span class="ident">source</span> <span class="op">=</span> <span class="string">b&quot;1 2 3 2.1 2.2 -12 -12.2&quot;</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">scanner</span> <span class="op">=</span> <span class="ident">SimpleScanner::new</span>(<span class="ident">source</span>, <span class="number">1</span>);        
+        
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">token</span>.<span class="ident">resolve_as_usize</span>().<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">1.</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, <span class="ident">token</span>.<span class="ident">resolve_as_usize</span>().<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">2.</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">token</span>.<span class="ident">resolve_as_usize</span>().<span class="ident">unwrap</span>());
+        <span class="macro">assert_eq!</span>(<span class="number">3.</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">2.1</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">2.2</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="op">-</span><span class="number">12.0</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">scan_token</span>();        
+        <span class="macro">assert_eq!</span>(<span class="ident">token</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Number</span>);
+        <span class="macro">assert_eq!</span>(<span class="op">-</span><span class="number">12.2</span>, <span class="ident">token</span>.<span class="ident">resolve_as_float</span>().<span class="ident">unwrap</span>());
+
+    }
     
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
