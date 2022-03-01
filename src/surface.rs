@@ -63,6 +63,10 @@ pub struct Surface {
     /// A reference to the Boundary in front of the Surface
     front_boundary: Option<Boundary>,
 
+    front_receives_sun: Option<bool>,
+
+    back_receives_sun: Option<bool>,
+
     /// A reference to the Boundary in back of the Surface
     back_boundary: Option<Boundary>,
     
@@ -138,6 +142,38 @@ impl SimpleModel {
 mod testing {
     use super::*;
 
+    use crate::scanner::{SimpleScanner, TokenType};
+
+    #[test]
+    fn scan_surface(){
+
+        let src = b"Surface {
+            
+            name : \"Some surface\",
+            vertices: [1, -2, 3, 4, 5, 6, 7, 8, 9],
+            construction: \"The Construction\",
+            front_receives_sun: true,
+            back_receives_sun: false,
+        }
+        ";
+        let mut model = SimpleModel::new("the_model".to_string());
+        let construction = Construction::new("The Construction".to_string());
+        let _construction = model.add_construction(construction);
+
+        let mut scanner = SimpleScanner::new(src, 1);
+        let ident = scanner.scan_token();
+        scanner.update_start_index();
+        assert_eq!(ident.token_type, TokenType::Identifier);
+        assert_eq!(ident.txt, b"Surface");
+        let (start,end) = scanner.get_object_slice();
+        let bytes = scanner.borrow_slice(start, end);
+        let s = Surface::from_bytes(0, bytes, &model).unwrap();
+        assert!(s.front_receives_sun().unwrap());
+        assert!(!s.back_receives_sun().unwrap());
+
+        
+
+    }
     
 
 

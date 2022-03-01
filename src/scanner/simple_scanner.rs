@@ -230,11 +230,21 @@ impl <'a>SimpleScanner<'a> {
         // Check if this is a keyword
         let c = self.source[self.start_index];
         match c as char {            
+            'f'=>{
+                if self.check_keyword("false"){
+                    return self.make_token(TokenType::False);
+                }
+            },         
+            't'=>{
+                if self.check_keyword("true"){
+                    return self.make_token(TokenType::True);
+                }                
+            },
             'u' =>{
                 if self.check_keyword("use"){
                     return self.make_token(TokenType::Use);
-                }
-            },            
+                }                
+            },   
             _ => {/*JUST GET OUT OF THIS MATCH*/}
         }
         
@@ -353,7 +363,7 @@ impl <'a>SimpleScanner<'a> {
         }  
 
         // 0..9 allowed
-        if c.is_ascii_digit(){
+        if c.is_ascii_digit() || (c == '-' && self.peek().is_ascii_digit()) {
             return self.number();
         }
 
@@ -633,13 +643,8 @@ impl <'a>SimpleScanner<'a> {
                 Ok(s)=>{model.add_luminaire(s, &mut state_header);},
                 Err(e)=>eprintln!("{}", e)
             };
-        }
-        
-        
-        
-
-        // Return        
-        // Ok(building)
+        }        
+        // Return      
         Ok((model, state_header))
     }
 
@@ -747,11 +752,57 @@ mod testing {
         ).unwrap();
         let mut scanner = SimpleScanner::new(source, 1);        
         scanner.scan_token();        
-        
-
-
     }// End of test_single_char
 
+    #[test]
+    fn test_simplemode_scan_keyword(){
+        
+        let source = b"true false";
+        check_token_types(
+            source, 
+            vec![TokenType::True, TokenType::False]
+        ).unwrap();
+        let mut scanner = SimpleScanner::new(source, 1);        
+        scanner.scan_token();        
+    }// End of test_single_char
+
+    #[test]
+    fn test_scan_number(){
+        let source = b"1 2 3 2.1 2.2 -12 -12.2";
+        let mut scanner = SimpleScanner::new(source, 1);        
+        
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(1, token.resolve_as_usize().unwrap());
+        assert_eq!(1., token.resolve_as_float().unwrap());
+
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(2, token.resolve_as_usize().unwrap());
+        assert_eq!(2., token.resolve_as_float().unwrap());
+
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(3, token.resolve_as_usize().unwrap());
+        assert_eq!(3., token.resolve_as_float().unwrap());
+
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(2.1, token.resolve_as_float().unwrap());
+
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(2.2, token.resolve_as_float().unwrap());
+
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(-12.0, token.resolve_as_float().unwrap());
+
+        let token = scanner.scan_token();        
+        assert_eq!(token.token_type, TokenType::Number);
+        assert_eq!(-12.2, token.resolve_as_float().unwrap());
+
+    }
     
 
     #[test]

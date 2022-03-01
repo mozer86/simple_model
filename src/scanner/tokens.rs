@@ -58,6 +58,8 @@ pub enum TokenType{
     
     // keywords
     Use,
+    True,
+    False,
     
     // mixed words
     TokenEnumName,
@@ -102,6 +104,8 @@ impl std::fmt::Display for TokenType {
             
             // keywords
             TokenType::Use=> write!(f, "use"),
+            TokenType::True=> write!(f, "true"),
+            TokenType::False=> write!(f, "false"),
             
             // mixed words
             TokenType::TokenEnumName=> write!(f, "EnumName"),
@@ -121,6 +125,15 @@ impl std::fmt::Display for TokenType {
 }
 
 impl <'a>Token<'a>{
+    pub fn resolve_as_bool(&self) -> Result<bool,String> {
+        let txt = std::str::from_utf8(self.txt).unwrap();
+        match self.token_type{
+            TokenType::True => Ok(true),
+            TokenType::False =>Ok(false),
+            _ => Err(format!("Trying to make a Boolean a token of type '{}' ({})", self.token_type, txt))                
+        }
+    }
+
     pub fn resolve_as_float(&self) -> Result<Float,String> {
         let txt = std::str::from_utf8(self.txt).unwrap();
         if let TokenType::Number = self.token_type{
