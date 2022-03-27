@@ -22,14 +22,14 @@ use crate::Float;
 use std::rc::Rc;
 use crate::model::SimpleModel;
 use crate::substance::Substance;
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+use derive::SimpleInputOutput;
 
 
 
 /// The representation of a physical layer-Material.
 /// That is to say, a layer of a certain thickness
 /// made of a certain Substance
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(SimpleInputOutput)]
 pub struct Material {
     /// The name of the material object
     pub name: String,
@@ -56,7 +56,10 @@ impl SimpleModel {
         self.materials.push(Rc::clone(&add));
         add
     }
+
 }
+
+
 
 
 /***********/

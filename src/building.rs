@@ -19,7 +19,7 @@ SOFTWARE.
 */
 use crate::Float;
 use crate::model::SimpleModel;
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+use derive::SimpleInputOutput;
 
 
 
@@ -47,7 +47,7 @@ pub enum ShelterClass{
 /// This object is utilized to group `Space` objects together for 
 /// metering and/or shared values. For example, the number of storeys
 /// and the `ShelterClass` will help defining the `Infiltrations`
-#[derive(SimpleInputOutput, SimpleObjectBehaviour, Clone)]
+#[derive(SimpleInputOutput, Clone)]
 pub struct Building {
     
     /// The name of the Building

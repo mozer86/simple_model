@@ -26,7 +26,7 @@ pub use crate::substance::normal::Normal;
 
 
 use crate::model::SimpleModel;
-use building_state_macro::{
+use derive::{
     SimpleGroupInputOutput,
     GroupSimpleRhaiAPI,
 };

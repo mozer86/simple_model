@@ -22,9 +22,8 @@ use crate::model::SimpleModel;
 use crate::simulation_state::{SimulationState, SimulationStateHeader};
 use crate::simulation_state_element::{StateElementField, SimulationStateElement};
 use crate::space::Space;
-use building_state_macro::{
+use derive::{
     SimpleInputOutput, 
-    SimpleObjectBehaviour,
     SimpleRhaiAPI
 };
 
@@ -33,7 +32,7 @@ use building_state_macro::{
 use std::rc::Rc;
 
 /// A Luminaire
-#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI, Clone)]
+#[derive(SimpleInputOutput,  SimpleRhaiAPI, Clone)]
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,
@@ -55,8 +54,7 @@ pub struct Luminaire {
     target_space: Option<Rc<Space>>,
 
     /// The index of the state of the luminaire
-    /// in the State array
-    #[state]
+    /// in the State array    
     #[operational]
     power_consumption: StateElementField,
 }

@@ -19,7 +19,7 @@ SOFTWARE.
 */
 
 use std::cell::RefCell;
-use building_state_macro::SimpleSimulationStateBehaviour;
+use derive::SimpleSimulationStateBehaviour;
 
 
 pub type StateElementField = RefCell<Option<usize>>;

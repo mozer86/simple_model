@@ -21,14 +21,12 @@ use crate::Float;
 use std::rc::Rc;
 
 use geometry3d::{
-    Polygon3D,
-    Point3D,
+    Polygon3D,    
     Loop3D
 };
 
-use building_state_macro::{
+use derive::{
     SimpleInputOutput, 
-    SimpleObjectBehaviour,
     SimpleRhaiAPI
 };
 
@@ -44,7 +42,7 @@ use crate::simulation_state_element::StateElementField;
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI, Clone)]
+#[derive( SimpleInputOutput, SimpleRhaiAPI, Clone)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,
@@ -71,43 +69,43 @@ pub struct Surface {
     back_boundary: Option<Boundary>,
     
     /* STATE */
-    #[state]
+    
     #[physical("front_temperature")]
     first_node_temperature: StateElementField,
 
-    #[state]
+    
     #[physical("back_temperature")]
     last_node_temperature: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_convection_coefficient: StateElementField,
 
-    #[state]
+    
     #[physical]
     back_convection_coefficient: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_convective_heat_flow: StateElementField,
 
-    #[state]
+    
     #[physical]
     back_convective_heat_flow: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_incident_solar_irradiance: StateElementField,
 
-    #[state]
+    
     #[physical]
     back_incident_solar_irradiance: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_ir_irradiance: StateElementField, 
 
-    #[state]
+    
     #[physical]
     back_ir_irradiance: StateElementField,
 }
@@ -143,6 +141,7 @@ mod testing {
     use super::*;
 
     use crate::scanner::{SimpleScanner, TokenType};
+    use geometry3d::Point3D;
 
     #[test]
     fn scan_surface(){

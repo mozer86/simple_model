@@ -18,9 +18,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use building_state_macro::SimpleInputOutput;
+use derive::SimpleInputOutput;
 use crate::Float;
-use crate::model::SimpleModel;
+
 
 /// An infiltration rate for a `Space`
 #[derive(Clone, SimpleInputOutput)]

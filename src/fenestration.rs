@@ -19,16 +19,14 @@ SOFTWARE.
 */
 use crate::Float;
 
-use building_state_macro::{
-    SimpleInputOutput, 
-    SimpleObjectBehaviour,
+use derive::{
+    SimpleInputOutput,     
     SimpleRhaiAPI
 };
 
-use geometry3d::{
-    Loop3D,
+use geometry3d::{    
     Polygon3D,
-    Point3D
+    Loop3D
 };
 
 
@@ -57,7 +55,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive(SimpleObjectBehaviour, SimpleInputOutput, SimpleRhaiAPI, Clone)]
+#[derive( SimpleInputOutput, SimpleRhaiAPI, Clone)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
@@ -88,50 +86,48 @@ pub struct Fenestration {
 
     /// A reference to the Boundary in back of the Fenestration
     back_boundary: Option<Boundary>,
-
-    #[state]
+    
     #[physical("front_temperature")]
     first_node_temperature: StateElementField,
 
-    #[state]
     #[physical("back_temperature")]
     last_node_temperature: StateElementField,
 
     /// Index of the SimulationStateElement representing
     /// the fraction open in the SimulationState
-    #[state]
+    
     #[operational]
     open_fraction: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_convection_coefficient: StateElementField,
 
-    #[state]
+    
     #[physical]
     back_convection_coefficient: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_convective_heat_flow: StateElementField,
 
-    #[state]
+    
     #[physical]
     back_convective_heat_flow: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_incident_solar_irradiance: StateElementField,
 
-    #[state]
+    
     #[physical]
     back_incident_solar_irradiance: StateElementField,
 
-    #[state]
+    
     #[physical]
     front_ir_irradiance: StateElementField, 
 
-    #[state]
+    
     #[physical]
     back_ir_irradiance: StateElementField,
 }
@@ -171,6 +167,13 @@ impl Fenestration {
 
 
 
+
+
+
+
+
+
+
 impl SimpleModel {
 
     /// Adds a [`Fenestration`] to the [`SimpleModel`]
@@ -202,3 +205,7 @@ mod testing {
 
 
 }
+
+
+
+

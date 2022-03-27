@@ -23,13 +23,13 @@ use crate::model::SimpleModel;
 use crate::material::Material;
 use std::rc::Rc;
 use crate::substance::Substance;
-use building_state_macro::{SimpleInputOutput, SimpleObjectBehaviour};
+use derive::SimpleInputOutput;
 
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
 /// Materials
-#[derive(SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(SimpleInputOutput)]
 pub struct Construction {
     /// The name of the Construction object.
     /// Must be unique within the model

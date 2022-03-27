@@ -18,46 +18,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use crate::Float;
 
-use std::rc::Rc;
-use crate::simulation_state_element:: StateElementField;
-use crate::space::Space;
-use crate::model::SimpleModel;
-
-use derive::{
-    SimpleInputOutput, 
-    GroupMemberSimpleRhaiAPI
-};
-
-/// An ideal Heating and Cooling device, with a COP of 1.
-/// 
-#[derive(Clone, SimpleInputOutput, GroupMemberSimpleRhaiAPI)]
-pub struct IdealHeaterCooler {
-    /// The name of the system
-    pub name: String,
-    
-    /// The position of this object in its contaner Vector
-    index: Option<usize>,
-
-    /// The `Space`s that this `IdealHeaterCooler` heats and/or
-    /// cools
-    pub target_spaces: Vec<Rc<Space>>,
-    
-    /// Max heating power
-    max_heating_power: Option<Float>,
-
-    /// Max cooling power
-    max_cooling_power: Option<Float>,
-
-    
-    #[operational("power_consumption")]
-    heating_cooling_consumption: StateElementField,
-    
+pub fn get_enum_variants(ast: &syn::DeriveInput)->syn::punctuated::Punctuated<syn::Variant, syn::token::Comma>{
+    if let syn::Data::Enum(syn::DataEnum {
+        ref variants,
+        ..
+    }) = ast.data
+    {
+        variants.clone()
+    } else {
+        panic!("THIS IS A BUG: Expecting an Enum");
+    }
+        
 }
 
-impl IdealHeaterCooler {
-    pub fn wrap(self)-> crate::hvac::HVAC {
-        crate::hvac::HVAC::IdealHeaterCooler(std::rc::Rc::new(self))
-    }
+pub fn contains_attr(v:&syn::Variant, att: &str)->bool{
+    let att_names : Vec<String> = v.attrs.iter().map(|a|{
+        format!("{}",a.path.segments[0].ident)
+    }).collect();
+    att_names.contains(&att.to_string())
 }

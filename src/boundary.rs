@@ -19,9 +19,10 @@ SOFTWARE.
 */
 
 use std::rc::Rc;
-use building_state_macro::SimpleInputOutput;
+use derive::SimpleInputOutput;
+
 use crate::space::Space;
-use crate::model::SimpleModel;
+
 
 
 /// Represents the boundary of a `Surface`
@@ -49,7 +50,7 @@ pub enum Boundary {
 mod testing {
     use super::*;
 
-
+    use crate::model::SimpleModel;
     #[test]
     fn test_boundary_from_bytes(){
         

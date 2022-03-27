@@ -21,7 +21,7 @@ use crate::scanner::SimpleScanner;
 use std::rc::Rc;
 use std::fs;
 use crate::hvac::*;
-use building_state_macro::{SimpleObjectBehaviour};
+use derive::SimpleInputOutput;
 use crate::SimulationStateHeader;
 
 use crate::{
@@ -36,7 +36,7 @@ use crate::{
 };
 
 
-#[derive(Default, SimpleObjectBehaviour)]
+#[derive(Default, SimpleInputOutput)]
 pub struct SimpleModel {
     /// The name of the building
     pub name: String,
@@ -84,87 +84,87 @@ impl SimpleModel{
 #[cfg(test)]
 mod testing {
     use super::*;
-    use crate::hvac;
-    use crate::substance;
     
+    
+    // use crate::hvac;
+    // use crate::substance;
+    // use crate::boundary::Boundary;
+    // use crate::building::{Building, ShelterClass};
+    // use crate::infiltration::Infiltration;
+    // #[test]
+    // fn write_io_doc(){
+    //     let mut summary = "# Input/Output reference guide\n\n".to_string();
+        
+    //     // Add automatic documentation
+    //     let dir = "../src";
+    //     // let dir = "./book/src";
+    //     let summary_file = format!("{}/SUMMARY.md", dir);
 
-    use crate::boundary::Boundary;
-    use crate::building::{Building, ShelterClass};
-    use crate::infiltration::Infiltration;
-    #[test]
-    fn write_io_doc(){
-        let mut summary = "# Input/Output reference guide\n\n".to_string();
-        
-        // Add automatic documentation
-        let dir = "../src";
-        // let dir = "./book/src";
-        let summary_file = format!("{}/SUMMARY.md", dir);
+    //     if !std::path::Path::new(&summary_file).exists(){
+    //         return;
+    //     }
 
-        if !std::path::Path::new(&summary_file).exists(){
-            return;
-        }
+    //     // Boundary
+    //     Boundary::print_doc(&dir, &mut summary).unwrap();
+        
+    //     // Building
+    //     Building::print_doc(&dir, &mut summary).unwrap();
+        
+    //     // Construction
+    //     Construction::print_doc(&dir, &mut summary).unwrap();
+        
+    //     // Fenestration
+    //     Fenestration::print_doc(&dir, &mut summary).unwrap();
+    //     Fenestration::print_api_doc(&dir, &mut summary).unwrap();
+        
+    //     // HVAC
+    //     HVAC::print_doc(&dir, &mut summary).unwrap();
+        
+    //     summary.push_str(&format!("\t"));
+    //     hvac::ElectricHeater::print_doc(&dir, &mut summary).unwrap();
+    //     hvac::ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
+        
+    //     summary.push_str(&format!("\t"));
+    //     hvac::IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
+    //     hvac::IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
 
-        // Boundary
-        Boundary::print_doc(&dir, &mut summary).unwrap();
+    //     // Infiltration
+    //     Infiltration::print_doc(&dir, &mut summary).unwrap();
         
-        // Building
-        Building::print_doc(&dir, &mut summary).unwrap();
-        
-        // Construction
-        Construction::print_doc(&dir, &mut summary).unwrap();
-        
-        // Fenestration
-        Fenestration::print_doc(&dir, &mut summary).unwrap();
-        Fenestration::print_api_doc(&dir, &mut summary).unwrap();
-        
-        // HVAC
-        HVAC::print_doc(&dir, &mut summary).unwrap();
-        
-        summary.push_str(&format!("\t"));
-        hvac::ElectricHeater::print_doc(&dir, &mut summary).unwrap();
-        hvac::ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
-        
-        summary.push_str(&format!("\t"));
-        hvac::IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
-        hvac::IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
+    //     // Luminaire
+    //     Luminaire::print_doc(&dir, &mut summary).unwrap();
+    //     Luminaire::print_api_doc(&dir, &mut summary).unwrap();
 
-        // Infiltration
-        Infiltration::print_doc(&dir, &mut summary).unwrap();
+    //     // Material
+    //     Material::print_doc(&dir, &mut summary).unwrap();
         
-        // Luminaire
-        Luminaire::print_doc(&dir, &mut summary).unwrap();
-        Luminaire::print_api_doc(&dir, &mut summary).unwrap();
-
-        // Material
-        Material::print_doc(&dir, &mut summary).unwrap();
+    //     // Space
+    //     Space::print_doc(&dir, &mut summary).unwrap();
+    //     Space::print_api_doc(&dir, &mut summary).unwrap();
         
-        // Space
-        Space::print_doc(&dir, &mut summary).unwrap();
-        Space::print_api_doc(&dir, &mut summary).unwrap();
-        
-        // Substance
-        Substance::print_doc(&dir, &mut summary).unwrap();
+    //     // Substance
+    //     Substance::print_doc(&dir, &mut summary).unwrap();
                 
-        summary.push_str(&format!("\t"));
-        substance::Normal::print_doc(&dir, &mut summary).unwrap();
-        // substance::Normal::print_api_doc(&dir, &mut summary).unwrap();
+    //     summary.push_str(&format!("\t"));
+    //     substance::Normal::print_doc(&dir, &mut summary).unwrap();
+    //     // substance::Normal::print_api_doc(&dir, &mut summary).unwrap();
         
         
 
 
         
-        ShelterClass::print_doc(&dir, &mut summary).unwrap();
+    //     ShelterClass::print_doc(&dir, &mut summary).unwrap();
         
-        Surface::print_doc(&dir, &mut summary).unwrap();
-        Surface::print_api_doc(&dir, &mut summary).unwrap();
+    //     Surface::print_doc(&dir, &mut summary).unwrap();
+    //     Surface::print_api_doc(&dir, &mut summary).unwrap();
         
 
         
-        let current_summary = fs::read_to_string(summary_file.clone()).expect("Could not read summary file");
-        let whole_summary = format!("{}\n\n{}", current_summary, summary);
-        std::fs::write(summary_file, whole_summary.as_bytes()).unwrap();
+    //     let current_summary = fs::read_to_string(summary_file.clone()).expect("Could not read summary file");
+    //     let whole_summary = format!("{}\n\n{}", current_summary, summary);
+    //     std::fs::write(summary_file, whole_summary.as_bytes()).unwrap();
 
-    }
+    // }
 
     #[test]
     fn test_read_file(){

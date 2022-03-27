@@ -19,12 +19,11 @@ SOFTWARE.
 */
 use crate::Float;
 
-use building_state_macro::{
+use derive::{
     SimpleInputOutput, 
-    SimpleObjectBehaviour
 };
 
-use crate::model::SimpleModel;
+
 
 /// Represents a Normal; that is to say, a physical
 /// materiality with physical properties. The name Normal
@@ -32,7 +31,7 @@ use crate::model::SimpleModel;
 /// and other software's terminology (which does not include
 /// Substace, but it does include Material, which is essentially
 /// a Normal with a thickness).
-#[derive(Clone, SimpleInputOutput, SimpleObjectBehaviour)]
+#[derive(Clone, SimpleInputOutput)]
 pub struct Normal {    
     /// The name of the Normal. Should be unique for each
     /// Material in the SimpleModel object    
@@ -80,6 +79,7 @@ impl Normal {
 #[cfg(test)]
 mod testing {
     use super::*;
+    use crate::model::SimpleModel;
 
     #[cfg(feature = "float")]
     const EPSILON : f32 = std::f32::EPSILON;

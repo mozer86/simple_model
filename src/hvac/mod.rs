@@ -27,7 +27,7 @@ pub use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
 pub use crate::hvac::electric_heater::ElectricHeater;
 
 use crate::model::SimpleModel;
-use building_state_macro::{
+use derive::{
     SimpleGroupInputOutput,
     GroupSimpleRhaiAPI
 };

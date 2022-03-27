@@ -22,9 +22,8 @@ SOFTWARE.
 
 use crate::Float;
 use std::rc::Rc;
-use building_state_macro::{
+use derive::{
     SimpleInputOutput, 
-    SimpleObjectBehaviour,
     SimpleRhaiAPI
 };
 
@@ -36,7 +35,7 @@ use crate::building::Building;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
-#[derive(SimpleInputOutput, SimpleObjectBehaviour, SimpleRhaiAPI, Clone)]
+#[derive(SimpleInputOutput, SimpleRhaiAPI, Clone)]
 pub struct Space {
     /// The name of the space
     pub name: String,
@@ -54,32 +53,24 @@ pub struct Space {
     // importance : Option<Box<dyn Schedule<Float>>>,
     building: Option<Rc<Building>>,
     
-
-    #[state]
     #[physical]
     dry_bulb_temperature: StateElementField,
 
-    #[state]
     #[physical]
     brightness: StateElementField,
-
-    #[state]
+    
     #[physical]
     loudness: StateElementField,
-
-    #[state]
+    
     #[physical]
     infiltration_volume: StateElementField,
-
-    #[state]
+    
     #[physical]
     infiltration_temperature: StateElementField,
-
-    #[state]
+    
     #[physical]
     ventilation_volume: StateElementField,
-
-    #[state]
+    
     #[physical]
     ventilation_temperature: StateElementField,
 }
