@@ -19,13 +19,13 @@ SOFTWARE.
 */
 use crate::Float;
 use crate::model::SimpleModel;
-use derive::SimpleInputOutput;
+use derive::ObjectIO;
 
 
 
 use std::rc::Rc;
 
-#[derive(Clone, SimpleInputOutput)]
+#[derive(Clone, ObjectIO)]
 pub enum ShelterClass{
     
     /// No obstructions or local shielding
@@ -47,7 +47,7 @@ pub enum ShelterClass{
 /// This object is utilized to group `Space` objects together for 
 /// metering and/or shared values. For example, the number of storeys
 /// and the `ShelterClass` will help defining the `Infiltrations`
-#[derive(SimpleInputOutput, Clone)]
+#[derive(ObjectIO, Clone)]
 pub struct Building {
     
     /// The name of the Building

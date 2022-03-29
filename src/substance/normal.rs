@@ -20,7 +20,7 @@ SOFTWARE.
 use crate::Float;
 
 use derive::{
-    SimpleInputOutput, 
+    ObjectIO, 
 };
 
 
@@ -31,7 +31,7 @@ use derive::{
 /// and other software's terminology (which does not include
 /// Substace, but it does include Material, which is essentially
 /// a Normal with a thickness).
-#[derive(Clone, SimpleInputOutput)]
+#[derive(Clone, ObjectIO)]
 pub struct Normal {    
     /// The name of the Normal. Should be unique for each
     /// Material in the SimpleModel object    

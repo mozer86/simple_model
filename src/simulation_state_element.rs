@@ -19,14 +19,14 @@ SOFTWARE.
 */
 
 use std::cell::RefCell;
-use derive::SimpleSimulationStateBehaviour;
+use derive::StateElements;
 
 
 pub type StateElementField = RefCell<Option<usize>>;
 
 
 /// The idea is to have a cheap-to-clone (or copy?) structure
-#[derive(Debug, Copy, Clone, PartialEq, SimpleSimulationStateBehaviour)]
+#[derive(Debug, Copy, Clone, PartialEq, StateElements)]
 pub enum SimulationStateElement {
     /* PERSONAL ELEMENTS */
     /// The amount of clothing the person is using,

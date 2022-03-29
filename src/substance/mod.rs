@@ -27,14 +27,14 @@ pub use crate::substance::normal::Normal;
 
 use crate::model::SimpleModel;
 use derive::{
-    SimpleGroupInputOutput,
-    GroupSimpleRhaiAPI,
+    GroupIO,
+    GroupAPI,
 };
 use std::rc::Rc;
 
 
 /// A collection of elements that make up constructions
-#[derive( Clone, GroupSimpleRhaiAPI,  SimpleGroupInputOutput)]
+#[derive( Clone, GroupAPI,  GroupIO)]
 pub enum Substance {
     
     /// A normal (i.e., solid) substance such as glass, 

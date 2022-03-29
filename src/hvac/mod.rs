@@ -28,14 +28,14 @@ pub use crate::hvac::electric_heater::ElectricHeater;
 
 use crate::model::SimpleModel;
 use derive::{
-    SimpleGroupInputOutput,
-    GroupSimpleRhaiAPI
+    GroupIO,
+    GroupAPI
 };
 use std::rc::Rc;
 
 
 /// A collection of elements heating and cooling systems
-#[derive( Clone, GroupSimpleRhaiAPI, SimpleGroupInputOutput)]
+#[derive( Clone, GroupAPI, GroupIO)]
 pub enum HVAC{
     /// An ideal heating/cooling device.
     /// Heats and Cools with an efficiency of

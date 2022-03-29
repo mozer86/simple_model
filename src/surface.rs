@@ -26,8 +26,8 @@ use geometry3d::{
 };
 
 use derive::{
-    SimpleInputOutput, 
-    SimpleRhaiAPI
+    ObjectIO, 
+    ObjectAPI
 };
 
 
@@ -42,7 +42,7 @@ use crate::simulation_state_element::StateElementField;
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive( SimpleInputOutput, SimpleRhaiAPI, Clone)]
+#[derive( ObjectIO, ObjectAPI, Clone)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,

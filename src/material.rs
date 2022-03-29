@@ -22,14 +22,14 @@ use crate::Float;
 use std::rc::Rc;
 use crate::model::SimpleModel;
 use crate::substance::Substance;
-use derive::SimpleInputOutput;
+use derive::ObjectIO;
 
 
 
 /// The representation of a physical layer-Material.
 /// That is to say, a layer of a certain thickness
 /// made of a certain Substance
-#[derive(SimpleInputOutput)]
+#[derive(ObjectIO)]
 pub struct Material {
     /// The name of the material object
     pub name: String,

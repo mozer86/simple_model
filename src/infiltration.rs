@@ -18,12 +18,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use derive::SimpleInputOutput;
+use derive::ObjectIO;
 use crate::Float;
 
 
 /// An infiltration rate for a `Space`
-#[derive(Clone, SimpleInputOutput)]
+#[derive(Clone, ObjectIO)]
 pub enum Infiltration {
     
     /// A contant infiltration, specified in `m3/s`

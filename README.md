@@ -4,8 +4,8 @@
 ![build badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/build.yaml/badge.svg)
 ![docs badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/docs.yaml/badge.svg)
 ![tests badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/tests.yaml/badge.svg)
-![ioreference badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/ioreference.yaml/badge.svg)
 ![coverage badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/blob/main/coverage/badges/flat.svg)
+
 
 
 This repository contains the basic API for creating and 

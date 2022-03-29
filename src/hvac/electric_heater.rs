@@ -28,11 +28,11 @@ use crate::model::SimpleModel;
 
 
 use derive::{
-    SimpleInputOutput, 
-    GroupMemberSimpleRhaiAPI
+    ObjectIO, 
+    GroupMemberAPI
 };
 
-#[derive(Clone, SimpleInputOutput, GroupMemberSimpleRhaiAPI)]
+#[derive(Clone, ObjectIO, GroupMemberAPI)]
 pub struct ElectricHeater {
     /// The name of the system
     pub name: String,

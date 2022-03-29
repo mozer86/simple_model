@@ -21,7 +21,7 @@ use crate::scanner::SimpleScanner;
 use std::rc::Rc;
 use std::fs;
 use crate::hvac::*;
-use derive::SimpleInputOutput;
+use derive::ObjectIO;
 use crate::SimulationStateHeader;
 
 use crate::{
@@ -36,7 +36,7 @@ use crate::{
 };
 
 
-#[derive(Default, SimpleInputOutput)]
+#[derive(Default, ObjectIO)]
 pub struct SimpleModel {
     /// The name of the building
     pub name: String,

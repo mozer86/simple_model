@@ -20,8 +20,8 @@ SOFTWARE.
 use crate::Float;
 
 use derive::{
-    SimpleInputOutput,     
-    SimpleRhaiAPI
+    ObjectIO,     
+    ObjectAPI
 };
 
 use geometry3d::{    
@@ -38,7 +38,7 @@ use crate::construction::Construction;
 use crate::simulation_state::{SimulationStateHeader, SimulationState};
 use crate::simulation_state_element::{StateElementField, SimulationStateElement};
 
-#[derive(Copy, Clone, Eq, PartialEq, SimpleInputOutput)]
+#[derive(Copy, Clone, Eq, PartialEq, ObjectIO)]
 pub enum FenestrationPositions {
     FixedClosed,
     FixedOpen,
@@ -46,7 +46,7 @@ pub enum FenestrationPositions {
     Binary,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, SimpleInputOutput)]
+#[derive(Copy, Clone, Eq, PartialEq, ObjectIO)]
 pub enum FenestrationType {
     Window,
     Door,
@@ -55,7 +55,7 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive( SimpleInputOutput, SimpleRhaiAPI, Clone)]
+#[derive( ObjectIO, ObjectAPI, Clone)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,

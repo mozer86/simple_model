@@ -504,7 +504,7 @@ impl StructObject {
 
 
     
-    fn get_getters_setters_docs(&self)->(TokenStream2, TokenStream2, String){
+    fn get_api_getters_setters_docs(&self)->(TokenStream2, TokenStream2, String){
         let object_name = self.ident.clone();
         let mut field_getters = quote!();
         let mut field_setters = quote!();
@@ -560,7 +560,7 @@ impl StructObject {
     }
     
 
-    pub fn gen_group_member_api(&self)->TokenStream2{
+    fn get_api(&self, access_from_model: TokenStream2)->TokenStream2{
         let object_name = self.ident.clone();
         let name_str = format!("{}",&object_name);
 
@@ -569,104 +569,14 @@ impl StructObject {
             engine.register_type_with_name::<std::rc::Rc<Self>>(#name_str);
         );
 
-        let (field_getters, field_setters, docs) = self.get_getters_setters_docs();
-        
-
-        quote!(
-            impl #object_name {
-                                
-                pub fn register_api(engine : &mut rhai::Engine, model: &std::rc::Rc<SimpleModel>, state: &std::rc::Rc<std::cell::RefCell<crate::SimulationState>>, research_mode: bool){
-                    
-                    #register_type                    
-                             
-                    // #access_from_model
-
-                    #field_getters
-
-                    #field_setters
-                }
-                
-                                    
-                #[cfg(debug_assertions)]
-                pub fn print_api_doc(dir: &str, summary: &mut String)->std::io::Result<()>{
-                    let api_doc = #docs;
-                    let filename = format!("{}.md", #name_str).to_lowercase();
-                    let full_filename = format!("{}/{}", dir, filename);                        
-
-                    let doc = std::fs::read_to_string(full_filename.clone())
-                        .expect("Something went wrong reading the documentation file");
-                                                                                               
-                    std::fs::write(&full_filename, format!("{}\n\n{}", doc, api_doc))?;
-
-                    Ok(())
-                }
-            
-            }
-        )
-
-
-    }
-
-
-
-
-
-    pub fn gen_object_api(&self)->TokenStream2{
-        let object_name = self.ident.clone();
-        let name_str = format!("{}",&object_name);
-        let name_str_lower = name_str.to_lowercase();
-        let err = format!("Cannot set API for object '{}' which is not stored in the SimpleModel", &object_name);
-        let location_str = crate::object_location(name_str.clone()).expect(&err);
-        let location = syn::Ident::new(location_str, proc_macro2::Span::call_site());
-
-        // Register type
-        let register_type = quote!(
-            engine.register_type_with_name::<std::rc::Rc<Self>>(#name_str);
-        );
-
-        // register_access_from_model
-        let not_found_err = format!("Could not find {} '{{}}'", object_name);
-        let out_of_bounds_err = format!("Trying to access {} number {{}}... but the last index is {{}}", object_name);
-        let negative_index_err = format!("Impossible to get {} using a negative index ({{}} was given)", object_name);
-        let access_from_model = quote!(
-            // get by name
-            let new_mod = std::rc::Rc::clone(model);  
-            let new_state = std::rc::Rc::clone(state);      
-            engine.register_result_fn(#name_str_lower, move |name: &str | {                
-                for s in new_mod.#location.iter(){                                    
-                    if s.name == name {                                
-                        return Ok(std::rc::Rc::clone(s))
-                    }
-                }
-                return Err(format!(#not_found_err, name).into());
-            });
-    
-            // Get by index
-            let new_mod = std::rc::Rc::clone(model);  
-            // let new_state = std::rc::Rc::clone(state);      
-            engine.register_result_fn(#name_str_lower, move |index: rhai::INT| {
-    
-                let len = new_mod.#location.len();
-                if index < 0 {
-                    return Err(format!(#negative_index_err, index).into())
-                }
-                if index >= len as i64 {
-                    return Err(format!(#out_of_bounds_err, index, len - 1).into());
-                } 
-                Ok(std::rc::Rc::clone(&new_mod.#location[index as usize]))
-            });
-    
-        );
-
-
-        let (field_getters, field_setters, docs) = self.get_getters_setters_docs();
+        let (field_getters, field_setters, docs) = self.get_api_getters_setters_docs();
 
 
         // Return
         quote!(
             impl #object_name {
                                 
-                pub fn register_api(engine : &mut rhai::Engine, model: &std::rc::Rc<SimpleModel>, state: &std::rc::Rc<std::cell::RefCell<SimulationState>>, research_mode: bool){
+                pub fn register_api(engine : &mut rhai::Engine, model: &std::rc::Rc<SimpleModel>, state: &std::rc::Rc<std::cell::RefCell<crate::SimulationState>>, research_mode: bool){
                     
                     #register_type
                              
@@ -694,6 +604,63 @@ impl StructObject {
             
             }
         )
+    }
+
+    
+    pub fn gen_group_member_api(&self)->TokenStream2{        
+        let access_from_model = quote!();        
+        self.get_api(access_from_model)        
+    }
+
+
+
+
+
+    pub fn gen_object_api(&self)->TokenStream2{
+        let object_name = self.ident.clone();
+        let name_str = format!("{}",&object_name);
+        let name_str_lower = name_str.to_lowercase();
+        let err = format!("Cannot set API for object '{}' which is not stored in the SimpleModel", &object_name);
+        let location_str = crate::object_location(name_str.clone()).expect(&err);
+        let location = syn::Ident::new(location_str, proc_macro2::Span::call_site());
+
+        
+
+        // register_access_from_model
+        let not_found_err = format!("Could not find {} '{{}}'", object_name);
+        let out_of_bounds_err = format!("Trying to access {} number {{}}... but the last index is {{}}", object_name);
+        let negative_index_err = format!("Impossible to get {} using a negative index ({{}} was given)", object_name);
+        let access_from_model = quote!(
+            // get by name
+            let new_mod = std::rc::Rc::clone(model);  
+            let new_state = std::rc::Rc::clone(state);      
+            engine.register_result_fn(#name_str_lower, move |name: &str | {                
+                for s in new_mod.#location.iter(){                                    
+                    if s.name == name {                                
+                        return Ok(std::rc::Rc::clone(s))
+                    }
+                }
+                return Err(format!(#not_found_err, name).into());
+            });
+    
+            // Get by index
+            let new_mod = std::rc::Rc::clone(model);              
+            engine.register_result_fn(#name_str_lower, move |index: rhai::INT| {
+    
+                let len = new_mod.#location.len();
+                if index < 0 {
+                    return Err(format!(#negative_index_err, index).into())
+                }
+                if index >= len as i64 {
+                    return Err(format!(#out_of_bounds_err, index, len - 1).into());
+                } 
+                Ok(std::rc::Rc::clone(&new_mod.#location[index as usize]))
+            });
+    
+        );
+
+        
+        self.get_api(access_from_model)
 
     }
 

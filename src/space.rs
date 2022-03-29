@@ -23,8 +23,8 @@ SOFTWARE.
 use crate::Float;
 use std::rc::Rc;
 use derive::{
-    SimpleInputOutput, 
-    SimpleRhaiAPI
+    ObjectIO, 
+    ObjectAPI
 };
 
 use crate::model::SimpleModel;
@@ -35,7 +35,7 @@ use crate::building::Building;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
-#[derive(SimpleInputOutput, SimpleRhaiAPI, Clone)]
+#[derive(ObjectIO, ObjectAPI, Clone)]
 pub struct Space {
     /// The name of the space
     pub name: String,

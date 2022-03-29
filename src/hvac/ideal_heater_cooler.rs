@@ -26,13 +26,13 @@ use crate::space::Space;
 use crate::model::SimpleModel;
 
 use derive::{
-    SimpleInputOutput, 
-    GroupMemberSimpleRhaiAPI
+    ObjectIO, 
+    GroupMemberAPI
 };
 
 /// An ideal Heating and Cooling device, with a COP of 1.
 /// 
-#[derive(Clone, SimpleInputOutput, GroupMemberSimpleRhaiAPI)]
+#[derive(Clone, ObjectIO, GroupMemberAPI)]
 pub struct IdealHeaterCooler {
     /// The name of the system
     pub name: String,

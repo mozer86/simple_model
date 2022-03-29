@@ -15,9 +15,7 @@
 //! There are two main kinds of fields in structs: `Optional` and `Mandatory` 
 
 use std::collections::HashMap;
-
-
-
+use crate::simulation_state_behaviour::*;
 
 
 fn object_location(typename: String)->Option<&'static str>{
@@ -75,7 +73,47 @@ use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
 use crate::docs::get_docs;
 
-#[proc_macro_derive(SimpleInputOutput)]
+#[proc_macro_derive(StateElements, attributes(personal, operational, physical))]
+pub fn derive_simulation_state_behaviour(input: TokenStream) -> TokenStream {
+    let mut out = input.clone();
+
+    let ast = parse_macro_input!(input as DeriveInput);
+    let enum_name = &ast.ident;
+    match ast.data {        
+        syn::Data::Enum(_)=>{
+            let variants = get_enum_variants(&ast);
+
+          
+            let derive_kind_variants = match derive_enum_kind(&ast, &variants){
+                Ok(s)=>s,
+                Err(e)=>{                    
+                    out.extend(TokenStream::from(e.to_compile_error()));
+                    return out
+                }
+            };
+        
+            // Gather everything
+            TokenStream::from(quote!(
+                impl #enum_name {
+
+                    
+                    #derive_kind_variants
+                }
+            ))
+        },
+        _ => {
+            panic!("SimulationStateBehaviour ::: can only be derived for Enums");
+        }
+    }
+
+}
+
+
+
+
+
+
+#[proc_macro_derive(ObjectIO)]
 pub fn derive_input_output(input: TokenStream) -> TokenStream {
 
     
@@ -132,47 +170,9 @@ pub fn derive_input_output(input: TokenStream) -> TokenStream {
 }
 
 
-use crate::simulation_state_behaviour::*;
-
-#[proc_macro_derive(SimpleSimulationStateBehaviour, attributes(personal, operational, physical))]
-pub fn derive_simulation_state_behaviour(input: TokenStream) -> TokenStream {
-    let mut out = input.clone();
-
-    let ast = parse_macro_input!(input as DeriveInput);
-    let enum_name = &ast.ident;
-    match ast.data {        
-        syn::Data::Enum(_)=>{
-            let variants = get_enum_variants(&ast);
-
-          
-            let derive_kind_variants = match derive_enum_kind(&ast, &variants){
-                Ok(s)=>s,
-                Err(e)=>{                    
-                    out.extend(TokenStream::from(e.to_compile_error()));
-                    return out
-                }
-            };
-        
-            // Gather everything
-            TokenStream::from(quote!(
-                impl #enum_name {
-
-                    
-                    #derive_kind_variants
-                }
-            ))
-        },
-        _ => {
-            panic!("SimulationStateBehaviour ::: can only be derived for Enums");
-        }
-    }
-
-}
 
 
-
-
-#[proc_macro_derive(SimpleGroupInputOutput)]
+#[proc_macro_derive(GroupIO)]
 pub fn derive_group_input_output(input: TokenStream) -> TokenStream {
 
     let ast = parse_macro_input!(input as DeriveInput);
@@ -184,7 +184,18 @@ pub fn derive_group_input_output(input: TokenStream) -> TokenStream {
 }
 
 
-#[proc_macro_derive(GroupSimpleRhaiAPI)]
+
+
+#[proc_macro_derive(ObjectAPI, attributes(operational, physical))]
+pub fn derive_object_api(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+    let docs = get_docs(&ast.attrs);
+    let obj = Object::new(ast.clone(), docs);
+    TokenStream::from(obj.gen_object_api())
+}
+
+
+#[proc_macro_derive(GroupAPI)]
 pub fn derive_group_api(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
     let docs = get_docs(&ast.attrs);
@@ -194,7 +205,8 @@ pub fn derive_group_api(input: TokenStream) -> TokenStream {
 }
 
 
-#[proc_macro_derive(GroupMemberSimpleRhaiAPI, attributes(operational, physical))]
+
+#[proc_macro_derive(GroupMemberAPI, attributes(operational, physical))]
 pub fn derive_group_member_api(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
     let docs = get_docs(&ast.attrs);
@@ -203,15 +215,6 @@ pub fn derive_group_member_api(input: TokenStream) -> TokenStream {
 }
 
 
-
-
-#[proc_macro_derive(SimpleRhaiAPI, attributes(operational, physical))]
-pub fn derive_object_api(input: TokenStream) -> TokenStream {
-    let ast = parse_macro_input!(input as DeriveInput);
-    let docs = get_docs(&ast.attrs);
-    let obj = Object::new(ast.clone(), docs);
-    TokenStream::from(obj.gen_object_api())
-}
 
 
 

@@ -23,8 +23,8 @@ use crate::simulation_state::{SimulationState, SimulationStateHeader};
 use crate::simulation_state_element::{StateElementField, SimulationStateElement};
 use crate::space::Space;
 use derive::{
-    SimpleInputOutput, 
-    SimpleRhaiAPI
+    ObjectIO, 
+    ObjectAPI
 };
 
 
@@ -32,7 +32,7 @@ use derive::{
 use std::rc::Rc;
 
 /// A Luminaire
-#[derive(SimpleInputOutput,  SimpleRhaiAPI, Clone)]
+#[derive(ObjectIO,  ObjectAPI, Clone)]
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,

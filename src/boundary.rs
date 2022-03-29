@@ -19,7 +19,7 @@ SOFTWARE.
 */
 
 use std::rc::Rc;
-use derive::SimpleInputOutput;
+use derive::ObjectIO;
 
 use crate::space::Space;
 
@@ -29,7 +29,7 @@ use crate::space::Space;
 /// 
 /// By default (i.e., if no boundary is assigned to a Surface), 
 /// the boundary will be assumed to be outside. 
-#[derive(Clone, SimpleInputOutput)]
+#[derive(Clone, ObjectIO)]
 pub enum Boundary {
     
     /// The Surface is in contact with the Ground
