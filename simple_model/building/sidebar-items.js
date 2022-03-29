@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ShelterClass",""]],"struct":[["Building","This object is utilized to group `Space` objects together for  metering and/or shared values. For example, the number of storeys and the `ShelterClass` will help defining the `Infiltrations`"]]});
+initSidebarItems({"enum":[["ShelterClass",""]],"struct":[["Building","This object is utilized to group `Space` objects together for metering and/or shared values. For example, the number of storeys and the `ShelterClass` will help defining the `Infiltrations`"]]});

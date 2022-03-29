@@ -143,16 +143,6 @@
 <span id="107">107</span>
 <span id="108">108</span>
 <span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
-<span id="112">112</span>
-<span id="113">113</span>
-<span id="114">114</span>
-<span id="115">115</span>
-<span id="116">116</span>
-<span id="117">117</span>
-<span id="118">118</span>
-<span id="119">119</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -172,17 +162,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */</span>
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::SimpleModel</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
 <span class="kw">use</span> <span class="ident">derive::ObjectIO</span>;
-
-
 
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">ObjectIO</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ShelterClass</span>{
-    
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ShelterClass</span> {
     <span class="doccomment">/// No obstructions or local shielding</span>
     <span class="ident">NoObstructions</span>,
 
@@ -196,76 +183,69 @@ SOFTWARE.
     <span class="ident">LargeLotUrban</span>,
 
     <span class="doccomment">/// Typical shelter produced by buildings that are immediately adjacent.</span>
-    <span class="ident">SmallLotUrban</span>,    
+    <span class="ident">SmallLotUrban</span>,
 }
 
-<span class="doccomment">/// This object is utilized to group `Space` objects together for </span>
+<span class="doccomment">/// This object is utilized to group `Space` objects together for</span>
 <span class="doccomment">/// metering and/or shared values. For example, the number of storeys</span>
 <span class="doccomment">/// and the `ShelterClass` will help defining the `Infiltrations`</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">ObjectIO</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Building</span> {
-    
     <span class="doccomment">/// The name of the Building</span>
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
 
     <span class="doccomment">/// The index of the building in the SimpleModel&#39;s buildings array</span>
-    <span class="ident">index</span> : <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The number of storeys of this building.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// This value use used by the `AirFlow` module when a `Space` associated</span>
-    <span class="doccomment">/// to this `Building` has been assigned an `EffectiveAirLeakageArea` </span>
-    <span class="doccomment">/// infiltration. This value is required for calculating the Stack </span>
-    <span class="doccomment">/// Coefficient ($C_s$) and the Wind Coefficient ($C_w$) of the </span>
+    <span class="doccomment">/// to this `Building` has been assigned an `EffectiveAirLeakageArea`</span>
+    <span class="doccomment">/// infiltration. This value is required for calculating the Stack</span>
+    <span class="doccomment">/// Coefficient ($C_s$) and the Wind Coefficient ($C_w$) of the</span>
     <span class="doccomment">/// `EffectiveAirLeakageArea` infiltration. $C_s$ and $C_w$ can be inputed</span>
-    <span class="doccomment">/// directly by assigning values to the `stack_coefficient` and </span>
+    <span class="doccomment">/// directly by assigning values to the `stack_coefficient` and</span>
     <span class="doccomment">/// `wind_coefficient` fields, in which case the `n_storeys` field will</span>
     <span class="doccomment">/// be ignored.</span>
-    <span class="ident">n_storeys</span> : <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">n_storeys</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 
-    <span class="doccomment">/// The `ShelterClass` of this building. </span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">/// The `ShelterClass` of this building.</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// This value use used by the `AirFlow` module when a `Space` associated</span>
-    <span class="doccomment">/// to this `Building` has been assigned an `EffectiveAirLeakageArea` </span>
-    <span class="doccomment">/// infiltration. This value is required for calculating the Wind </span>
-    <span class="doccomment">/// Coefficient ($C_s$) of the </span>
+    <span class="doccomment">/// to this `Building` has been assigned an `EffectiveAirLeakageArea`</span>
+    <span class="doccomment">/// infiltration. This value is required for calculating the Wind</span>
+    <span class="doccomment">/// Coefficient ($C_s$) of the</span>
     <span class="doccomment">/// `EffectiveAirLeakageArea` infiltration.  $C_w$ can be inputed</span>
-    <span class="doccomment">/// directly by assigning values to the `wind_coefficient` field, in </span>
+    <span class="doccomment">/// directly by assigning values to the `wind_coefficient` field, in</span>
     <span class="doccomment">/// which case the `shelter_class` field will be ignored.</span>
     <span class="ident">shelter_class</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ShelterClass</span><span class="op">&gt;</span>,
 
-    <span class="doccomment">/// The stack coefficient of this building, used for </span>
+    <span class="doccomment">/// The stack coefficient of this building, used for</span>
     <span class="doccomment">/// calculating infiltrations in `Spaces` that utilize the `EffectiveAirLeakageArea`</span>
     <span class="doccomment">/// infiltration option.</span>
-    <span class="doccomment">/// </span>
-    <span class="doccomment">/// If not given, the number of storeys will be used for getting </span>
-    <span class="doccomment">/// this values (based on EnergyPlus&#39; Engineering Reference). </span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If not given, the number of storeys will be used for getting</span>
+    <span class="doccomment">/// this values (based on EnergyPlus&#39; Engineering Reference).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// &gt; **Note:** The `EffectiveAirLeakageArea` object is appropriate for buildings</span>
-    <span class="doccomment">/// &gt; of 3 storeys or less. </span>
-    <span class="ident">stack_coefficient</span> : <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// &gt; of 3 storeys or less.</span>
+    <span class="ident">stack_coefficient</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 
-    <span class="doccomment">/// The wind coefficient of this building, used for </span>
+    <span class="doccomment">/// The wind coefficient of this building, used for</span>
     <span class="doccomment">/// calculating infiltrations in `Spaces` that utilize the `EffectiveAirLeakageArea`</span>
     <span class="doccomment">/// infiltration option.</span>
-    <span class="doccomment">/// </span>
-    <span class="doccomment">/// If not given, the number of storeys will be used for getting </span>
-    <span class="doccomment">/// this values (based on EnergyPlus&#39; Engineering Reference). </span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If not given, the number of storeys will be used for getting</span>
+    <span class="doccomment">/// this values (based on EnergyPlus&#39; Engineering Reference).</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// &gt; **Note:** The `EffectiveAirLeakageArea` object is appropriate for buildings</span>
-    <span class="doccomment">/// &gt; of 3 storeys or less. </span>
-    <span class="ident">wind_coefficient</span> : <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
-
-    
+    <span class="doccomment">/// &gt; of 3 storeys or less.</span>
+    <span class="ident">wind_coefficient</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 }
 
-
-
-
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
-
     <span class="doccomment">/// Adds a [`Building`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_building</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Building</span>) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_building</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span>: <span class="ident">Building</span>) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span> {
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="self">self</span>.<span class="ident">buildings</span>.<span class="ident">len</span>());
         <span class="kw">let</span> <span class="ident">add</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">add</span>);
         <span class="self">self</span>.<span class="ident">buildings</span>.<span class="ident">push</span>(<span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">add</span>));

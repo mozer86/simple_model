@@ -370,33 +370,6 @@
 <span id="334">334</span>
 <span id="335">335</span>
 <span id="336">336</span>
-<span id="337">337</span>
-<span id="338">338</span>
-<span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
-<span id="361">361</span>
-<span id="362">362</span>
-<span id="363">363</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -416,24 +389,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */</span>
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::scanner::SimpleScanner</span>;
-<span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
-<span class="kw">use</span> <span class="ident">std::fs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hvac</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">derive::ObjectIO</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::scanner::SimpleScanner</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::SimulationStateHeader</span>;
+<span class="kw">use</span> <span class="ident">derive::ObjectIO</span>;
+<span class="kw">use</span> <span class="ident">std::fs</span>;
+<span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">Surface</span>, 
-    <span class="ident">Space</span>, 
-    <span class="ident">Building</span>,
-    <span class="ident">Substance</span>,
-    <span class="ident">Material</span>,
-    <span class="ident">Construction</span>,
-    <span class="ident">Luminaire</span>,
-    <span class="ident">Fenestration</span>
-};
-
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Building</span>, <span class="ident">Construction</span>, <span class="ident">Fenestration</span>, <span class="ident">Luminaire</span>, <span class="ident">Material</span>, <span class="ident">Space</span>, <span class="ident">Substance</span>, <span class="ident">Surface</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">ObjectIO</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SimpleModel</span> {
@@ -448,7 +411,7 @@ SOFTWARE.
     <span class="comment">// geometry</span>
     <span class="kw">pub</span> <span class="ident">surfaces</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Surface</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">spaces</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">buildings</span> : <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">buildings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The windows and doors in the surface    </span>
     <span class="kw">pub</span> <span class="ident">fenestrations</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Fenestration</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -460,16 +423,11 @@ SOFTWARE.
     <span class="kw">pub</span> <span class="ident">luminaires</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Luminaire</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-
-<span class="kw">impl</span> <span class="ident">SimpleModel</span>{
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_file</span>(<span class="ident">filename</span>: <span class="ident">String</span>)-&gt;<span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="self">Self</span>, <span class="ident">SimulationStateHeader</span>), <span class="ident">String</span><span class="op">&gt;</span>{
-        
-        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">fs::read</span>(<span class="ident">filename</span>.<span class="ident">clone</span>()){
-            <span class="prelude-val">Ok</span>(<span class="ident">v</span>)=&gt;<span class="ident">v</span>,
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;{
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Could not read SIMPLE file &#39;{}&#39;&quot;</span>, <span class="ident">filename</span>))
-            }
+<span class="kw">impl</span> <span class="ident">SimpleModel</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_file</span>(<span class="ident">filename</span>: <span class="ident">String</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="self">Self</span>, <span class="ident">SimulationStateHeader</span>), <span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">fs::read</span>(<span class="ident">filename</span>.<span class="ident">clone</span>()) {
+            <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="ident">v</span>,
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Could not read SIMPLE file &#39;{}&#39;&quot;</span>, <span class="ident">filename</span>)),
         };
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">scanner</span> <span class="op">=</span> <span class="ident">SimpleScanner::new</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>, <span class="number">1</span>);
         <span class="ident">scanner</span>.<span class="ident">parse_model</span>()
@@ -483,130 +441,123 @@ SOFTWARE.
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">testing</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    
-    
+
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::boundary::Boundary</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::building::Building</span>;
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::hvac</span>;
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::boundary::Boundary</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::building</span>::{<span class="ident">Building</span>, <span class="comment">/*ShelterClass*/</span>};
     <span class="comment">// use crate::infiltration::Infiltration;</span>
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">write_io_doc</span>(){
+    <span class="kw">fn</span> <span class="ident">write_io_doc</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">summary</span> <span class="op">=</span> <span class="string">&quot;# Input/Output reference guide\n\n&quot;</span>.<span class="ident">to_string</span>();
-        
+
         <span class="comment">// Add automatic documentation</span>
         <span class="comment">// let dir = &quot;../src&quot;;</span>
         <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="string">&quot;./book/src&quot;</span>;
         <span class="kw">let</span> <span class="ident">summary_file</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}/SUMMARY.md&quot;</span>, <span class="ident">dir</span>);
-        
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">std::path::Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">summary_file</span>).<span class="ident">exists</span>(){            
+
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">std::path::Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">summary_file</span>).<span class="ident">exists</span>() {
             <span class="kw">return</span>;
         }
 
         <span class="comment">// clear summary</span>
         <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">std::fs::File::create</span>(<span class="kw-2">&amp;</span><span class="ident">summary_file</span>).<span class="ident">unwrap</span>();
         <span class="ident">f</span>.<span class="ident">set_len</span>(<span class="number">0</span>).<span class="ident">unwrap</span>();
-        
 
         <span class="comment">// Boundary</span>
         <span class="ident">Boundary::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="comment">// Building</span>
         <span class="ident">Building::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="comment">// Construction</span>
         <span class="ident">Construction::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="comment">// Fenestration</span>
         <span class="ident">Fenestration::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">Fenestration::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="comment">// HVAC</span>
         <span class="ident">HVAC::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="ident">summary</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\t&quot;</span>));
         <span class="ident">hvac::ElectricHeater::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">hvac::ElectricHeater::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="ident">summary</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\t&quot;</span>));
         <span class="ident">hvac::IdealHeaterCooler::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">hvac::IdealHeaterCooler::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
 
         <span class="comment">// Infiltration</span>
         <span class="comment">// Infiltration::print_doc(&amp;dir, &amp;mut summary).unwrap();</span>
-        
+
         <span class="comment">// Luminaire</span>
         <span class="ident">Luminaire::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">Luminaire::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
 
         <span class="comment">// Material</span>
         <span class="ident">Material::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="comment">// Space</span>
         <span class="ident">Space::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">Space::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
+
         <span class="comment">// Substance</span>
         <span class="ident">Substance::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-                
+
         <span class="ident">summary</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\t&quot;</span>));
         <span class="ident">substance::Normal::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="comment">// substance::Normal::print_api_doc(&amp;dir, &amp;mut summary).unwrap();</span>
-        
-        
 
-
-        
         <span class="comment">// ShelterClass::print_doc(&amp;dir, &amp;mut summary).unwrap();</span>
-        
+
         <span class="ident">Surface::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">Surface::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        
 
-        
-        <span class="kw">let</span> <span class="ident">current_summary</span> <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">summary_file</span>.<span class="ident">clone</span>()).<span class="ident">expect</span>(<span class="string">&quot;Could not read summary file&quot;</span>);
+        <span class="kw">let</span> <span class="ident">current_summary</span> <span class="op">=</span>
+            <span class="ident">fs::read_to_string</span>(<span class="ident">summary_file</span>.<span class="ident">clone</span>()).<span class="ident">expect</span>(<span class="string">&quot;Could not read summary file&quot;</span>);
         <span class="kw">let</span> <span class="ident">whole_summary</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}\n\n{}&quot;</span>, <span class="ident">current_summary</span>, <span class="ident">summary</span>);
         <span class="ident">std::fs::write</span>(<span class="ident">summary_file</span>, <span class="ident">whole_summary</span>.<span class="ident">as_bytes</span>()).<span class="ident">unwrap</span>();
-
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_read_file</span>(){
-        <span class="kw">let</span> (<span class="ident">model</span>, <span class="ident">_state_header</span>) <span class="op">=</span> <span class="ident">SimpleModel::from_file</span>(<span class="string">&quot;./test_data/box.spl&quot;</span>.<span class="ident">to_string</span>()).<span class="ident">unwrap</span>();
-        
+    <span class="kw">fn</span> <span class="ident">test_read_file</span>() {
+        <span class="kw">let</span> (<span class="ident">model</span>, <span class="ident">_state_header</span>) <span class="op">=</span>
+            <span class="ident">SimpleModel::from_file</span>(<span class="string">&quot;./test_data/box.spl&quot;</span>.<span class="ident">to_string</span>()).<span class="ident">unwrap</span>();
+
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">substances</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">substances</span>[<span class="number">0</span>].<span class="ident">name</span>().<span class="ident">clone</span>(), <span class="string">&quot;the substance&quot;</span>);
-        
+
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">materials</span>.<span class="ident">len</span>(), <span class="number">2</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">materials</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;the material&quot;</span>);        
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">materials</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;the material&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">materials</span>[<span class="number">1</span>].<span class="ident">name</span>, <span class="string">&quot;another material&quot;</span>);
-        
+
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">constructions</span>.<span class="ident">len</span>(), <span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">constructions</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;the construction&quot;</span>);        
-        <span class="macro">assert!</span>(<span class="ident">Rc::ptr_eq</span>(<span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">constructions</span>[<span class="number">0</span>].<span class="ident">materials</span>[<span class="number">0</span>], <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">materials</span>[<span class="number">0</span>]));
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">constructions</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;the construction&quot;</span>);
+        <span class="macro">assert!</span>(<span class="ident">Rc::ptr_eq</span>(
+            <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">constructions</span>[<span class="number">0</span>].<span class="ident">materials</span>[<span class="number">0</span>],
+            <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">materials</span>[<span class="number">0</span>]
+        ));
 
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">surfaces</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">surfaces</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;the surface&quot;</span>);
-        <span class="macro">assert!</span>(<span class="ident">Rc::ptr_eq</span>(<span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">surfaces</span>[<span class="number">0</span>].<span class="ident">construction</span>, <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">constructions</span>[<span class="number">0</span>]));
+        <span class="macro">assert!</span>(<span class="ident">Rc::ptr_eq</span>(
+            <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">surfaces</span>[<span class="number">0</span>].<span class="ident">construction</span>,
+            <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">constructions</span>[<span class="number">0</span>]
+        ));
 
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>.<span class="ident">len</span>(), <span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Bedroom&quot;</span>);        
-
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">spaces</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Bedroom&quot;</span>);
 
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">buildings</span>.<span class="ident">len</span>(), <span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">buildings</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Main campus&quot;</span>);        
-
+        <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">buildings</span>[<span class="number">0</span>].<span class="ident">name</span>, <span class="string">&quot;Main campus&quot;</span>);
 
         <span class="macro">assert_eq!</span>(<span class="ident">model</span>.<span class="ident">hvacs</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">heater</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">model</span>.<span class="ident">hvacs</span>[<span class="number">0</span>] {
             <span class="macro">assert_eq!</span>(<span class="string">&quot;Bedrooms heater&quot;</span>, <span class="ident">heater</span>.<span class="ident">name</span>)
-        }<span class="kw">else</span>{
+        } <span class="kw">else</span> {
             <span class="macro">panic!</span>(<span class="string">&quot;Was not an electric heater!&quot;</span>);
         }
-        
-
-
-        
     }
 
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::Normal</span>;
@@ -620,17 +571,16 @@ SOFTWARE.
 
         <span class="kw">let</span> <span class="ident">s0</span> <span class="op">=</span> <span class="ident">building</span>.<span class="ident">add_substance</span>(<span class="ident">substance</span>);
 
-        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">building</span>.<span class="ident">substances</span>[<span class="number">0</span>];        
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">building</span>.<span class="ident">substances</span>[<span class="number">0</span>];
         <span class="macro">assert_eq!</span>(<span class="ident">subs_name</span>, <span class="ident">s</span>.<span class="ident">name</span>().<span class="ident">clone</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">subs_name</span>, <span class="ident">s0</span>.<span class="ident">name</span>().<span class="ident">clone</span>());
 
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">irrefutable_let_patterns</span>)]</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Substance::Normal</span>(<span class="ident">s</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">s0</span> {
             <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">s</span>.<span class="ident">index</span>().<span class="ident">unwrap</span>(), <span class="number">0</span>);
-        }<span class="kw">else</span>{
+        } <span class="kw">else</span> {
             <span class="macro">panic!</span>(<span class="string">&quot;asd&quot;</span>)
         }
-        
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -643,53 +593,51 @@ SOFTWARE.
 
         <span class="kw">let</span> <span class="ident">h0</span> <span class="op">=</span> <span class="ident">building</span>.<span class="ident">add_hvac</span>(<span class="ident">heater</span>.<span class="ident">wrap</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">state_header</span>);
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">h</span>) <span class="op">=</span> <span class="ident">h0</span>{
-            <span class="macro">assert_eq!</span>(<span class="ident">heater_name</span>, <span class="ident">h</span>.<span class="ident">name</span>);        
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">h</span>) <span class="op">=</span> <span class="ident">h0</span> {
+            <span class="macro">assert_eq!</span>(<span class="ident">heater_name</span>, <span class="ident">h</span>.<span class="ident">name</span>);
             <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">h</span>.<span class="ident">index</span>().<span class="ident">unwrap</span>(), <span class="number">0</span>);
         }
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">h</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">building</span>.<span class="ident">hvacs</span>[<span class="number">0</span>]{
-            <span class="macro">assert_eq!</span>(<span class="ident">heater_name</span>, <span class="ident">h</span>.<span class="ident">name</span>);        
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">h</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">building</span>.<span class="ident">hvacs</span>[<span class="number">0</span>] {
+            <span class="macro">assert_eq!</span>(<span class="ident">heater_name</span>, <span class="ident">h</span>.<span class="ident">name</span>);
             <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">h</span>.<span class="ident">index</span>().<span class="ident">unwrap</span>(), <span class="number">0</span>);
         }
     }
 
-    
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state::SimulationStateHeader</span>;
 
-
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state</span>::{<span class="ident">SimulationStateHeader</span>};
-    
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::rhai_api</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state_element::SimulationStateElement</span>;
     <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::rhai_api</span>::<span class="kw-2">*</span>;    
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_api</span>(){
-
+    <span class="kw">fn</span> <span class="ident">test_api</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">model</span> <span class="op">=</span> <span class="ident">SimpleModel::new</span>(<span class="string">&quot;The Model&quot;</span>.<span class="ident">to_string</span>());
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state_header</span> <span class="op">=</span> <span class="ident">SimulationStateHeader::new</span>();
-        
+
         <span class="kw">let</span> <span class="ident">electric</span> <span class="op">=</span> <span class="ident">ElectricHeater::new</span>(<span class="string">&quot;electric heater&quot;</span>.<span class="ident">to_string</span>());
         <span class="kw">let</span> <span class="ident">electric</span> <span class="op">=</span> <span class="ident">model</span>.<span class="ident">add_hvac</span>(<span class="ident">electric</span>.<span class="ident">wrap</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">state_header</span>);
         <span class="kw">let</span> <span class="ident">ideal</span> <span class="op">=</span> <span class="ident">IdealHeaterCooler::new</span>(<span class="string">&quot;ideal hvac&quot;</span>.<span class="ident">to_string</span>());
         <span class="kw">let</span> <span class="ident">ideal</span> <span class="op">=</span> <span class="ident">model</span>.<span class="ident">add_hvac</span>(<span class="ident">ideal</span>.<span class="ident">wrap</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">state_header</span>);
-        
+
         <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
-        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceInfiltrationVolume</span>(<span class="number">0</span>), <span class="number">2.1</span>);
+        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span>
+            <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceInfiltrationVolume</span>(<span class="number">0</span>), <span class="number">2.1</span>);
         <span class="ident">space</span>.<span class="ident">set_infiltration_volume_index</span>(<span class="ident">state_index</span>);
-        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceDryBulbTemperature</span>(<span class="number">0</span>), <span class="number">22.2</span>);
+        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span>
+            <span class="ident">state_header</span>.<span class="ident">push</span>(<span class="ident">SimulationStateElement::SpaceDryBulbTemperature</span>(<span class="number">0</span>), <span class="number">22.2</span>);
         <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="ident">state_index</span>);
         <span class="ident">model</span>.<span class="ident">add_space</span>(<span class="ident">space</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">take_values</span>().<span class="ident">unwrap</span>();        
-        
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">hvac</span>) <span class="op">=</span> <span class="ident">electric</span>{
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">state_header</span>.<span class="ident">take_values</span>().<span class="ident">unwrap</span>();
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::ElectricHeater</span>(<span class="ident">hvac</span>) <span class="op">=</span> <span class="ident">electric</span> {
             <span class="ident">hvac</span>.<span class="ident">set_heating_cooling_consumption</span>(<span class="kw-2">&amp;mut</span> <span class="ident">state</span>, <span class="number">91.2</span>);
         }
-        
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::IdealHeaterCooler</span>(<span class="ident">hvac</span>) <span class="op">=</span> <span class="ident">ideal</span>{
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HVAC::IdealHeaterCooler</span>(<span class="ident">hvac</span>) <span class="op">=</span> <span class="ident">ideal</span> {
             <span class="ident">hvac</span>.<span class="ident">set_heating_cooling_consumption</span>(<span class="kw-2">&amp;mut</span> <span class="ident">state</span>, <span class="number">23.14</span>);
         }
-        
+
         <span class="comment">// Wrap and send to the Heap</span>
         <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">RefCell::new</span>(<span class="ident">state</span>));
         <span class="kw">let</span> <span class="ident">model</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">model</span>);
@@ -697,7 +645,9 @@ SOFTWARE.
 
         <span class="ident">register_control_api</span>(<span class="kw-2">&amp;mut</span> <span class="ident">engine</span>, <span class="kw-2">&amp;</span><span class="ident">model</span>, <span class="kw-2">&amp;</span><span class="ident">state</span>, <span class="bool-val">true</span>);
 
-        <span class="kw">let</span> <span class="ident">ast</span> <span class="op">=</span> <span class="ident">engine</span>.<span class="ident">compile</span>(<span class="string">&quot;
+        <span class="kw">let</span> <span class="ident">ast</span> <span class="op">=</span> <span class="ident">engine</span>
+            .<span class="ident">compile</span>(
+                <span class="string">&quot;
             
             let some_space = space(\&quot;some space\&quot;);
             let vol = some_space.infiltration_volume;
@@ -749,16 +699,12 @@ SOFTWARE.
             let temp = the_space.dry_bulb_temperature;
             print(`Temp is ${temp}`)            
             
-        &quot;</span>).<span class="ident">unwrap</span>();
+        &quot;</span>,
+            )
+            .<span class="ident">unwrap</span>();
 
-        <span class="kw">let</span> <span class="ident">_result</span> : () <span class="op">=</span> <span class="ident">engine</span>.<span class="ident">eval_ast</span>(<span class="kw-2">&amp;</span><span class="ident">ast</span>).<span class="ident">unwrap</span>();
-
-        
-
-
-
+        <span class="kw">let</span> <span class="ident">_result</span>: () <span class="op">=</span> <span class="ident">engine</span>.<span class="ident">eval_ast</span>(<span class="kw-2">&amp;</span><span class="ident">ast</span>).<span class="ident">unwrap</span>();
     }
-    
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="simple_model" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>

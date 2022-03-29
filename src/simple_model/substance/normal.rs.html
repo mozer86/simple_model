@@ -160,12 +160,6 @@
 <span id="124">124</span>
 <span id="125">125</span>
 <span id="126">126</span>
-<span id="127">127</span>
-<span id="128">128</span>
-<span id="129">129</span>
-<span id="130">130</span>
-<span id="131">131</span>
-<span id="132">132</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -187,11 +181,7 @@ SOFTWARE.
 */</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
 
-<span class="kw">use</span> <span class="ident">derive</span>::{
-    <span class="ident">ObjectIO</span>, 
-};
-
-
+<span class="kw">use</span> <span class="ident">derive::ObjectIO</span>;
 
 <span class="doccomment">/// Represents a Normal; that is to say, a physical</span>
 <span class="doccomment">/// materiality with physical properties. The name Normal</span>
@@ -200,11 +190,11 @@ SOFTWARE.
 <span class="doccomment">/// Substace, but it does include Material, which is essentially</span>
 <span class="doccomment">/// a Normal with a thickness).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">ObjectIO</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Normal</span> {    
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Normal</span> {
     <span class="doccomment">/// The name of the Normal. Should be unique for each</span>
     <span class="doccomment">/// Material in the SimpleModel object    </span>
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
-    
+
     <span class="doccomment">/// The position of this object in its contaner Vector</span>
     <span class="ident">index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 
@@ -221,7 +211,7 @@ SOFTWARE.
     <span class="ident">solar_absorbtance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// Thermal absorbtance (i.e., emissitivy; from 0 to 1)</span>
-    <span class="ident">thermal_absorbtance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>
+    <span class="ident">thermal_absorbtance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Normal</span> {
@@ -234,11 +224,10 @@ SOFTWARE.
         <span class="prelude-val">Ok</span>(<span class="ident">thermal_conductivity</span> <span class="op">/</span> (<span class="ident">density</span> <span class="op">*</span> <span class="ident">specific_heat_capacity</span>))
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wrap</span>(<span class="self">self</span>)-&gt;<span class="ident"><span class="kw">crate</span>::substance::Substance</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wrap</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="kw">crate</span>::substance::Substance</span> {
         <span class="ident"><span class="kw">crate</span>::substance::Substance::Normal</span>(<span class="ident">std::rc::Rc::new</span>(<span class="self">self</span>))
     }
 }
-
 
 <span class="comment">/***********/</span>
 <span class="comment">/* TESTING */</span>
@@ -250,10 +239,10 @@ SOFTWARE.
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::SimpleModel</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;float&quot;</span>)]</span>
-    <span class="kw">const</span> <span class="ident">EPSILON</span> : <span class="ident">f32</span> <span class="op">=</span> <span class="ident">std::f32::EPSILON</span>;
+    <span class="kw">const</span> <span class="ident">EPSILON</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="ident">std::f32::EPSILON</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;float&quot;</span>))]</span>
-    <span class="kw">const</span> <span class="ident">EPSILON</span> : <span class="ident">f64</span> <span class="op">=</span> <span class="ident">std::f64::EPSILON</span>;
+    <span class="kw">const</span> <span class="ident">EPSILON</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">std::f64::EPSILON</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_substance_basic</span>() {
@@ -279,7 +268,7 @@ SOFTWARE.
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_normal_substance_from_bytes</span>(){
+    <span class="kw">fn</span> <span class="ident">test_normal_substance_from_bytes</span>() {
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; {
             name : \&quot;A substance\&quot;,            
             thermal_conductivity : 1.2,
@@ -292,10 +281,9 @@ SOFTWARE.
         <span class="kw">let</span> <span class="ident">sub</span> <span class="op">=</span> <span class="ident">Normal::from_bytes</span>(<span class="number">1</span>, <span class="ident">bytes</span>, <span class="kw-2">&amp;mut</span> <span class="ident">building</span>).<span class="ident">unwrap</span>();
 
         <span class="macro">assert_eq!</span>(<span class="ident">sub</span>.<span class="ident">name</span>, <span class="string">&quot;A substance&quot;</span>.<span class="ident">to_string</span>());
-        <span class="macro">assert!</span>((<span class="number">1.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">thermal_conductivity</span>.<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-        <span class="macro">assert!</span>((<span class="number">2.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">specific_heat_capacity</span>.<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-        <span class="macro">assert!</span>((<span class="number">3.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">density</span>.<span class="ident">unwrap</span>()).<span class="ident">abs</span>()<span class="op">&lt;</span><span class="ident">EPSILON</span>);
-
+        <span class="macro">assert!</span>((<span class="number">1.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">thermal_conductivity</span>.<span class="ident">unwrap</span>()).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="ident">EPSILON</span>);
+        <span class="macro">assert!</span>((<span class="number">2.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">specific_heat_capacity</span>.<span class="ident">unwrap</span>()).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="ident">EPSILON</span>);
+        <span class="macro">assert!</span>((<span class="number">3.2</span> <span class="op">-</span> <span class="ident">sub</span>.<span class="ident">density</span>.<span class="ident">unwrap</span>()).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="ident">EPSILON</span>);
     }
 }
 </code></pre></div>

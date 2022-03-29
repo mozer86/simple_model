@@ -114,7 +114,6 @@
 <span id="78">78</span>
 <span id="79">79</span>
 <span id="80">80</span>
-<span id="81">81</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -134,22 +133,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */</span>
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::SimpleModel</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state</span>::{<span class="ident">SimulationState</span>, <span class="ident">SimulationStateHeader</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state_element</span>::{<span class="ident">StateElementField</span>, <span class="ident">SimulationStateElement</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state::SimulationStateHeader</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state_element</span>::{<span class="ident">SimulationStateElement</span>, <span class="ident">StateElementField</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::space::Space</span>;
-<span class="kw">use</span> <span class="ident">derive</span>::{
-    <span class="ident">ObjectIO</span>, 
-    <span class="ident">ObjectAPI</span>
-};
-
-
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
+<span class="kw">use</span> <span class="ident">derive</span>::{<span class="ident">ObjectAPI</span>, <span class="ident">ObjectIO</span>};
 
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
 <span class="doccomment">/// A Luminaire</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">ObjectIO</span>,  <span class="ident">ObjectAPI</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">ObjectIO</span>, <span class="ident">ObjectAPI</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Luminaire</span> {
     <span class="doccomment">/// The name of the Luminaire</span>
     <span class="ident">name</span>: <span class="ident">String</span>,
@@ -176,18 +170,22 @@ SOFTWARE.
     <span class="ident">power_consumption</span>: <span class="ident">StateElementField</span>,
 }
 
-
-
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
-
     <span class="doccomment">/// Adds a [`Luminaire`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_luminaire</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Luminaire</span>, <span class="ident">state</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SimulationStateHeader</span> ) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Luminaire</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_luminaire</span>(
+        <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
+        <span class="kw-2">mut</span> <span class="ident">add</span>: <span class="ident">Luminaire</span>,
+        <span class="ident">state</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SimulationStateHeader</span>,
+    ) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Luminaire</span><span class="op">&gt;</span> {
         <span class="comment">// Check the index of this object</span>
         <span class="kw">let</span> <span class="ident">obj_index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fenestrations</span>.<span class="ident">len</span>();
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="ident">obj_index</span>);
 
         <span class="comment">// Push the state, and map into the object</span>
-        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">push</span>( <span class="ident">SimulationStateElement::LuminairePowerConsumption</span>(<span class="ident">obj_index</span>), <span class="number">0.</span>);
+        <span class="kw">let</span> <span class="ident">state_index</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">push</span>(
+            <span class="ident">SimulationStateElement::LuminairePowerConsumption</span>(<span class="ident">obj_index</span>),
+            <span class="number">0.</span>,
+        );
         <span class="ident">add</span>.<span class="ident">set_power_consumption_index</span>(<span class="ident">state_index</span>);
 
         <span class="comment">// Add to model, and return a reference</span>

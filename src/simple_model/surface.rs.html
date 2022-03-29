@@ -220,38 +220,6 @@
 <span id="184">184</span>
 <span id="185">185</span>
 <span id="186">186</span>
-<span id="187">187</span>
-<span id="188">188</span>
-<span id="189">189</span>
-<span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
-<span id="207">207</span>
-<span id="208">208</span>
-<span id="209">209</span>
-<span id="210">210</span>
-<span id="211">211</span>
-<span id="212">212</span>
-<span id="213">213</span>
-<span id="214">214</span>
-<span id="215">215</span>
-<span id="216">216</span>
-<span id="217">217</span>
-<span id="218">218</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -274,39 +242,27 @@ SOFTWARE.
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
-<span class="kw">use</span> <span class="ident">geometry3d</span>::{
-    <span class="ident">Polygon3D</span>,    
-    <span class="ident">Loop3D</span>
-};
+<span class="kw">use</span> <span class="ident">geometry3d</span>::{<span class="ident">Loop3D</span>, <span class="ident">Polygon3D</span>};
 
-<span class="kw">use</span> <span class="ident">derive</span>::{
-    <span class="ident">ObjectIO</span>, 
-    <span class="ident">ObjectAPI</span>
-};
+<span class="kw">use</span> <span class="ident">derive</span>::{<span class="ident">ObjectAPI</span>, <span class="ident">ObjectIO</span>};
 
-
-<span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">SimpleModel</span>,
-    <span class="ident">Boundary</span>,
-    <span class="ident">Construction</span>,
-    <span class="ident">SimulationState</span>
-};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Boundary</span>, <span class="ident">Construction</span>, <span class="ident">SimpleModel</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::simulation_state_element::StateElementField</span>;
 
 <span class="doccomment">/// A fixed surface in the building (or surroundings). This can be of</span>
 <span class="doccomment">/// any Construction, transparent or not.</span>
-<span class="attribute">#[<span class="ident">derive</span>( <span class="ident">ObjectIO</span>, <span class="ident">ObjectAPI</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">ObjectIO</span>, <span class="ident">ObjectAPI</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Surface</span> {
     <span class="doccomment">/// The name of the surface</span>
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
 
     <span class="doccomment">/// The position of this object in its contaner Vector</span>
-    <span class="ident">index</span> : <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 
-    <span class="doccomment">/// An array of Numbers representing the vertices of the </span>
+    <span class="doccomment">/// An array of Numbers representing the vertices of the</span>
     <span class="doccomment">/// surface. The length of this array must be divisible by 3.</span>
-    <span class="kw">pub</span> <span class="ident">vertices</span> : <span class="ident">Polygon3D</span>,
+    <span class="kw">pub</span> <span class="ident">vertices</span>: <span class="ident">Polygon3D</span>,
 
     <span class="doccomment">/// The index of the construction in the SimpleModel&#39;s</span>
     <span class="doccomment">/// Construction array    </span>
@@ -321,45 +277,35 @@ SOFTWARE.
 
     <span class="doccomment">/// A reference to the Boundary in back of the Surface</span>
     <span class="ident">back_boundary</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Boundary</span><span class="op">&gt;</span>,
-    
+
     <span class="comment">/* STATE */</span>
-    
     <span class="attribute">#[<span class="ident">physical</span>(<span class="string">&quot;front_temperature&quot;</span>)]</span>
     <span class="ident">first_node_temperature</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>(<span class="string">&quot;back_temperature&quot;</span>)]</span>
     <span class="ident">last_node_temperature</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">front_convection_coefficient</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">back_convection_coefficient</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">front_convective_heat_flow</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">back_convective_heat_flow</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">front_incident_solar_irradiance</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">back_incident_solar_irradiance</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
-    <span class="ident">front_ir_irradiance</span>: <span class="ident">StateElementField</span>, 
+    <span class="ident">front_ir_irradiance</span>: <span class="ident">StateElementField</span>,
 
-    
     <span class="attribute">#[<span class="ident">physical</span>]</span>
     <span class="ident">back_ir_irradiance</span>: <span class="ident">StateElementField</span>,
 }
@@ -374,11 +320,9 @@ SOFTWARE.
     }
 }
 
-
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
-
     <span class="doccomment">/// Adds a [`Surface`] to the [`SimpleModel`]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_surface</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span> : <span class="ident">Surface</span>) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Surface</span><span class="op">&gt;</span>{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_surface</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">add</span>: <span class="ident">Surface</span>) -&gt; <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Surface</span><span class="op">&gt;</span> {
         <span class="ident">add</span>.<span class="ident">set_index</span>(<span class="self">self</span>.<span class="ident">surfaces</span>.<span class="ident">len</span>());
         <span class="kw">let</span> <span class="ident">add</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">add</span>);
         <span class="self">self</span>.<span class="ident">surfaces</span>.<span class="ident">push</span>(<span class="ident">Rc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">add</span>));
@@ -398,8 +342,7 @@ SOFTWARE.
     <span class="kw">use</span> <span class="ident">geometry3d::Point3D</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">scan_surface</span>(){
-
+    <span class="kw">fn</span> <span class="ident">scan_surface</span>() {
         <span class="kw">let</span> <span class="ident">src</span> <span class="op">=</span> <span class="string">b&quot;Surface {
             
             name : \&quot;Some surface\&quot;,
@@ -418,17 +361,12 @@ SOFTWARE.
         <span class="ident">scanner</span>.<span class="ident">update_start_index</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">ident</span>.<span class="ident">token_type</span>, <span class="ident">TokenType::Identifier</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">ident</span>.<span class="ident">txt</span>, <span class="string">b&quot;Surface&quot;</span>);
-        <span class="kw">let</span> (<span class="ident">start</span>,<span class="ident">end</span>) <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">get_object_slice</span>();
+        <span class="kw">let</span> (<span class="ident">start</span>, <span class="ident">end</span>) <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">get_object_slice</span>();
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">scanner</span>.<span class="ident">borrow_slice</span>(<span class="ident">start</span>, <span class="ident">end</span>);
         <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">Surface::from_bytes</span>(<span class="number">0</span>, <span class="ident">bytes</span>, <span class="kw-2">&amp;</span><span class="ident">model</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert!</span>(<span class="ident">s</span>.<span class="ident">front_receives_sun</span>().<span class="ident">unwrap</span>());
         <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">s</span>.<span class="ident">back_receives_sun</span>().<span class="ident">unwrap</span>());
-
-        
-
     }
-    
-
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_surface_basic</span>() {
@@ -461,13 +399,11 @@ SOFTWARE.
         <span class="macro">assert!</span>(<span class="ident">surf</span>.<span class="ident">front_boundary</span>.<span class="ident">is_some</span>());
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">Boundary::Ground</span>) <span class="op">=</span> <span class="ident">surf</span>.<span class="ident">front_boundary</span>() {}
         <span class="macro">assert!</span>(<span class="ident">surf</span>.<span class="ident">back_boundary</span>.<span class="ident">is_none</span>());
-        
 
         <span class="macro">assert!</span>(<span class="ident">surf</span>.<span class="ident">first_node_temperature</span>.<span class="ident">borrow</span>().<span class="ident">is_some</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">surf</span>.<span class="ident">first_node_temperature_index</span>(), <span class="prelude-val">Some</span>(<span class="number">31</span>));
         <span class="macro">assert!</span>(<span class="ident">surf</span>.<span class="ident">last_node_temperature</span>.<span class="ident">borrow</span>().<span class="ident">is_some</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">surf</span>.<span class="ident">last_node_temperature_index</span>(), <span class="prelude-val">Some</span>(<span class="number">39</span>));
-
     }
 }
 </code></pre></div>
