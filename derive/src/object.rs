@@ -127,4 +127,13 @@ impl Object {
             Self::StructObject(s) => s.gen_group_member_api()
         }
     }
+
+    pub fn gen_object_api(&self)->TokenStream2{
+        match self {
+            Self::Enum(_s)=>{
+                panic!("API does not yet support Enums")
+            },
+            Self::StructObject(s) => s.gen_object_api()
+        }
+    }
 }
