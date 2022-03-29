@@ -18,59 +18,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 pub mod normal;
-
 
 pub use crate::substance::normal::Normal;
 
-
 use crate::model::SimpleModel;
-use derive::{
-    GroupIO,
-    GroupAPI,
-};
+use derive::{GroupAPI, GroupIO};
 use std::rc::Rc;
 
-
 /// A collection of elements that make up constructions
-#[derive( Clone, GroupAPI,  GroupIO)]
+#[derive(Clone, GroupAPI, GroupIO)]
 pub enum Substance {
-    
-    /// A normal (i.e., solid) substance such as glass, 
+    /// A normal (i.e., solid) substance such as glass,
     /// timber or concrete.    
     Normal(Rc<Normal>),
-
-    
 }
 
-
-
-
-
-
 impl SimpleModel {
-
     /// Adds a [`Substance`] to the [`SimpleModel`]
-    pub fn add_substance(&mut self, mut add : Substance ) -> Substance {
-
+    pub fn add_substance(&mut self, mut add: Substance) -> Substance {
         // Check the index of this object
         let obj_index = self.substances.len();
         match &mut add {
-            Substance::Normal(substance)=>{                
-                let substance = Rc::get_mut(substance).expect("Could not borrow Substance::Normal as mutable");
-                substance.set_index(obj_index);                
+            Substance::Normal(substance) => {
+                let substance =
+                    Rc::get_mut(substance).expect("Could not borrow Substance::Normal as mutable");
+                substance.set_index(obj_index);
             }
         }
-                
-        // Add to model, and return a reference                
+
+        // Add to model, and return a reference
         // let add = Rc::new(add);
         self.substances.push(add.clone());
         add
     }
 }
-
-
 
 /***********/
 /* TESTING */
@@ -81,9 +63,8 @@ mod testing {
     use super::*;
 
     #[test]
-    fn test_substance_from_bytes(){
+    fn test_substance_from_bytes() {
         let mut model = SimpleModel::new("the model".to_string());
-        
 
         let bytes = b" ::Normal {
             name : \"Some substance\",            
@@ -92,12 +73,17 @@ mod testing {
         ";
 
         let substance = Substance::from_bytes(1, bytes, &mut model);
-        if let Ok(Substance::Normal(h)) = &substance{
+        if let Ok(Substance::Normal(h)) = &substance {
             let found = h.thermal_conductivity().unwrap();
             let exp = 2.;
 
-            assert!(( exp - found).abs() < 1e-5, "Expecting {}, but found {}", exp, found)                        
-        }else{
+            assert!(
+                (exp - found).abs() < 1e-5,
+                "Expecting {}, but found {}",
+                exp,
+                found
+            )
+        } else {
             panic!("Definitely NOT an electric heater....!")
         }
     }

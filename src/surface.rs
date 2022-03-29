@@ -20,39 +20,27 @@ SOFTWARE.
 use crate::Float;
 use std::rc::Rc;
 
-use geometry3d::{
-    Polygon3D,    
-    Loop3D
-};
+use geometry3d::{Loop3D, Polygon3D};
 
-use derive::{
-    ObjectIO, 
-    ObjectAPI
-};
+use derive::{ObjectAPI, ObjectIO};
 
-
-use crate::{
-    SimpleModel,
-    Boundary,
-    Construction,
-    SimulationState
-};
+use crate::{Boundary, Construction, SimpleModel};
 
 use crate::simulation_state_element::StateElementField;
 
 /// A fixed surface in the building (or surroundings). This can be of
 /// any Construction, transparent or not.
-#[derive( ObjectIO, ObjectAPI, Clone)]
+#[derive(ObjectIO, ObjectAPI, Clone)]
 pub struct Surface {
     /// The name of the surface
     pub name: String,
 
     /// The position of this object in its contaner Vector
-    index : Option<usize>,
+    index: Option<usize>,
 
-    /// An array of Numbers representing the vertices of the 
+    /// An array of Numbers representing the vertices of the
     /// surface. The length of this array must be divisible by 3.
-    pub vertices : Polygon3D,
+    pub vertices: Polygon3D,
 
     /// The index of the construction in the SimpleModel's
     /// Construction array    
@@ -67,45 +55,35 @@ pub struct Surface {
 
     /// A reference to the Boundary in back of the Surface
     back_boundary: Option<Boundary>,
-    
+
     /* STATE */
-    
     #[physical("front_temperature")]
     first_node_temperature: StateElementField,
 
-    
     #[physical("back_temperature")]
     last_node_temperature: StateElementField,
 
-    
     #[physical]
     front_convection_coefficient: StateElementField,
 
-    
     #[physical]
     back_convection_coefficient: StateElementField,
 
-    
     #[physical]
     front_convective_heat_flow: StateElementField,
 
-    
     #[physical]
     back_convective_heat_flow: StateElementField,
 
-    
     #[physical]
     front_incident_solar_irradiance: StateElementField,
 
-    
     #[physical]
     back_incident_solar_irradiance: StateElementField,
 
-    
     #[physical]
-    front_ir_irradiance: StateElementField, 
+    front_ir_irradiance: StateElementField,
 
-    
     #[physical]
     back_ir_irradiance: StateElementField,
 }
@@ -120,11 +98,9 @@ impl Surface {
     }
 }
 
-
 impl SimpleModel {
-
     /// Adds a [`Surface`] to the [`SimpleModel`]
-    pub fn add_surface(&mut self, mut add : Surface) -> Rc<Surface>{
+    pub fn add_surface(&mut self, mut add: Surface) -> Rc<Surface> {
         add.set_index(self.surfaces.len());
         let add = Rc::new(add);
         self.surfaces.push(Rc::clone(&add));
@@ -144,8 +120,7 @@ mod testing {
     use geometry3d::Point3D;
 
     #[test]
-    fn scan_surface(){
-
+    fn scan_surface() {
         let src = b"Surface {
             
             name : \"Some surface\",
@@ -164,17 +139,12 @@ mod testing {
         scanner.update_start_index();
         assert_eq!(ident.token_type, TokenType::Identifier);
         assert_eq!(ident.txt, b"Surface");
-        let (start,end) = scanner.get_object_slice();
+        let (start, end) = scanner.get_object_slice();
         let bytes = scanner.borrow_slice(start, end);
         let s = Surface::from_bytes(0, bytes, &model).unwrap();
         assert!(s.front_receives_sun().unwrap());
         assert!(!s.back_receives_sun().unwrap());
-
-        
-
     }
-    
-
 
     #[test]
     fn test_surface_basic() {
@@ -207,12 +177,10 @@ mod testing {
         assert!(surf.front_boundary.is_some());
         if let Ok(Boundary::Ground) = surf.front_boundary() {}
         assert!(surf.back_boundary.is_none());
-        
 
         assert!(surf.first_node_temperature.borrow().is_some());
         assert_eq!(surf.first_node_temperature_index(), Some(31));
         assert!(surf.last_node_temperature.borrow().is_some());
         assert_eq!(surf.last_node_temperature_index(), Some(39));
-
     }
 }

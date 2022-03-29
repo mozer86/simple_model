@@ -18,12 +18,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use std::cell::RefCell;
 use derive::StateElements;
-
+use std::cell::RefCell;
 
 pub type StateElementField = RefCell<Option<usize>>;
-
 
 /// The idea is to have a cheap-to-clone (or copy?) structure
 #[derive(Debug, Copy, Clone, PartialEq, StateElements)]
@@ -69,8 +67,6 @@ pub enum SimulationStateElement {
     // /// but it should be a physical quantity**
     // #[physical]
     // SpaceBrightness(usize),
-
-    
     /// The convective heat transfer coefficient
     /// at the front of a surface
     #[physical]
@@ -81,12 +77,12 @@ pub enum SimulationStateElement {
     #[physical]
     SurfaceBackConvectionCoefficient(usize),
 
-    /// The convective heat flow 
+    /// The convective heat flow
     /// at the front of a surface
     #[physical]
     SurfaceFrontConvectiveHeatFlow(usize),
 
-    /// The convective heat flow 
+    /// The convective heat flow
     /// at the back of a surface
     #[physical]
     SurfaceBackConvectiveHeatFlow(usize),
@@ -117,12 +113,12 @@ pub enum SimulationStateElement {
     #[physical]
     FenestrationBackConvectionCoefficient(usize),
 
-    /// The convective heat flow 
+    /// The convective heat flow
     /// at the front of a surface
     #[physical]
     FenestrationFrontConvectiveHeatFlow(usize),
 
-    /// The convective heat flow 
+    /// The convective heat flow
     /// at the back of a surface
     #[physical]
     FenestrationBackConvectiveHeatFlow(usize),
@@ -143,7 +139,6 @@ pub enum SimulationStateElement {
     #[physical]
     FenestrationBackIRIrradiance(usize),
 
-    
     /// Space Air Temperature in C... The elements
     /// are the index of the Space in the Building mode
     /// and the temperature
@@ -184,7 +179,6 @@ pub enum SimulationStateElement {
     /// I.e. the order is (Surface Index, Node index, Temperature).    
     #[physical]
     FenestrationNodeTemperature(usize, usize),
-
     // Temperature (Float) of Fenestation's (usize) node usize
     // I.e. the order is (Surface Index, Node index, Temperature).
     //FenestrationNodeTemperature(usize,usize),
@@ -205,7 +199,6 @@ pub enum SimulationStateElement {
     // SpaceLoudness(usize),
 }
 
-
 /***********/
 /* TESTING */
 /***********/
@@ -214,19 +207,16 @@ pub enum SimulationStateElement {
 mod testing {
     use super::*;
 
-    
-
     #[test]
     fn test_compare() {
         let i = 2;
         let a = SimulationStateElement::SpaceDryBulbTemperature(i);
 
-        assert!(a == SimulationStateElement::SpaceDryBulbTemperature(i));        
+        assert!(a == SimulationStateElement::SpaceDryBulbTemperature(i));
         assert!(a != SimulationStateElement::SpaceDryBulbTemperature(2 * i));
         assert!(a != SimulationStateElement::SurfaceNodeTemperature(i, 2));
     }
 
-    
     #[test]
     fn test_classify() {
         // Physical

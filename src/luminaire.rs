@@ -17,22 +17,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-use crate::Float;
 use crate::model::SimpleModel;
-use crate::simulation_state::{SimulationState, SimulationStateHeader};
-use crate::simulation_state_element::{StateElementField, SimulationStateElement};
+use crate::simulation_state::SimulationStateHeader;
+use crate::simulation_state_element::{SimulationStateElement, StateElementField};
 use crate::space::Space;
-use derive::{
-    ObjectIO, 
-    ObjectAPI
-};
-
-
+use crate::Float;
+use derive::{ObjectAPI, ObjectIO};
 
 use std::rc::Rc;
 
 /// A Luminaire
-#[derive(ObjectIO,  ObjectAPI, Clone)]
+#[derive(ObjectIO, ObjectAPI, Clone)]
 pub struct Luminaire {
     /// The name of the Luminaire
     name: String,
@@ -59,18 +54,22 @@ pub struct Luminaire {
     power_consumption: StateElementField,
 }
 
-
-
 impl SimpleModel {
-
     /// Adds a [`Luminaire`] to the [`SimpleModel`]
-    pub fn add_luminaire(&mut self, mut add : Luminaire, state: &mut SimulationStateHeader ) -> Rc<Luminaire>{
+    pub fn add_luminaire(
+        &mut self,
+        mut add: Luminaire,
+        state: &mut SimulationStateHeader,
+    ) -> Rc<Luminaire> {
         // Check the index of this object
         let obj_index = self.fenestrations.len();
         add.set_index(obj_index);
 
         // Push the state, and map into the object
-        let state_index = state.push( SimulationStateElement::LuminairePowerConsumption(obj_index), 0.);
+        let state_index = state.push(
+            SimulationStateElement::LuminairePowerConsumption(obj_index),
+            0.,
+        );
         add.set_power_consumption_index(state_index);
 
         // Add to model, and return a reference

@@ -19,12 +19,11 @@ SOFTWARE.
 */
 use crate::Float;
 
-use crate::model::SimpleModel;
 use crate::material::Material;
-use std::rc::Rc;
+use crate::model::SimpleModel;
 use crate::substance::Substance;
 use derive::ObjectIO;
-
+use std::rc::Rc;
 
 /// An object representing a multilayer
 /// Construction; that is to say, an array of
@@ -41,38 +40,31 @@ pub struct Construction {
     /// The indices of the Material objects in the
     /// materials property of the SimpleModel object
     pub materials: Vec<Rc<Material>>,
-    
     // front finishing
     // back finishing
 }
 
-
-
 impl Construction {
     /// Calculates the R-value of the Construction (not including surface coefficients).
     pub fn r_value(&self) -> Result<Float, String> {
-
         let mut r = 0.0;
 
-        for material in self.materials.iter() {  
-            match &material.substance{
-                Substance::Normal(s)=>{
+        for material in self.materials.iter() {
+            match &material.substance {
+                Substance::Normal(s) => {
                     let lambda = s.thermal_conductivity()?;
                     r += material.thickness / lambda;
                 }
-            }                      
-            
+            }
         }
 
         Ok(r)
     }
 }
 
-
 impl SimpleModel {
-
     /// Adds a [`Construction`] to the [`SimpleModel`]
-    pub fn add_construction(&mut self, mut add : Construction) -> Rc<Construction>{
+    pub fn add_construction(&mut self, mut add: Construction) -> Rc<Construction> {
         add.set_index(self.constructions.len());
         let add = Rc::new(add);
         self.constructions.push(Rc::clone(&add));
@@ -130,7 +122,7 @@ mod testing {
     }
 
     #[test]
-    fn test_construction_from_bytes(){
+    fn test_construction_from_bytes() {
         let bytes = b" {
             name : \"A Material\",            
             substance : Substance::Normal {          
@@ -142,8 +134,6 @@ mod testing {
             thickness: 0.1            
         }
         ";
-
-        
 
         let mut building = SimpleModel::new("the building".to_string());
         let mat = Material::from_bytes(1, bytes, &mut building).unwrap();
@@ -160,6 +150,5 @@ mod testing {
 
         let construction = Construction::from_bytes(1, bytes, &mut building).unwrap();
         assert!(Rc::ptr_eq(&mat, &construction.materials[0]));
-
     }
 }

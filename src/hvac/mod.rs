@@ -18,25 +18,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
-mod ideal_heater_cooler;
 mod electric_heater;
+mod ideal_heater_cooler;
 
-
-pub use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
 pub use crate::hvac::electric_heater::ElectricHeater;
+pub use crate::hvac::ideal_heater_cooler::IdealHeaterCooler;
 
 use crate::model::SimpleModel;
-use derive::{
-    GroupIO,
-    GroupAPI
-};
+use derive::{GroupAPI, GroupIO};
 use std::rc::Rc;
 
-
 /// A collection of elements heating and cooling systems
-#[derive( Clone, GroupAPI, GroupIO)]
-pub enum HVAC{
+#[derive(Clone, GroupAPI, GroupIO)]
+pub enum HVAC {
     /// An ideal heating/cooling device.
     /// Heats and Cools with an efficiency of
     /// 1, and nothing effects its COP or efficiency    
@@ -44,43 +38,45 @@ pub enum HVAC{
 
     /// An electric heater, it can only
     /// heat.
-    ElectricHeater(Rc<ElectricHeater>)
+    ElectricHeater(Rc<ElectricHeater>),
 }
 
-
-
-use crate::simulation_state_element::SimulationStateElement;
 use crate::simulation_state::SimulationStateHeader;
+use crate::simulation_state_element::SimulationStateElement;
 
 impl SimpleModel {
-
     /// Adds a [`HVAC`] to the [`SimpleModel`]
-    pub fn add_hvac(&mut self, mut add : HVAC, state: &mut SimulationStateHeader ) -> HVAC {
-
+    pub fn add_hvac(&mut self, mut add: HVAC, state: &mut SimulationStateHeader) -> HVAC {
         // Check the index of this object
         let obj_index = self.hvacs.len();
         match &mut add {
-            HVAC::ElectricHeater(hvac)=>{
-                let hvac = Rc::get_mut(hvac).expect("Could not borrow ElectricHeater as mut when adding");
+            HVAC::ElectricHeater(hvac) => {
+                let hvac =
+                    Rc::get_mut(hvac).expect("Could not borrow ElectricHeater as mut when adding");
                 hvac.set_index(obj_index);
-                let state_index = state.push( SimulationStateElement::HeatingCoolingPowerConsumption(obj_index), 0.);
-                hvac.set_heating_cooling_consumption_index(state_index);                
-            },
-            HVAC::IdealHeaterCooler(hvac)=>{
-                let hvac = Rc::get_mut(hvac).expect("Could not borrow IdealHeaterCooler as mut when adding");
+                let state_index = state.push(
+                    SimulationStateElement::HeatingCoolingPowerConsumption(obj_index),
+                    0.,
+                );
+                hvac.set_heating_cooling_consumption_index(state_index);
+            }
+            HVAC::IdealHeaterCooler(hvac) => {
+                let hvac = Rc::get_mut(hvac)
+                    .expect("Could not borrow IdealHeaterCooler as mut when adding");
                 hvac.set_index(obj_index);
-                let state_index = state.push( SimulationStateElement::HeatingCoolingPowerConsumption(obj_index), 0.);
-                hvac.set_heating_cooling_consumption_index(state_index);                                               
+                let state_index = state.push(
+                    SimulationStateElement::HeatingCoolingPowerConsumption(obj_index),
+                    0.,
+                );
+                hvac.set_heating_cooling_consumption_index(state_index);
             }
         }
-                
-        // Add to model, and return a reference                
+
+        // Add to model, and return a reference
         self.hvacs.push(add.clone());
         add
     }
 }
-
-
 
 /***********/
 /* TESTING */
@@ -93,7 +89,7 @@ mod testing {
     use std::rc::Rc;
 
     #[test]
-    fn test_hvac_from_bytes(){
+    fn test_hvac_from_bytes() {
         let mut model = SimpleModel::new("the model".to_string());
         let bytes = b"{
             name: \"the space\"
@@ -109,12 +105,11 @@ mod testing {
         ";
 
         let heater = HVAC::from_bytes(1, bytes, &mut model);
-        if let Ok(HVAC::ElectricHeater(h)) = &heater{
+        if let Ok(HVAC::ElectricHeater(h)) = &heater {
             if let Ok(s) = h.target_space() {
                 assert!(Rc::ptr_eq(&s, &space));
-            }            
-            
-        }else{
+            }
+        } else {
             panic!("Definitely NOT an electric heater....!")
         }
     }

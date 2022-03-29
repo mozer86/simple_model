@@ -24,7 +24,6 @@ use std::ops::Index;
 
 pub type SimulationState = Vec<Float>;
 
-
 /// The SimulationState is a Vector of SimulationStateElement objects.
 /// It is intended to be a quick-to-clone structure.
 ///
@@ -63,18 +62,18 @@ pub struct SimulationStateHeader {
     pub elements: Vec<SimulationStateElement>,
 
     /// The default values, from which the simulation will start
-    pub default_values: Option<SimulationState>
+    pub default_values: Option<SimulationState>,
 }
 
-impl std::default::Default for SimulationStateHeader{
-    fn default() -> Self { 
+impl std::default::Default for SimulationStateHeader {
+    fn default() -> Self {
         Self {
             n_operational: 0,
             n_individual: 0,
             passed_operational: false,
             passed_personal: false,
             elements: Vec::new(),
-            default_values: Some(Vec::new())
+            default_values: Some(Vec::new()),
         }
     }
 }
@@ -84,8 +83,6 @@ impl SimulationStateHeader {
     pub fn new() -> Self {
         Self::default()
     }
-    
-    
 
     /// Pushes an SimulationStateElement into the elements
     /// vector.
@@ -119,18 +116,25 @@ impl SimulationStateHeader {
 
         let ret = self.elements.len();
         self.elements.push(e);
-        if let Some(values) = &mut self.default_values{
+        if let Some(values) = &mut self.default_values {
             values.push(value);
-        }else{
+        } else {
             panic!("Trying to push a value to a SimulationStateHeader with no values vector")
         }
-        return ret;
+        // return
+        ret
     }
 
     /// Returns the number of elements in the
     /// State element
     pub fn len(&self) -> usize {
         self.elements.len()
+    }
+
+    /// Checks if the
+    /// State element is empty
+    pub fn is_empty(&self) -> bool {
+        self.elements.is_empty()
     }
 
     /// Returns the number of operational elements
@@ -147,13 +151,17 @@ impl SimulationStateHeader {
     pub fn copy_from(&mut self, origin: &SimulationStateHeader) {
         debug_assert_eq!(origin.len(), self.len());
 
-        self.elements.copy_from_slice(&origin.elements.as_slice())
+        self.elements.copy_from_slice(origin.elements.as_slice())
     }
 
     /// Copies the Physical SimulationStateElements objects from `origin` to `destination`.
     /// It is expected that all the Operational BuildingStateElements are bundled at
     /// the beginning of the element.
-    pub fn copy_physical_state(&mut self, origin: &SimulationState, destination: &mut SimulationState) {
+    pub fn copy_physical_state(
+        &mut self,
+        origin: &SimulationState,
+        destination: &mut SimulationState,
+    ) {
         debug_assert_eq!(origin.len(), self.len());
         debug_assert_eq!(origin.len(), destination.len());
 
@@ -161,7 +169,7 @@ impl SimulationStateHeader {
         let fin = self.len();
 
         #[cfg(debug_assertions)]
-        for i in ini..fin {            
+        for i in ini..fin {
             // Check that it is physical indeed
             debug_assert!(self[i].is_physical());
         }
@@ -173,7 +181,11 @@ impl SimulationStateHeader {
     /// Copies the Operational SimulationStateElements objects from origin to destination.
     /// It is expected that all the Operational BuildingStateElements are bundled at
     /// the beginning of the element.    
-    pub fn copy_operational_state(&mut self, origin: &SimulationState, destination: &mut SimulationState) {
+    pub fn copy_operational_state(
+        &mut self,
+        origin: &SimulationState,
+        destination: &mut SimulationState,
+    ) {
         debug_assert_eq!(origin.len(), self.len());
         debug_assert_eq!(origin.len(), destination.len());
 
@@ -181,7 +193,7 @@ impl SimulationStateHeader {
         let fin = self.n_individual + self.n_operational;
 
         #[cfg(debug_assertions)]
-        for i in ini..fin {            
+        for i in ini..fin {
             // Check that it is physical indeed
             debug_assert!(self[i].is_operational());
         }
@@ -193,7 +205,11 @@ impl SimulationStateHeader {
     /// Copies the Individual SimulationStateElements objects from origin to destination.
     /// It is expected that all the Operational BuildingStateElements are bundled at
     /// the beginning of the element.
-    pub fn copy_individual_state(&mut self, origin: &SimulationState, destination: &mut SimulationState) {
+    pub fn copy_individual_state(
+        &mut self,
+        origin: &SimulationState,
+        destination: &mut SimulationState,
+    ) {
         debug_assert_eq!(origin.len(), self.len());
         debug_assert_eq!(origin.len(), destination.len());
 
@@ -211,10 +227,9 @@ impl SimulationStateHeader {
 
     /// Takes the `default_values` from the [`SimulationStateHeader`]. Leaves
     /// `None` in its place.
-    pub fn take_values(&mut self)->Option<SimulationState>{
+    pub fn take_values(&mut self) -> Option<SimulationState> {
         self.default_values.take()
     }
-
 }
 
 impl Index<usize> for SimulationStateHeader {
@@ -251,42 +266,42 @@ mod testing {
         // Add one operational
         assert_eq!(
             0,
-            state.push(SimulationStateElement::LuminairePowerConsumption(0),1.0)
+            state.push(SimulationStateElement::LuminairePowerConsumption(0), 1.0)
         );
         assert_eq!(1, state.len());
         assert_eq!(1, state.n_operational());
         assert!(state.passed_personal);
         assert!(!state.passed_operational);
-        if let Some(values) = &state.default_values{
+        if let Some(values) = &state.default_values {
             assert_eq!(values[0], 1.0);
-        }else{
+        } else {
             assert!(false)
         }
 
         assert_eq!(
             1,
-            state.push(SimulationStateElement::LuminairePowerConsumption(0),12.0)
+            state.push(SimulationStateElement::LuminairePowerConsumption(0), 12.0)
         );
         assert_eq!(2, state.len());
         assert_eq!(2, state.n_operational());
         assert!(!state.passed_operational);
-        if let Some(values) = &state.default_values{
+        if let Some(values) = &state.default_values {
             assert_eq!(values[1], 12.0);
-        }else{
+        } else {
             assert!(false)
         }
 
         // push a physical one
         assert_eq!(
             2,
-            state.push(SimulationStateElement::SpaceDryBulbTemperature(2),2.)
+            state.push(SimulationStateElement::SpaceDryBulbTemperature(2), 2.)
         );
         assert_eq!(3, state.len());
         assert_eq!(2, state.n_operational());
         assert!(state.passed_operational);
-        if let Some(values) = &state.default_values{
+        if let Some(values) = &state.default_values {
             assert_eq!(values[2], 2.0);
-        }else{
+        } else {
             assert!(false)
         }
     }
@@ -312,8 +327,8 @@ mod testing {
         let mut headers = SimulationStateHeader::new();
 
         // Add individual ones
-        headers.push(SimulationStateElement::Clothing,0.0);
-        headers.push(SimulationStateElement::Clothing,1.0);
+        headers.push(SimulationStateElement::Clothing, 0.0);
+        headers.push(SimulationStateElement::Clothing, 1.0);
 
         // Add operational ones
         headers.push(SimulationStateElement::LuminairePowerConsumption(1), 2.0);
@@ -323,107 +338,97 @@ mod testing {
         headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 4.);
         headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 5.);
 
-        let state1 : SimulationState = headers.take_values().unwrap();
-        let mut state2 : SimulationState = vec![ -1.; state1.len()];
+        let state1: SimulationState = headers.take_values().unwrap();
+        let mut state2: SimulationState = vec![-1.; state1.len()];
 
         headers.copy_operational_state(&state1, &mut state2);
-        
 
         // CHECK
 
-        // Check that the individual states were untouched        
+        // Check that the individual states were untouched
         assert_eq!(state2[0], -1.);
         assert_eq!(state2[1], -1.);
-
 
         // Check that the two operational states were transferred
         assert_eq!(state2[2], 2.);
         assert_eq!(state2[3], 3.);
 
-        
         // Check that the physical states were untouched
         assert_eq!(state2[4], -1.);
         assert_eq!(state2[5], -1.);
-
     }
 
     #[test]
     fn test_copy_individual_state() {
-         /* CREATE STATE 1 */
-         let mut headers = SimulationStateHeader::new();
+        /* CREATE STATE 1 */
+        let mut headers = SimulationStateHeader::new();
 
-         // Add individual ones
-         headers.push(SimulationStateElement::Clothing,0.0);
-         headers.push(SimulationStateElement::Clothing,1.0);
- 
-         // Add operational ones
-         headers.push(SimulationStateElement::LuminairePowerConsumption(1), 2.0);
-         headers.push(SimulationStateElement::LuminairePowerConsumption(1), 3.0);
- 
-         // push physical ones
-         headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 4.);
-         headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 5.);
- 
-         let state1 : SimulationState = headers.take_values().unwrap();
-         let mut state2 : SimulationState = vec![ -1.; state1.len()];
- 
-         headers.copy_individual_state(&state1, &mut state2);
-         
- 
-         // CHECK
- 
-         // Check that the individual states were copied
-         assert_eq!(state2[0], 0.);
-         assert_eq!(state2[1], 1.);
- 
- 
-         // Check that the two operational states were untouched
-         assert_eq!(state2[2], -1.);
-         assert_eq!(state2[3], -1.);
- 
-         
-         // Check that the physical states were untouched
-         assert_eq!(state2[4], -1.);
-         assert_eq!(state2[5], -1.);
+        // Add individual ones
+        headers.push(SimulationStateElement::Clothing, 0.0);
+        headers.push(SimulationStateElement::Clothing, 1.0);
+
+        // Add operational ones
+        headers.push(SimulationStateElement::LuminairePowerConsumption(1), 2.0);
+        headers.push(SimulationStateElement::LuminairePowerConsumption(1), 3.0);
+
+        // push physical ones
+        headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 4.);
+        headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 5.);
+
+        let state1: SimulationState = headers.take_values().unwrap();
+        let mut state2: SimulationState = vec![-1.; state1.len()];
+
+        headers.copy_individual_state(&state1, &mut state2);
+
+        // CHECK
+
+        // Check that the individual states were copied
+        assert_eq!(state2[0], 0.);
+        assert_eq!(state2[1], 1.);
+
+        // Check that the two operational states were untouched
+        assert_eq!(state2[2], -1.);
+        assert_eq!(state2[3], -1.);
+
+        // Check that the physical states were untouched
+        assert_eq!(state2[4], -1.);
+        assert_eq!(state2[5], -1.);
     }
 
     #[test]
     fn test_copy_physical_state() {
-         /* CREATE STATE 1 */
-         let mut headers = SimulationStateHeader::new();
+        /* CREATE STATE 1 */
+        let mut headers = SimulationStateHeader::new();
 
-         // Add individual ones
-         headers.push(SimulationStateElement::Clothing,0.0);
-         headers.push(SimulationStateElement::Clothing,1.0);
- 
-         // Add operational ones
-         headers.push(SimulationStateElement::LuminairePowerConsumption(1), 2.0);
-         headers.push(SimulationStateElement::LuminairePowerConsumption(1), 3.0);
- 
-         // push physical ones
-         headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 4.);
-         headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 5.);
- 
-         let state1 : SimulationState = headers.take_values().unwrap();
-         let mut state2 : SimulationState = vec![ -1.; state1.len()];
- 
-         headers.copy_physical_state(&state1, &mut state2);
-         
- 
-         // CHECK
- 
-         // Check that the individual states were untouched        
-         assert_eq!(state2[0], -1.);
-         assert_eq!(state2[1], -1.);
- 
- 
-         // Check that the two operational states were untouched
-         assert_eq!(state2[2], -1.);
-         assert_eq!(state2[3], -1.);
- 
-         
-         // Check that the physical states were copied
-         assert_eq!(state2[4], 4.);
-         assert_eq!(state2[5], 5.);
+        // Add individual ones
+        headers.push(SimulationStateElement::Clothing, 0.0);
+        headers.push(SimulationStateElement::Clothing, 1.0);
+
+        // Add operational ones
+        headers.push(SimulationStateElement::LuminairePowerConsumption(1), 2.0);
+        headers.push(SimulationStateElement::LuminairePowerConsumption(1), 3.0);
+
+        // push physical ones
+        headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 4.);
+        headers.push(SimulationStateElement::SpaceDryBulbTemperature(1), 5.);
+
+        let state1: SimulationState = headers.take_values().unwrap();
+        let mut state2: SimulationState = vec![-1.; state1.len()];
+
+        headers.copy_physical_state(&state1, &mut state2);
+
+        // CHECK
+
+        // Check that the individual states were untouched
+        assert_eq!(state2[0], -1.);
+        assert_eq!(state2[1], -1.);
+
+        // Check that the two operational states were untouched
+        assert_eq!(state2[2], -1.);
+        assert_eq!(state2[3], -1.);
+
+        // Check that the physical states were copied
+        assert_eq!(state2[4], 4.);
+        assert_eq!(state2[5], 5.);
     }
 }

@@ -18,29 +18,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use std::rc::Rc;
 use derive::ObjectIO;
+use std::rc::Rc;
 
 use crate::space::Space;
 
-
-
 /// Represents the boundary of a `Surface`
-/// 
-/// By default (i.e., if no boundary is assigned to a Surface), 
-/// the boundary will be assumed to be outside. 
+///
+/// By default (i.e., if no boundary is assigned to a Surface),
+/// the boundary will be assumed to be outside.
 #[derive(Clone, ObjectIO)]
 pub enum Boundary {
-    
     /// The Surface is in contact with the Ground
     Ground,
 
     /// The Surface leads to another surface
     Space(Rc<Space>),
 }
-
-
-
 
 /***********/
 /* TESTING */
@@ -52,15 +46,14 @@ mod testing {
 
     use crate::model::SimpleModel;
     #[test]
-    fn test_boundary_from_bytes(){
-        
+    fn test_boundary_from_bytes() {
         /* Ground */
         let mut building = SimpleModel::new("the building".to_string());
         let bytes = b" ::Ground,";
         let bound = Boundary::from_bytes(1, bytes, &mut building).unwrap();
-        if let Boundary::Ground = bound{
+        if let Boundary::Ground = bound {
             assert!(true)
-        }else{
+        } else {
             assert!(false)
         }
 
@@ -71,24 +64,22 @@ mod testing {
 
         let bytes = b" ::Space(\"the space\"),";
         let bound = Boundary::from_bytes(1, bytes, &mut building).unwrap();
-        if let Boundary::Space(s) = &bound{
+        if let Boundary::Space(s) = &bound {
             assert!(Rc::ptr_eq(s, &space));
-        }else{
+        } else {
             assert!(false)
         }
 
         /* SPACE ANONYMOUS */
-        let mut building = SimpleModel::new("the building".to_string());        
+        let mut building = SimpleModel::new("the building".to_string());
         let bytes = b" ::Space(Space{
             name: \"Some Space\"
         }),";
         let bound = Boundary::from_bytes(1, bytes, &mut building).unwrap();
-        if let Boundary::Space(s) = &bound{
+        if let Boundary::Space(s) = &bound {
             assert_eq!(s.name, "Some Space");
-        }else{
+        } else {
             assert!(false)
         }
-        
-
     }
 }

@@ -18,11 +18,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 pub mod simple_scanner;
 // pub mod markdown_scanner;
 mod tokens;
 
-
-pub use simple_scanner::{SimpleScanner, make_error_msg};
+pub use simple_scanner::{make_error_msg, SimpleScanner};
 pub use tokens::TokenType;

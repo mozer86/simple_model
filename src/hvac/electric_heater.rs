@@ -20,41 +20,34 @@ SOFTWARE.
 
 use crate::Float;
 
-
-use std::rc::Rc;
-use crate::space::Space;
-use crate::simulation_state_element::StateElementField;
 use crate::model::SimpleModel;
+use crate::simulation_state_element::StateElementField;
+use crate::space::Space;
+use std::rc::Rc;
 
-
-use derive::{
-    ObjectIO, 
-    GroupMemberAPI
-};
+use derive::{GroupMemberAPI, ObjectIO};
 
 #[derive(Clone, ObjectIO, GroupMemberAPI)]
 pub struct ElectricHeater {
     /// The name of the system
     pub name: String,
-    
+
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
     /// The [`Space`] that this [`ElectricHeater`] heats and/or
     /// cools
     target_space: Option<Rc<Space>>,
-    
+
     /// Max heating power
     max_heating_power: Option<Float>,
-    
+
     #[operational("power_consumption")]
     heating_cooling_consumption: StateElementField,
 }
 
 impl ElectricHeater {
-    pub fn wrap(self)-> crate::hvac::HVAC {
+    pub fn wrap(self) -> crate::hvac::HVAC {
         crate::hvac::HVAC::ElectricHeater(std::rc::Rc::new(self))
     }
 }
-
-

@@ -27,7 +27,6 @@ type Float = f32;
 #[cfg(not(feature = "float"))]
 type Float = f64;
 
-
 pub mod rhai_api;
 pub mod scanner;
 
@@ -53,7 +52,6 @@ pub mod substance;
 pub use substance::Substance;
 // pub use substance;
 
-
 mod boundary;
 pub use boundary::Boundary;
 
@@ -75,6 +73,3 @@ pub use infiltration::Infiltration;
 // Trait... better to leave this
 pub mod hvac;
 pub use hvac::HVAC;
-
-
-

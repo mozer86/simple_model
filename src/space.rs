@@ -18,20 +18,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
-
 use crate::Float;
+use derive::{ObjectAPI, ObjectIO};
 use std::rc::Rc;
-use derive::{
-    ObjectIO, 
-    ObjectAPI
-};
 
-use crate::model::SimpleModel;
-use crate::simulation_state::SimulationState;
-use crate::simulation_state_element::StateElementField;
-use crate::infiltration::Infiltration;
 use crate::building::Building;
+use crate::infiltration::Infiltration;
+use crate::model::SimpleModel;
+use crate::simulation_state_element::StateElementField;
 
 /// Represents a space within a building. This will
 /// often be a room, but it might also be half a room
@@ -52,35 +46,32 @@ pub struct Space {
     /// The importance of this space over time
     // importance : Option<Box<dyn Schedule<Float>>>,
     building: Option<Rc<Building>>,
-    
+
     #[physical]
     dry_bulb_temperature: StateElementField,
 
     #[physical]
     brightness: StateElementField,
-    
+
     #[physical]
     loudness: StateElementField,
-    
+
     #[physical]
     infiltration_volume: StateElementField,
-    
+
     #[physical]
     infiltration_temperature: StateElementField,
-    
+
     #[physical]
     ventilation_volume: StateElementField,
-    
+
     #[physical]
     ventilation_temperature: StateElementField,
 }
 
-
-
 impl SimpleModel {
-
     /// Adds a [`Space`] to the [`SimpleModel`]
-    pub fn add_space(&mut self, mut add : Space) -> Rc<Space>{
+    pub fn add_space(&mut self, mut add: Space) -> Rc<Space> {
         add.set_index(self.spaces.len());
         let add = Rc::new(add);
         self.spaces.push(Rc::clone(&add));
@@ -88,20 +79,19 @@ impl SimpleModel {
     }
 }
 
-
 /***********/
 /* TESTING */
 /***********/
 
 #[cfg(test)]
 mod testing {
-    use super::*;    
+    use super::*;
 
     #[cfg(feature = "float")]
-    const EPSILON : f32 = std::f32::EPSILON;
+    const EPSILON: f32 = std::f32::EPSILON;
 
     #[cfg(not(feature = "float"))]
-    const EPSILON : f64 = std::f64::EPSILON;
+    const EPSILON: f64 = std::f64::EPSILON;
 
     #[test]
     fn test_new() {
@@ -138,7 +128,7 @@ mod testing {
     }
 
     #[test]
-    fn test_space_from_bytes(){
+    fn test_space_from_bytes() {
         let bytes = b" {
             name : \"A Space\",            
             volume : 1.2,
@@ -150,10 +140,9 @@ mod testing {
         let space = Space::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(space.name, "A Space".to_string());
-        assert!((1.2 - space.volume.unwrap()).abs()<EPSILON);
-        if let Some(Infiltration::Constant(v)) = space.infiltration{
-            assert!((2.2 - v).abs()<EPSILON);
+        assert!((1.2 - space.volume.unwrap()).abs() < EPSILON);
+        if let Some(Infiltration::Constant(v)) = space.infiltration {
+            assert!((2.2 - v).abs() < EPSILON);
         }
-
     }
 }

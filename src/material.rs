@@ -19,12 +19,10 @@ SOFTWARE.
 */
 use crate::Float;
 
-use std::rc::Rc;
 use crate::model::SimpleModel;
 use crate::substance::Substance;
 use derive::ObjectIO;
-
-
+use std::rc::Rc;
 
 /// The representation of a physical layer-Material.
 /// That is to say, a layer of a certain thickness
@@ -43,24 +41,17 @@ pub struct Material {
 
     /// The thickness of the [`Material`]
     pub thickness: Float,
-
-    
 }
 
 impl SimpleModel {
-
     /// Adds a [`Material`] to the [`SimpleModel`]
-    pub fn add_material(&mut self, mut add : Material) -> Rc<Material>{
+    pub fn add_material(&mut self, mut add: Material) -> Rc<Material> {
         add.set_index(self.materials.len());
         let add = Rc::new(add);
         self.materials.push(Rc::clone(&add));
         add
     }
-
 }
-
-
-
 
 /***********/
 /* TESTING */
@@ -68,16 +59,14 @@ impl SimpleModel {
 
 #[cfg(test)]
 mod testing {
-    use crate::substance::Normal;
     use super::*;
+    use crate::substance::Normal;
 
     #[cfg(feature = "float")]
-    const EPSILON : f32 = std::f32::EPSILON;
+    const EPSILON: f32 = std::f32::EPSILON;
 
     #[cfg(not(feature = "float"))]
-    const EPSILON : f64 = std::f64::EPSILON;
-
-    
+    const EPSILON: f64 = std::f64::EPSILON;
 
     #[test]
     fn test_material_basic() {
@@ -97,10 +86,8 @@ mod testing {
         assert_eq!(thickness, s.thickness);
     }
 
-    
     #[test]
-    fn test_material_from_bytes(){
-
+    fn test_material_from_bytes() {
         /* BY NAME */
 
         let bytes = b" ::Normal {
@@ -126,21 +113,21 @@ mod testing {
         let mat = Material::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());
-        assert!((0.1 - mat.thickness).abs()<EPSILON);
-        
+        assert!((0.1 - mat.thickness).abs() < EPSILON);
+
         #[allow(irrefutable_let_patterns)]
-        if let Substance::Normal(s1) = &mat.substance{
+        if let Substance::Normal(s1) = &mat.substance {
             if let Substance::Normal(s2) = &sub {
                 assert!(Rc::ptr_eq(s1, s2));
-            }else{
+            } else {
                 panic!("pre aasd");
             }
-        }else{
+        } else {
             panic!("asd")
         }
 
         /* SELF-CONTAINED DEFAULT */
-        
+
         let bytes = b" {
             name : \"A Material\",            
             substance : Substance::Normal {          
@@ -153,25 +140,20 @@ mod testing {
         }
         ";
 
-        
-
         let mut building = SimpleModel::new("the building".to_string());
         let mat = Material::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(mat.name, "A Material".to_string());
-        assert!((0.1  - mat.thickness).abs()<EPSILON);
+        assert!((0.1 - mat.thickness).abs() < EPSILON);
 
         #[allow(irrefutable_let_patterns)]
-        if let Substance::Normal(sub) = mat.substance{
+        if let Substance::Normal(sub) = mat.substance {
             assert_eq!(sub.name, "le substancia".to_string());
-            assert!((1.2 - sub.thermal_conductivity().unwrap()).abs()<EPSILON);
-            assert!((2.2 - sub.specific_heat_capacity().unwrap()).abs()<EPSILON);
-            assert!((3.2 - sub.density().unwrap()).abs()<EPSILON);
-        }else{
+            assert!((1.2 - sub.thermal_conductivity().unwrap()).abs() < EPSILON);
+            assert!((2.2 - sub.specific_heat_capacity().unwrap()).abs() < EPSILON);
+            assert!((3.2 - sub.density().unwrap()).abs() < EPSILON);
+        } else {
             panic!("Panic!!!!")
         }
-
     }
 }
-
-

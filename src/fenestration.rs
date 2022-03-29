@@ -19,24 +19,17 @@ SOFTWARE.
 */
 use crate::Float;
 
-use derive::{
-    ObjectIO,     
-    ObjectAPI
-};
+use derive::{ObjectAPI, ObjectIO};
 
-use geometry3d::{    
-    Polygon3D,
-    Loop3D
-};
-
+use geometry3d::{Loop3D, Polygon3D};
 
 use std::rc::Rc;
 
-use crate::model::SimpleModel;
 use crate::boundary::Boundary;
 use crate::construction::Construction;
-use crate::simulation_state::{SimulationStateHeader, SimulationState};
-use crate::simulation_state_element::{StateElementField, SimulationStateElement};
+use crate::model::SimpleModel;
+use crate::simulation_state::SimulationStateHeader;
+use crate::simulation_state_element::{SimulationStateElement, StateElementField};
 
 #[derive(Copy, Clone, Eq, PartialEq, ObjectIO)]
 pub enum FenestrationPositions {
@@ -55,15 +48,15 @@ pub enum FenestrationType {
 /// A surface that can potentially be opened and closed.
 /// It can be of any Construction and it does not need to be
 /// a hole in another surface.
-#[derive( ObjectIO, ObjectAPI, Clone)]
+#[derive(ObjectIO, ObjectAPI, Clone)]
 pub struct Fenestration {
     /// The name of the sub surface
     pub name: String,
-    
+
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
-    /// An array of Numbers representing the vertices of the 
+    /// An array of Numbers representing the vertices of the
     /// surface. The length of this array must be divisible by 3.
     pub vertices: Polygon3D,
 
@@ -80,13 +73,12 @@ pub struct Fenestration {
     // The index of the Shading device attached to the Fenestration
     // in the shading property of the SimpleModel object
     //shading: Option<usize>,
-    
     /// A reference to the Boundary in front of the Fenestration
     front_boundary: Option<Boundary>,
 
     /// A reference to the Boundary in back of the Fenestration
     back_boundary: Option<Boundary>,
-    
+
     #[physical("front_temperature")]
     first_node_temperature: StateElementField,
 
@@ -95,39 +87,31 @@ pub struct Fenestration {
 
     /// Index of the SimulationStateElement representing
     /// the fraction open in the SimulationState
-    
+
     #[operational]
     open_fraction: StateElementField,
 
-    
     #[physical]
     front_convection_coefficient: StateElementField,
 
-    
     #[physical]
     back_convection_coefficient: StateElementField,
 
-    
     #[physical]
     front_convective_heat_flow: StateElementField,
 
-    
     #[physical]
     back_convective_heat_flow: StateElementField,
 
-    
     #[physical]
     front_incident_solar_irradiance: StateElementField,
 
-    
     #[physical]
     back_incident_solar_irradiance: StateElementField,
 
-    
     #[physical]
-    front_ir_irradiance: StateElementField, 
+    front_ir_irradiance: StateElementField,
 
-    
     #[physical]
     back_ir_irradiance: StateElementField,
 }
@@ -161,29 +145,24 @@ impl Fenestration {
             FenestrationPositions::Binary => true,
         }
     }
-
-   
 }
 
-
-
-
-
-
-
-
-
-
 impl SimpleModel {
-
     /// Adds a [`Fenestration`] to the [`SimpleModel`]
-    pub fn add_fenestration(&mut self, mut add : Fenestration, state: &mut SimulationStateHeader ) -> Rc<Fenestration>{
+    pub fn add_fenestration(
+        &mut self,
+        mut add: Fenestration,
+        state: &mut SimulationStateHeader,
+    ) -> Rc<Fenestration> {
         // Check the index of this object
         let fen_index = self.fenestrations.len();
         add.set_index(fen_index);
 
         // Push the OpenFraction state, and map into the object
-        let state_index = state.push( SimulationStateElement::FenestrationOpenFraction(fen_index), 0.);
+        let state_index = state.push(
+            SimulationStateElement::FenestrationOpenFraction(fen_index),
+            0.,
+        );
         add.set_open_fraction_index(state_index);
 
         // Add to model, and return a reference
@@ -193,7 +172,6 @@ impl SimpleModel {
     }
 }
 
-
 /***********/
 /* TESTING */
 /***********/
@@ -202,10 +180,4 @@ impl SimpleModel {
 mod testing {
 
     // use super::*;
-
-
 }
-
-
-
-

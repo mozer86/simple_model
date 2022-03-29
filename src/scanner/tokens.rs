@@ -18,32 +18,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use crate::Float;
 use crate::scanner::make_error_msg;
+use crate::Float;
 
-#[derive(Clone,Copy)]
+#[derive(Clone, Copy)]
 pub struct Token<'a> {
-    pub line: usize,    
+    pub line: usize,
     pub length: usize,
-    pub start: usize,          
+    pub start: usize,
     pub token_type: TokenType,
     pub txt: &'a [u8],
 }
 
-
-#[derive(Debug, Clone,Copy, Eq, PartialEq)]
-pub enum TokenType{
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum TokenType {
     // single char
     Colon,
-    Comma,    
+    Comma,
     LeftBrace,
     RightBrace,
     LeftBracket,
     RightBracket,
-    Hash,    
+    Hash,
     Underscore,
     Star,
-    Bang,    
+    Bang,
     CodeBoundary,
     LeftParen,
     RightParen,
@@ -51,26 +50,26 @@ pub enum TokenType{
     // double char
     ColonColon,
     StarStar,
-    
+
     // triple char
     HorizontalRule,
     SimpleBuildingBlockLimit,
-    
+
     // keywords
     Use,
     True,
     False,
-    
+
     // mixed words
     TokenEnumName,
     Identifier,
     TokenString,
     Number,
     Word,
-    
+
     // special
     ControlBlockLimit,
-        
+
     // other
     EOF,
     Error,
@@ -78,92 +77,107 @@ pub enum TokenType{
 
 impl std::fmt::Display for TokenType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self{
+        match self {
             // Single char
             TokenType::Colon => write!(f, ":"),
-            TokenType::Comma=> write!(f, ","),
-            TokenType::LeftBrace=> write!(f, "{{"),
-            TokenType::RightBrace=> write!(f, "}}"),
-            TokenType::LeftBracket=> write!(f, "["),
-            TokenType::RightBracket=> write!(f, "]"),
-            TokenType::Hash=> write!(f, "#"),
-            TokenType::Underscore=> write!(f, "_"),
-            TokenType::Star=> write!(f, "*"),
-            TokenType::Bang=> write!(f, "!"),
-            TokenType::CodeBoundary=> write!(f, "`"),
-            TokenType::LeftParen=> write!(f, "("),
-            TokenType::RightParen=> write!(f, ")"),
+            TokenType::Comma => write!(f, ","),
+            TokenType::LeftBrace => write!(f, "{{"),
+            TokenType::RightBrace => write!(f, "}}"),
+            TokenType::LeftBracket => write!(f, "["),
+            TokenType::RightBracket => write!(f, "]"),
+            TokenType::Hash => write!(f, "#"),
+            TokenType::Underscore => write!(f, "_"),
+            TokenType::Star => write!(f, "*"),
+            TokenType::Bang => write!(f, "!"),
+            TokenType::CodeBoundary => write!(f, "`"),
+            TokenType::LeftParen => write!(f, "("),
+            TokenType::RightParen => write!(f, ")"),
 
             // double char
-            TokenType::ColonColon=> write!(f, "::"),
-            TokenType::StarStar=> write!(f, "**"),
-            
+            TokenType::ColonColon => write!(f, "::"),
+            TokenType::StarStar => write!(f, "**"),
+
             // triple char
-            TokenType::HorizontalRule=> write!(f, "==="),
-            TokenType::SimpleBuildingBlockLimit=> write!(f, "```"),
-            
+            TokenType::HorizontalRule => write!(f, "==="),
+            TokenType::SimpleBuildingBlockLimit => write!(f, "```"),
+
             // keywords
-            TokenType::Use=> write!(f, "use"),
-            TokenType::True=> write!(f, "true"),
-            TokenType::False=> write!(f, "false"),
-            
+            TokenType::Use => write!(f, "use"),
+            TokenType::True => write!(f, "true"),
+            TokenType::False => write!(f, "false"),
+
             // mixed words
-            TokenType::TokenEnumName=> write!(f, "EnumName"),
-            TokenType::Identifier=> write!(f, "Identifier"),
-            TokenType::TokenString=> write!(f, "String"),
-            TokenType::Number=> write!(f, "Number"),
-            TokenType::Word=> write!(f, "Word"),
-            
+            TokenType::TokenEnumName => write!(f, "EnumName"),
+            TokenType::Identifier => write!(f, "Identifier"),
+            TokenType::TokenString => write!(f, "String"),
+            TokenType::Number => write!(f, "Number"),
+            TokenType::Word => write!(f, "Word"),
+
             // special
-            TokenType::ControlBlockLimit=> write!(f, "ControlBlockLimit"),
-                
+            TokenType::ControlBlockLimit => write!(f, "ControlBlockLimit"),
+
             // other
-            TokenType::EOF=> write!(f, "EOF"),
-            TokenType::Error=> write!(f, "Error"),
+            TokenType::EOF => write!(f, "EOF"),
+            TokenType::Error => write!(f, "Error"),
         }
     }
 }
 
-impl <'a>Token<'a>{
-    pub fn resolve_as_bool(&self) -> Result<bool,String> {
+impl<'a> Token<'a> {
+    pub fn resolve_as_bool(&self) -> Result<bool, String> {
         let txt = std::str::from_utf8(self.txt).unwrap();
-        match self.token_type{
+        match self.token_type {
             TokenType::True => Ok(true),
-            TokenType::False =>Ok(false),
-            _ => Err(format!("Trying to make a Boolean a token of type '{}' ({})", self.token_type, txt))                
+            TokenType::False => Ok(false),
+            _ => Err(format!(
+                "Trying to make a Boolean a token of type '{}' ({})",
+                self.token_type, txt
+            )),
         }
     }
 
-    pub fn resolve_as_float(&self) -> Result<Float,String> {
+    pub fn resolve_as_float(&self) -> Result<Float, String> {
         let txt = std::str::from_utf8(self.txt).unwrap();
-        if let TokenType::Number = self.token_type{
-             match txt.parse::<Float>(){
-                 Ok(fvalue)=>Ok(fvalue),
-                 Err(e)=>Err(format!("This is a bug, please report it: {}", e))
-             }             
-        }else{
-            Err(format!("Token '{}' cannot be transformed into a float", txt))
+        if let TokenType::Number = self.token_type {
+            match txt.parse::<Float>() {
+                Ok(fvalue) => Ok(fvalue),
+                Err(e) => Err(format!("This is a bug, please report it: {}", e)),
+            }
+        } else {
+            Err(format!(
+                "Token '{}' cannot be transformed into a float",
+                txt
+            ))
         }
     }
 
-    pub fn resolve_as_usize(&self) -> Result<usize,String> {
+    pub fn resolve_as_usize(&self) -> Result<usize, String> {
         let txt = std::str::from_utf8(self.txt).unwrap();
-        if let TokenType::Number = self.token_type{
-             match txt.parse::<usize>(){
+        if let TokenType::Number = self.token_type {
+            match txt.parse::<usize>(){
                  Ok(fvalue)=>Ok(fvalue),
                  Err(_)=>Err(make_error_msg(format!("value '{}' does not seem to be a positive integer. Hint: remove dots, e.g., don't write '12.', write '12'", txt), self.line))
-             }             
-        }else{
-            Err(make_error_msg(format!("Token '{}' cannot be transformed into a positive integer", txt), self.line))
+             }
+        } else {
+            Err(make_error_msg(
+                format!(
+                    "Token '{}' cannot be transformed into a positive integer",
+                    txt
+                ),
+                self.line,
+            ))
         }
     }
 
-    pub fn resolve_as_string(&self) -> Result<String,String> {
+    pub fn resolve_as_string(&self) -> Result<String, String> {
         let txt = std::str::from_utf8(self.txt).unwrap();
-        if let TokenType::TokenString = self.token_type{
-             Ok(txt[1..txt.len()-1].to_string())         
-        }else{
-            Err(make_error_msg(format!("Token '{}' cannot be transformed into a String", txt), self.line))
+        if let TokenType::TokenString = self.token_type {
+            Ok(txt[1..txt.len() - 1].to_string())
+        } else {
+            Err(make_error_msg(
+                format!("Token '{}' cannot be transformed into a String", txt),
+                self.line,
+            ))
         }
     }
 }

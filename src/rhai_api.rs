@@ -18,30 +18,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use std::rc::Rc;
-use std::cell::RefCell;
 use crate::{
-    SimulationState,
-    SimpleModel,
-    Space,
-    Surface,
-    Fenestration,
-    Luminaire,    
-    hvac::{ 
-        HVAC, 
-        ElectricHeater, 
-        IdealHeaterCooler        
-    }
+    hvac::{ElectricHeater, IdealHeaterCooler, HVAC},
+    Fenestration, Luminaire, SimpleModel, SimulationState, Space, Surface,
 };
-
-
-
-
-
+use std::cell::RefCell;
+use std::rc::Rc;
 
 /// Registers the functions used to operate the building
-pub fn register_control_api(engine : &mut rhai::Engine, model: &Rc<SimpleModel>, state: &Rc<RefCell<SimulationState>>, research_mode: bool){
-
+pub fn register_control_api(
+    engine: &mut rhai::Engine,
+    model: &Rc<SimpleModel>,
+    state: &Rc<RefCell<SimulationState>>,
+    research_mode: bool,
+) {
     Space::register_api(engine, model, state, research_mode);
     Surface::register_api(engine, model, state, research_mode);
     Fenestration::register_api(engine, model, state, research_mode);
@@ -50,10 +40,4 @@ pub fn register_control_api(engine : &mut rhai::Engine, model: &Rc<SimpleModel>,
     HVAC::register_api(engine, model, state, research_mode);
     ElectricHeater::register_api(engine, model, state, research_mode);
     IdealHeaterCooler::register_api(engine, model, state, research_mode);
-    
-
-    
-
-    
-
 }

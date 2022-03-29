@@ -19,11 +19,7 @@ SOFTWARE.
 */
 use crate::Float;
 
-use derive::{
-    ObjectIO, 
-};
-
-
+use derive::ObjectIO;
 
 /// Represents a Normal; that is to say, a physical
 /// materiality with physical properties. The name Normal
@@ -32,11 +28,11 @@ use derive::{
 /// Substace, but it does include Material, which is essentially
 /// a Normal with a thickness).
 #[derive(Clone, ObjectIO)]
-pub struct Normal {    
+pub struct Normal {
     /// The name of the Normal. Should be unique for each
     /// Material in the SimpleModel object    
     pub name: String,
-    
+
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
@@ -53,7 +49,7 @@ pub struct Normal {
     solar_absorbtance: Option<Float>,
 
     /// Thermal absorbtance (i.e., emissitivy; from 0 to 1)
-    thermal_absorbtance: Option<Float>
+    thermal_absorbtance: Option<Float>,
 }
 
 impl Normal {
@@ -66,11 +62,10 @@ impl Normal {
         Ok(thermal_conductivity / (density * specific_heat_capacity))
     }
 
-    pub fn wrap(self)->crate::substance::Substance {
+    pub fn wrap(self) -> crate::substance::Substance {
         crate::substance::Substance::Normal(std::rc::Rc::new(self))
     }
 }
-
 
 /***********/
 /* TESTING */
@@ -82,10 +77,10 @@ mod testing {
     use crate::model::SimpleModel;
 
     #[cfg(feature = "float")]
-    const EPSILON : f32 = std::f32::EPSILON;
+    const EPSILON: f32 = std::f32::EPSILON;
 
     #[cfg(not(feature = "float"))]
-    const EPSILON : f64 = std::f64::EPSILON;
+    const EPSILON: f64 = std::f64::EPSILON;
 
     #[test]
     fn test_substance_basic() {
@@ -111,7 +106,7 @@ mod testing {
     }
 
     #[test]
-    fn test_normal_substance_from_bytes(){
+    fn test_normal_substance_from_bytes() {
         let bytes = b" {
             name : \"A substance\",            
             thermal_conductivity : 1.2,
@@ -124,9 +119,8 @@ mod testing {
         let sub = Normal::from_bytes(1, bytes, &mut building).unwrap();
 
         assert_eq!(sub.name, "A substance".to_string());
-        assert!((1.2 - sub.thermal_conductivity.unwrap()).abs()<EPSILON);
-        assert!((2.2 - sub.specific_heat_capacity.unwrap()).abs()<EPSILON);
-        assert!((3.2 - sub.density.unwrap()).abs()<EPSILON);
-
+        assert!((1.2 - sub.thermal_conductivity.unwrap()).abs() < EPSILON);
+        assert!((2.2 - sub.specific_heat_capacity.unwrap()).abs() < EPSILON);
+        assert!((3.2 - sub.density.unwrap()).abs() < EPSILON);
     }
 }
