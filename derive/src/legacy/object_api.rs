@@ -70,7 +70,7 @@ pub fn get_api_docs( physical_fields: &Vec<(syn::Field, Option<String>)>, operat
 | Property | Getter | Setter |
 |----------|--------|--------|", ret);
     
-        let get_row = |field: &syn::Field, alias: &Option<String>, is_physical: bool|{
+    let get_row = |field: &syn::Field, alias: &Option<String>, is_physical: bool|{
         let api_fieldname = exposed_api_fieldname(field, alias);
         let mut this_ret = format!("| `{}` | Yes  ", api_fieldname);
         if is_physical {

@@ -86,85 +86,90 @@ mod testing {
     use super::*;
     
     
-    // use crate::hvac;
-    // use crate::substance;
-    // use crate::boundary::Boundary;
-    // use crate::building::{Building, ShelterClass};
+    use crate::hvac;
+    use crate::substance;
+    use crate::boundary::Boundary;
+    use crate::building::{Building, /*ShelterClass*/};
     // use crate::infiltration::Infiltration;
-    // #[test]
-    // fn write_io_doc(){
-    //     let mut summary = "# Input/Output reference guide\n\n".to_string();
+    #[test]
+    fn write_io_doc(){
+        let mut summary = "# Input/Output reference guide\n\n".to_string();
         
-    //     // Add automatic documentation
-    //     let dir = "../src";
-    //     // let dir = "./book/src";
-    //     let summary_file = format!("{}/SUMMARY.md", dir);
+        // Add automatic documentation
+        // let dir = "../src";
+        let dir = "./book/src";
+        let summary_file = format!("{}/SUMMARY.md", dir);
+        
+        if !std::path::Path::new(&summary_file).exists(){            
+            return;
+        }
 
-    //     if !std::path::Path::new(&summary_file).exists(){
-    //         return;
-    //     }
+        // clear summary
+        let f = std::fs::File::create(&summary_file).unwrap();
+        f.set_len(0).unwrap();
+        
 
-    //     // Boundary
-    //     Boundary::print_doc(&dir, &mut summary).unwrap();
+        // Boundary
+        Boundary::print_doc(&dir, &mut summary).unwrap();
         
-    //     // Building
-    //     Building::print_doc(&dir, &mut summary).unwrap();
+        // Building
+        Building::print_doc(&dir, &mut summary).unwrap();
         
-    //     // Construction
-    //     Construction::print_doc(&dir, &mut summary).unwrap();
+        // Construction
+        Construction::print_doc(&dir, &mut summary).unwrap();
         
-    //     // Fenestration
-    //     Fenestration::print_doc(&dir, &mut summary).unwrap();
-    //     Fenestration::print_api_doc(&dir, &mut summary).unwrap();
+        // Fenestration
+        Fenestration::print_doc(&dir, &mut summary).unwrap();
+        Fenestration::print_api_doc(&dir, &mut summary).unwrap();
         
-    //     // HVAC
-    //     HVAC::print_doc(&dir, &mut summary).unwrap();
+        // HVAC
+        HVAC::print_doc(&dir, &mut summary).unwrap();
         
-    //     summary.push_str(&format!("\t"));
-    //     hvac::ElectricHeater::print_doc(&dir, &mut summary).unwrap();
-    //     hvac::ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
+        summary.push_str(&format!("\t"));
+        hvac::ElectricHeater::print_doc(&dir, &mut summary).unwrap();
+        hvac::ElectricHeater::print_api_doc(&dir, &mut summary).unwrap();
         
-    //     summary.push_str(&format!("\t"));
-    //     hvac::IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
-    //     hvac::IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
+        summary.push_str(&format!("\t"));
+        hvac::IdealHeaterCooler::print_doc(&dir, &mut summary).unwrap();
+        hvac::IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
 
-    //     // Infiltration
-    //     Infiltration::print_doc(&dir, &mut summary).unwrap();
+        // Infiltration
+        // Infiltration::print_doc(&dir, &mut summary).unwrap();
         
-    //     // Luminaire
-    //     Luminaire::print_doc(&dir, &mut summary).unwrap();
-    //     Luminaire::print_api_doc(&dir, &mut summary).unwrap();
+        // Luminaire
+        Luminaire::print_doc(&dir, &mut summary).unwrap();
+        Luminaire::print_api_doc(&dir, &mut summary).unwrap();
 
-    //     // Material
-    //     Material::print_doc(&dir, &mut summary).unwrap();
+        // Material
+        Material::print_doc(&dir, &mut summary).unwrap();
         
-    //     // Space
-    //     Space::print_doc(&dir, &mut summary).unwrap();
-    //     Space::print_api_doc(&dir, &mut summary).unwrap();
+        // Space
+        Space::print_doc(&dir, &mut summary).unwrap();
+        Space::print_api_doc(&dir, &mut summary).unwrap();
         
-    //     // Substance
-    //     Substance::print_doc(&dir, &mut summary).unwrap();
+        // Substance
+        Substance::print_doc(&dir, &mut summary).unwrap();
                 
-    //     summary.push_str(&format!("\t"));
-    //     substance::Normal::print_doc(&dir, &mut summary).unwrap();
-    //     // substance::Normal::print_api_doc(&dir, &mut summary).unwrap();
+        summary.push_str(&format!("\t"));
+        substance::Normal::print_doc(&dir, &mut summary).unwrap();
+        // substance::Normal::print_api_doc(&dir, &mut summary).unwrap();
         
         
 
 
         
-    //     ShelterClass::print_doc(&dir, &mut summary).unwrap();
+        // ShelterClass::print_doc(&dir, &mut summary).unwrap();
         
-    //     Surface::print_doc(&dir, &mut summary).unwrap();
-    //     Surface::print_api_doc(&dir, &mut summary).unwrap();
+        Surface::print_doc(&dir, &mut summary).unwrap();
+        Surface::print_api_doc(&dir, &mut summary).unwrap();
         
 
         
-    //     let current_summary = fs::read_to_string(summary_file.clone()).expect("Could not read summary file");
-    //     let whole_summary = format!("{}\n\n{}", current_summary, summary);
-    //     std::fs::write(summary_file, whole_summary.as_bytes()).unwrap();
+        let current_summary = fs::read_to_string(summary_file.clone()).expect("Could not read summary file");
+        let whole_summary = format!("{}\n\n{}", current_summary, summary);
+        std::fs::write(summary_file, whole_summary.as_bytes()).unwrap();
 
-    // }
+    }
 
     #[test]
     fn test_read_file(){
@@ -219,6 +224,8 @@ mod testing {
         let s = &building.substances[0];        
         assert_eq!(subs_name, s.name().clone());
         assert_eq!(subs_name, s0.name().clone());
+
+        #[allow(irrefutable_let_patterns)]
         if let Substance::Normal(s) = &s0 {
             assert_eq!(*s.index().unwrap(), 0);
         }else{

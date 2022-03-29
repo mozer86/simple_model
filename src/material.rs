@@ -77,6 +77,7 @@ mod testing {
     #[cfg(not(feature = "float"))]
     const EPSILON : f64 = std::f64::EPSILON;
 
+    
 
     #[test]
     fn test_material_basic() {
@@ -96,6 +97,7 @@ mod testing {
         assert_eq!(thickness, s.thickness);
     }
 
+    
     #[test]
     fn test_material_from_bytes(){
 
@@ -125,6 +127,8 @@ mod testing {
 
         assert_eq!(mat.name, "A Material".to_string());
         assert!((0.1 - mat.thickness).abs()<EPSILON);
+        
+        #[allow(irrefutable_let_patterns)]
         if let Substance::Normal(s1) = &mat.substance{
             if let Substance::Normal(s2) = &sub {
                 assert!(Rc::ptr_eq(s1, s2));
@@ -156,6 +160,8 @@ mod testing {
 
         assert_eq!(mat.name, "A Material".to_string());
         assert!((0.1  - mat.thickness).abs()<EPSILON);
+
+        #[allow(irrefutable_let_patterns)]
         if let Substance::Normal(sub) = mat.substance{
             assert_eq!(sub.name, "le substancia".to_string());
             assert!((1.2 - sub.thermal_conductivity().unwrap()).abs()<EPSILON);

@@ -18,10 +18,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use crate::legacy::enum_parser::*;
+
 use syn::spanned::Spanned;
 use quote::quote;
 use proc_macro2::TokenStream as TokenStream2;
+
+
+pub fn get_enum_variants(ast: &syn::DeriveInput)->syn::punctuated::Punctuated<syn::Variant, syn::token::Comma>{
+    if let syn::Data::Enum(syn::DataEnum {
+        ref variants,
+        ..
+    }) = ast.data
+    {
+        variants.clone()
+    } else {
+        panic!("THIS IS A BUG: Expecting an Enum");
+    }
+        
+}
+
+pub fn contains_attr(v:&syn::Variant, att: &str)->bool{
+    let att_names : Vec<String> = v.attrs.iter().map(|a|{
+        format!("{}",a.path.segments[0].ident)
+    }).collect();
+    att_names.contains(&att.to_string())
+}
 
 
 pub fn derive_enum_kind(ast: &syn::DeriveInput, variants: &syn::punctuated::Punctuated<syn::Variant, syn::token::Comma>) -> Result<TokenStream2,syn::Error> {

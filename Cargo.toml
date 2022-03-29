@@ -6,7 +6,7 @@ members = ['derive']
 name = "simple_model"
 version = "0.1.0"
 authors = ["German Molina <germolinal@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 
 
@@ -15,7 +15,7 @@ derive = { path = "derive" }
 calendar = { git = "https://github.com/SIMPLE-BuildingSimulation/calendar.git" }
 geometry3d = {git = "https://github.com/SIMPLE-BuildingSimulation/geometry3d.git"}
 schedule = { git = "https://github.com/SIMPLE-BuildingSimulation/schedule.git" }
-rhai = { version = "1.1.2" }
+rhai = { version = "1.5" }
 
 
 

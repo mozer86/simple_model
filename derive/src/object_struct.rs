@@ -5,8 +5,9 @@ use crate::field::Field;
 
 
 pub struct StructObject {
-    ident:  syn::Ident,
+    pub ident:  syn::Ident,
     fields : Vec<Field>, 
+    docs: String,
     // optional_fields: Vec<Field>, 
     // state_fields: Vec<Field>,
 
@@ -16,20 +17,85 @@ pub struct StructObject {
 
 
 impl StructObject {
-    pub fn new(ident: syn::Ident, stru: syn::DataStruct)->Self{
+    pub fn new(ident: syn::Ident, stru: syn::DataStruct, docs: String)->Self{
         
 
         let fields : Vec<syn::Field> = Self::get_object_fields(&stru).into_iter().map(|x| x).collect();
 
-        let fields : Vec<Field> = fields.into_iter().map(|x| Field::new(x)).collect();
+
+        let fields : Vec<Field> = fields.into_iter().map(|x|{             
+            Field::new(x)
+        }).collect();
 
         StructObject{
             ident,
-            fields
+            fields,
+            docs,
         }
 
     }
 
+    pub fn gen_docs(&self) -> String {
+        let mut ret = String::new();
+    
+        // Title
+        ret += &format!("# {}\n\n", self.ident);
+
+        // Written doc
+        let docs = &self.docs;
+        ret += &format!("{}\n\n", docs);
+
+        // A codeblock with the all the fields
+        ret += "```rs\n"; // Open template
+        ret += &format!("{} {{\n", self.ident);
+        
+        for field in self.fields.iter() {
+            let f_ident = field.data().ident.clone().unwrap();        
+            if format!("{}", f_ident) == "index".to_string(){
+                continue;
+            }
+            if let Field::State(_) = field{
+                continue;
+            }                        
+            ret += &format!("   {},\n", field.get_documentation());
+            
+        }
+        ret += "}\n```\n\n";
+
+
+        // Documentations for fields
+        for field in self.fields.iter() {
+            let f_ident = field.data().ident.clone().unwrap();        
+            if format!("{}", f_ident) == "index".to_string(){
+                continue;
+            }
+            if let Field::State(_) = field{
+                continue;
+            }         
+
+            ret += &format!("\n\n#### {}", f_ident);
+            if let Field::Option(_) = field{
+                ret += " (*optional*)";
+            }
+            ret += "\n\n";
+            
+            let errmsg = format!("Field '{}' has no docs", f_ident);
+            ret += &format!("{}\n\n", field.data().docs.expect(&errmsg));      
+            
+        }
+        ret += "\n\n";
+
+
+        // Api access.
+        let object_name_str = format!("{}", self.ident);
+        if crate::object_has_api(object_name_str.clone()){
+            let name_str_lower = object_name_str.to_lowercase();
+            ret += &format!("\n\n## API Access\n\n```rs\n// by name\nlet my_{} = {}(string);\n// by index\nlet my_{} = {}(int);\n```", name_str_lower, name_str_lower, name_str_lower, name_str_lower)
+        }
+
+
+        ret
+    }
 
     pub fn gen_from_bytes(&self)-> TokenStream2 {
         let object_name = &self.ident;
@@ -434,6 +500,199 @@ impl StructObject {
             #sets
         )
     }
+
+
+
+    
+    fn get_getters_setters_docs(&self)->(TokenStream2, TokenStream2, String){
+        let object_name = self.ident.clone();
+        let mut field_getters = quote!();
+        let mut field_setters = quote!();
+        // open docs
+        let mut docs = format!("\n\n## API\n\nThe following properties are available for simulating control algorithms");
+        docs = format!("{}\n\n| Property | Getter | Setter |\n|----------|--------|--------|\n", docs);
+
+        
+        for field in self.fields.iter(){               
+            
+            if let Field::State(_) = field{
+                
+                let data = field.data();
+                // Getters, Setters (and therefore, docs) are only for Operational and Physical fields
+                // for now.  
+                let att_names : Vec<String> = data.attributes.iter().map(|x| x.name.clone()).collect();
+                if !att_names.contains(&"physical".to_string()) && !att_names.contains(&"operational".to_string()){
+                    continue                                
+                }
+                // Docs
+                let api_fieldname = field.api_name();
+                    
+                let mut row = format!("| `{}` | Yes  ", api_fieldname);
+                if att_names.contains(&"physical".to_string()) {
+                    row = format!("{} | Research mode |", row);
+                }else{
+                    row = format!("{} | Yes |", row);
+                }
+                docs = format!("{}\n{}", docs, row);                
+                
+                
+                
+                // Extend getters and setters
+                let get = field.api_getter(&object_name);
+                field_getters = quote!(
+                    #field_getters                
+                    #get
+                    
+                );
+                let set = field.api_setter(&object_name);
+                field_setters = quote!(
+                    #field_setters                
+                    #set                    
+                );
+            }                                    
+
+            
+        }
+
+        // return
+        (field_getters, field_setters, docs)
+
+    }
+    
+
+    pub fn gen_group_member_api(&self)->TokenStream2{
+        let object_name = self.ident.clone();
+        let name_str = format!("{}",&object_name);
+
+        // Register type in API... always within an RC
+        let register_type = quote!(
+            engine.register_type_with_name::<std::rc::Rc<Self>>(#name_str);
+        );
+
+        let (field_getters, field_setters, docs) = self.get_getters_setters_docs();
+        
+
+        quote!(
+            impl #object_name {
+                                
+                pub fn register_api(engine : &mut rhai::Engine, model: &std::rc::Rc<SimpleModel>, state: &std::rc::Rc<std::cell::RefCell<crate::SimulationState>>, research_mode: bool){
+                    
+                    #register_type                    
+                             
+                    // #access_from_model
+
+                    #field_getters
+
+                    #field_setters
+                }
+                
+                                    
+                #[cfg(debug_assertions)]
+                pub fn print_api_doc(dir: &str, summary: &mut String)->std::io::Result<()>{
+                    let api_doc = #docs;
+                    let filename = format!("{}.md", #name_str).to_lowercase();
+                    let full_filename = format!("{}/{}", dir, filename);                        
+
+                    let doc = std::fs::read_to_string(full_filename.clone())
+                        .expect("Something went wrong reading the documentation file");
+                                                                                               
+                    std::fs::write(&full_filename, format!("{}\n\n{}", doc, api_doc))?;
+
+                    Ok(())
+                }
+            
+            }
+        )
+
+
+    }
+
+
+
+
+
+    // pub fn gen_api(&self)->TokenStream2{
+    //     let object_name = self.ident.clone();
+    //     let name_str = format!("{}",&object_name);
+    //     let name_str_lower = name_str.to_lowercase();
+    //     let err = format!("Cannot set API for object '{}' which is not stored in the SimpleModel", &object_name);
+    //     let location = crate::object_location(name_str).expect(&err);
+
+    //     // Register type
+    //     let register_type = quote!(
+    //         engine.register_type_with_name::<std::rc::Rc<Self>>(#name_str);
+    //     );
+
+    //     // register_access_from_model
+    //     let not_found_err = format!("Could not find {} '{{}}'", object_name);
+    //     let out_of_bounds_err = format!("Trying to access {} number {{}}... but the last index is {{}}", object_name);
+    //     let negative_index_err = format!("Impossible to get {} using a negative index ({{}} was given)", object_name);
+    //     let access_from_model = quote!(
+    //         // get by name
+    //         let new_mod = std::rc::Rc::clone(model);  
+    //         let new_state = std::rc::Rc::clone(state);      
+    //         engine.register_result_fn(#name_str_lower, move |name: &str | {
+    //             for s in new_mod.#location.iter(){                
+    //                 if s.name == name {                                
+    //                     return Ok(std::rc::Rc::clone(s))
+    //                 }
+    //             }
+    //             return Err(format!(#not_found_err, name).into());
+    //         });
+    
+    //         // Get by index
+    //         let new_mod = std::rc::Rc::clone(model);  
+    //         // let new_state = std::rc::Rc::clone(state);      
+    //         engine.register_result_fn(#name_str_lower, move |index: rhai::INT| {
+    
+    //             let len = new_mod.#location.len();
+    //             if index < 0 {
+    //                 return Err(format!(#negative_index_err, index).into())
+    //             }
+    //             if index >= len as i64 {
+    //                 return Err(format!(#out_of_bounds_err, index, len - 1).into());
+    //             } 
+    //             Ok(std::rc::Rc::clone(&new_mod.#location[index as usize]))
+    //         });
+    
+    //     );
+
+
+
+    //     // Return
+    //     quote!(
+    //         impl #object_name {
+                                
+    //             pub fn register_api(engine : &mut rhai::Engine, model: &std::rc::Rc<SimpleModel>, state: &std::rc::Rc<std::cell::RefCell<SimulationState>>, research_mode: bool){
+                    
+    //                 #register_type
+                             
+    //                 #access_from_model
+
+    //                 #field_getters
+
+    //                 #field_setters
+    //             }
+                
+                                    
+    //             #[cfg(debug_assertions)]
+    //             pub fn print_api_doc(dir: &str, summary: &mut String)->std::io::Result<()>{
+    //                 let api_doc = #api_doc_fn;
+    //                 let filename = format!("{}.md", #name_str).to_lowercase();
+    //                 let full_filename = format!("{}/{}", dir, filename);                        
+
+    //                 let doc = std::fs::read_to_string(full_filename.clone())
+    //                     .expect("Something went wrong reading the documentation file");
+                                                                                               
+    //                 std::fs::write(&full_filename, format!("{}\n\n{}", doc, api_doc))?;
+
+    //                 Ok(())
+    //             }
+            
+    //         }
+    //     )
+
+    // }
 
     
 }

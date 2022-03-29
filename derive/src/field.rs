@@ -5,75 +5,51 @@ use proc_macro2::TokenStream as TokenStream2;
 
 pub const STATE_ELEMENT_TYPE : &str = "StateElementField";
 
+#[derive(Clone, Debug)]
+pub struct Attribute {
+    pub name: String,
+    pub value: Option<String>,
+}
+
+impl Attribute {
+    pub fn new(a: &syn::Attribute)->Self{
+        if let syn::AttrStyle::Inner(_) = &a.style{
+            panic!("Expecing Outer style attribute")
+        }
+        let name = a.path.segments[0].ident.clone();
+        let mut value : Option<String> = None;
+        a.tokens.clone().into_iter().for_each(|token|{
+            if let proc_macro2::TokenTree::Group(g) = token {                            
+                g.stream().into_iter().for_each(|literal|{
+                    if let proc_macro2::TokenTree::Literal(lit) = literal{                        
+                        value = Some(format!("{}", lit));
+                    }
+                })
+                
+            }
+        });
+        // return
+        Self{
+            name: format!("{}", name),
+            value
+        }        
+    }
+}
+
+
+
+
+
+
 #[derive(Clone)]
 pub struct FieldData{
     pub ident: Option<syn::Ident>,
-    pub attributes: Vec<String>,
+    pub attributes: Vec<Attribute>,
     pub child: Option<Box<Field>>,
     pub ty : syn::Type,
+    pub docs: Option<String>,
+    pub api_alias: Option<String>,
 }
-
-
-
-fn resolve_polygon()->TokenStream2{
-
-   quote!( {
-        let mut the_vector = Vec::new();
-        // Check that we are opening an array
-        if field_value.token_type != crate::scanner::TokenType::LeftBracket{
-            return Err(crate::scanner::make_error_msg(format!("Expecting '[' to open a Polygon... found '{}'", field_value.token_type), scanner.line))
-        }  
-        // Loop through the whole array
-        loop {
-            let field_value = scanner.scan_token();
-            match field_value.token_type{
-                crate::scanner::TokenType::EOF | crate::scanner::TokenType::RightBrace => return Err(crate::scanner::make_error_msg(format!("Polygon definition does not end."), scanner.line)),
-                crate::scanner::TokenType::RightBracket => {break},
-                _ => {
-                    
-                    let element = field_value.resolve_as_float()?;
-                    the_vector.push(element)
-                }
-            }
-
-            // Check the comma
-            let comma = scanner.scan_token();
-            if comma.token_type == crate::scanner::TokenType::RightBracket{
-                break
-            }else if comma.token_type != crate::scanner::TokenType::Comma{
-                return Err(crate::scanner::make_error_msg(format!("Elements in a vector must by divided by commas (i.e., ',')... found {}", comma.token_type), scanner.line))
-            }
-        }
-
-        // Check coherent input
-        let n_numbers = the_vector.len();
-        if  n_numbers%3 != 0 {
-            return Err(crate::scanner::make_error_msg(format!("The length of the vector defining a Polygon must be divisible by 3... found {}", n_numbers ), scanner.line))
-        }   
-        if  n_numbers < 9 {
-            return Err(crate::scanner::make_error_msg(format!("The length of the vector defining a Polygon must be at least 9 (three 3D vertices)... found {}", n_numbers ), scanner.line))
-        }
-
-        // Build the polygon
-        let n_pts = n_numbers/3;
-        let mut the_loop = Loop3D::new();
-        for pt_index in 0..n_pts{
-            let first = 3 * pt_index;
-            let x = the_vector[first];
-            let y = the_vector[first + 1];
-            let z = the_vector[first + 2];
-            the_loop.push(geometry3d::Point3D::new(x,y,z))?;                        
-        }                    
-        if let Err(_) = the_loop.close(){
-            return Err("It seems that some of the vertices in the surface are collinear. You do not have the minimum of 3 non-collinear vertices".to_string())
-        }
-        let p = Polygon3D::new(the_loop)?;
-        p
-
-    })
-}
-
-
 
 
 
@@ -103,7 +79,9 @@ impl Field {
             ident: None,
             attributes: Vec::new(),
             child: None,
-            ty: ty.clone()
+            ty: ty.clone(),
+            docs: None, // This is nested... the Docs should be in the parent
+            api_alias: None, // This is nested... the Docs should be in the parent
         };
 
         if let syn::Type::Path(p) = ty {
@@ -150,24 +128,36 @@ impl Field {
 
     /// Creates a new Field object based on the tokens in an actual Struct.    
     pub fn new(field: syn::Field)-> Self {
-        
+
+
         let ident = field.ident.clone();        
         
         if let syn::Type::Path(t) = &field.ty {
             
             
-            let attributes : Vec<String> = field.attrs.iter().map(|a|{
-                format!("{}",a.path.segments[0].ident)
+            let attributes : Vec<Attribute> = field.attrs.iter().map(|a|{
+                Attribute::new(a)
             }).collect();
+            
+            let mut api_alias : Option<String> = None;
+            for a in attributes.iter(){
+                if a.name == "physical" || a.name == "operational"{
+                    api_alias = a.value.clone();
+                    break;
+                }
+            };
 
             let path = t.path.clone();
             let ty  = field.ty.clone();
-            
+            let docs = Some(crate::docs::get_docs(&field.attrs));
+
             let mut data = FieldData{
                 ident: ident.clone(),
                 attributes,
                 child: None,
                 ty: ty.clone(),
+                docs,
+                api_alias,
             };
 
             if path_is_float(&path){
@@ -214,19 +204,97 @@ impl Field {
 
     pub fn data(&self)->FieldData{
         match self {
-            Self::Float(d) => d.clone(),
-            Self::Int(d)=>d.clone(),
-            Self::Bool(d)=>d.clone(),
-            Self::String(d)=>d.clone(),        
-            Self::Vec(d)=>d.clone(),
-            Self::Rc(d)=>d.clone(),
-            Self::Option(d)=>d.clone(),
-            Self::Object(d)=>d.clone(),
-            Self::State(d)=>d.clone(),
+            Self::Float(d) |
+            Self::Int(d) |
+            Self::Bool(d) |
+            Self::String(d) |
+            Self::Vec(d) |
+            Self::Rc(d) |
+            Self::Option(d) |
+            Self::Object(d) |
+            Self::State(d) => d.clone(),
+        }
+    }
+
+    pub fn api_name(&self)->String{
+        let data = self.data();
+        match data.api_alias {
+            Some(a)=>format!("{}", &a[1..a.len()-1]),
+            None => format!("{}", &data.ident.clone().unwrap())
         }
     }
 
     
+    pub fn api_getter(&self, object_name: &syn::Ident)->TokenStream2{
+        let fieldname = &self.data().ident.unwrap();
+
+        let api_fieldname = self.api_name();        
+
+        let value_not_available_err = format!("{} called '{{}}' has not been assigned a value for property '{}'", object_name, api_fieldname);
+        quote!(
+            // Getter by name
+            let new_mod = std::rc::Rc::clone(model);  
+            let new_state = std::rc::Rc::clone(state);              
+            engine.register_get_result(#api_fieldname, move |this: &mut std::rc::Rc<#object_name>| {
+                let state_ptr = & *new_state.borrow();            
+                match this.#fieldname(state_ptr){
+                    Some(v)=> {return Ok(v)},
+                    None => {return Err(format!(#value_not_available_err, this.name).into());}
+                }
+            });        
+        )
+    }
+
+
+
+    pub fn api_setter(&self, object_name: &syn::Ident)->TokenStream2{
+        let data = self.data();
+        let fieldname = &data.ident.clone().unwrap();
+        let api_fieldname = match data.api_alias {
+            Some(a)=>format!("{}", &a[1..a.len()-1]),
+            None => format!("{}", &fieldname)
+        };
+
+        let rust_fn = syn::Ident::new(&format!("set_{}", fieldname), proc_macro2::Span::call_site());
+        let index_ident = format!("{}_index", fieldname);
+        let index_ident = syn::Ident::new(&index_ident, fieldname.span());
+        let value_not_available_err = format!("Property '{}' has not been initialized for {} called '{{}}' ", api_fieldname, object_name);
+        quote!(
+            // Setter by name
+            let new_mod = std::rc::Rc::clone(model);  
+            let new_state = std::rc::Rc::clone(state);      
+            engine.register_set_result(#api_fieldname, move |this: &mut std::rc::Rc<#object_name>, v: crate::Float | {            
+                match this.#index_ident(){
+                    Some(_)=>{
+                        let state_ptr = &mut *new_state.borrow_mut();
+                        this.#rust_fn(state_ptr, v);                
+                    },
+                    None => {
+                        return Err(format!(#value_not_available_err, this.name).into());
+                    }
+                };
+                Ok(())
+                
+            });  
+            
+            let new_mod = std::rc::Rc::clone(model);  
+            let new_state = std::rc::Rc::clone(state);      
+            engine.register_set_result(#api_fieldname, move |this: &mut std::rc::Rc<#object_name>, v: rhai::INT | {            
+                match this.#index_ident(){
+                    Some(_)=>{
+                        let state_ptr = &mut *new_state.borrow_mut();
+                        this.#rust_fn(state_ptr, v as crate::Float);                
+                    },
+                    None => {
+                        return Err(format!(#value_not_available_err, this.name).into());
+                    }
+                };
+                Ok(())
+                
+            });  
+        )
+    }
+
 
 
 
@@ -449,6 +517,67 @@ impl Field {
         }
     }
 
+    pub fn get_documentation_type(&self)-> String {
+        match self {
+            Field::Float(_) => {
+                "number".to_string()
+            },
+            Field::Int(_)=>{
+                "int".to_string()
+            },
+            Field::Bool(_d)=>{
+                "boolean".to_string()
+            },
+            Field::String(_d)=>{
+                "string".to_string()
+            },
+        
+            Field::Vec(d)=>{    
+                let child_type = d.child.clone().unwrap().get_documentation_type();
+                format!("[{}, ...]", child_type)
+            },
+            Field::Rc(d)=>{
+                d.child.clone().unwrap().get_documentation_type()
+            },
+            Field::Option(d)=>{
+                let child_type = d.child.clone().unwrap().get_documentation_type();
+                format!("{}, // optional", child_type)
+            },
+            Field::Object(d)=>{
+                if let syn::Type::Path(t) = &d.ty {
+                    format!("{}", path_to_string(&t.path))
+                }else{
+                    panic!("Weird object when getting docs")
+                }
+                
+            },
+            Field::State(_d)=>{
+                panic!("Trying to doc-type of State field")
+            },
+        }
+    }
+
+    pub fn get_documentation(&self)-> String {
+        let f_ident = self.data().ident.clone().unwrap();
+        
+        match self {
+            Field::Float(_) |                
+            Field::Int(_) |
+            Field::Bool(_) |
+            Field::String(_) |
+            Field::Vec(_) |                            
+            Field::Rc(_) |
+            Field::Object(_) |
+            Field::Option(_) =>{
+                format!("{} : {}", f_ident, self.get_documentation_type())
+            },            
+            Field::State(_d)=>{
+                panic!("Trying to get verification for State field")
+            },
+        }
+
+    }
+
 }
 
 
@@ -555,3 +684,63 @@ fn resolve_other_object(d: &FieldData, objtype: &syn::Type, parent_is_rc: bool)-
 
 
 
+
+fn resolve_polygon()->TokenStream2{
+
+    quote!( {
+         let mut the_vector = Vec::new();
+         // Check that we are opening an array
+         if field_value.token_type != crate::scanner::TokenType::LeftBracket{
+             return Err(crate::scanner::make_error_msg(format!("Expecting '[' to open a Polygon... found '{}'", field_value.token_type), scanner.line))
+         }  
+         // Loop through the whole array
+         loop {
+             let field_value = scanner.scan_token();
+             match field_value.token_type{
+                 crate::scanner::TokenType::EOF | crate::scanner::TokenType::RightBrace => return Err(crate::scanner::make_error_msg(format!("Polygon definition does not end."), scanner.line)),
+                 crate::scanner::TokenType::RightBracket => {break},
+                 _ => {
+                     
+                     let element = field_value.resolve_as_float()?;
+                     the_vector.push(element)
+                 }
+             }
+ 
+             // Check the comma
+             let comma = scanner.scan_token();
+             if comma.token_type == crate::scanner::TokenType::RightBracket{
+                 break
+             }else if comma.token_type != crate::scanner::TokenType::Comma{
+                 return Err(crate::scanner::make_error_msg(format!("Elements in a vector must by divided by commas (i.e., ',')... found {}", comma.token_type), scanner.line))
+             }
+         }
+ 
+         // Check coherent input
+         let n_numbers = the_vector.len();
+         if  n_numbers%3 != 0 {
+             return Err(crate::scanner::make_error_msg(format!("The length of the vector defining a Polygon must be divisible by 3... found {}", n_numbers ), scanner.line))
+         }   
+         if  n_numbers < 9 {
+             return Err(crate::scanner::make_error_msg(format!("The length of the vector defining a Polygon must be at least 9 (three 3D vertices)... found {}", n_numbers ), scanner.line))
+         }
+ 
+         // Build the polygon
+         let n_pts = n_numbers/3;
+         let mut the_loop = Loop3D::new();
+         for pt_index in 0..n_pts{
+             let first = 3 * pt_index;
+             let x = the_vector[first];
+             let y = the_vector[first + 1];
+             let z = the_vector[first + 2];
+             the_loop.push(geometry3d::Point3D::new(x,y,z))?;                        
+         }                    
+         if let Err(_) = the_loop.close(){
+             return Err("It seems that some of the vertices in the surface are collinear. You do not have the minimum of 3 non-collinear vertices".to_string())
+         }
+         let p = Polygon3D::new(the_loop)?;
+         p
+ 
+     })
+ }
+ 
+ 
