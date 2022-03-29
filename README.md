@@ -5,6 +5,7 @@
 ![docs badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/docs.yaml/badge.svg)
 ![tests badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/tests.yaml/badge.svg)
 ![coverage badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/coverage.yaml/badge.svg)
+![style badge](https://github.com/SIMPLE-BuildingSimulation/simple_model/actions/workflows/style.yaml/badge.svg)
 
 
 
