@@ -353,10 +353,12 @@ impl EnumObject {
         let name_str = format!("{}", &object_name);
         let name_str_lower = name_str.to_lowercase();
 
-        let location_str = crate::object_location(name_str).unwrap_or_else(|| panic!(
-            "Trying to gen a Group API of '{}', which is not registered in Model",
-            &object_name
-        ));
+        let location_str = crate::object_location(name_str).unwrap_or_else(|| {
+            panic!(
+                "Trying to gen a Group API of '{}', which is not registered in Model",
+                &object_name
+            )
+        });
         let location = syn::Ident::new(location_str, proc_macro2::Span::call_site());
         let not_found_err = format!("Could not find {} '{{}}'", &object_name);
         let negative_index_err = format!(

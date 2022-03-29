@@ -2,7 +2,6 @@ use crate::common_path::*;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
-
 pub const STATE_ELEMENT_TYPE: &str = "StateElementField";
 
 #[derive(Clone, Debug)]
@@ -120,8 +119,7 @@ impl Field {
         let ident = field.ident.clone();
 
         if let syn::Type::Path(t) = &field.ty {
-            let attributes: Vec<Attribute> =
-                field.attrs.iter().map( Attribute::new ).collect();
+            let attributes: Vec<Attribute> = field.attrs.iter().map(Attribute::new).collect();
 
             let mut api_alias: Option<String> = None;
             for a in attributes.iter() {

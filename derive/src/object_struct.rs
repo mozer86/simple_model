@@ -13,9 +13,10 @@ pub struct StructObject {
 
 impl StructObject {
     pub fn new(ident: syn::Ident, stru: syn::DataStruct, docs: String) -> Self {
-        
         let fields: Vec<Field> = Self::get_object_fields(&stru)
-            .into_iter().map(Field::new ).collect();
+            .into_iter()
+            .map(Field::new)
+            .collect();
 
         StructObject {
             ident,
@@ -595,11 +596,13 @@ impl StructObject {
         let object_name = self.ident.clone();
         let name_str = format!("{}", &object_name);
         let name_str_lower = name_str.to_lowercase();
-        
-        let location_str = crate::object_location(name_str).unwrap_or_else(||panic!(
-            "Cannot set API for object '{}' which is not stored in the SimpleModel",
-            &object_name
-        ));
+
+        let location_str = crate::object_location(name_str).unwrap_or_else(|| {
+            panic!(
+                "Cannot set API for object '{}' which is not stored in the SimpleModel",
+                &object_name
+            )
+        });
         let location = syn::Ident::new(location_str, proc_macro2::Span::call_site());
 
         // register_access_from_model

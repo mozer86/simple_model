@@ -32,10 +32,11 @@ pub fn get_enum_variants(
     }
 }
 
-pub fn contains_attr(v: &syn::Variant, att: &str) -> bool {     
-        v.attrs
+pub fn contains_attr(v: &syn::Variant, att: &str) -> bool {
+    v.attrs
         .iter()
-        .map(|a| format!("{}", a.path.segments[0].ident)).any(|x| x == *att)        
+        .map(|a| format!("{}", a.path.segments[0].ident))
+        .any(|x| x == *att)
 }
 
 pub fn derive_enum_kind(

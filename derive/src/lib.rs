@@ -39,8 +39,10 @@ fn object_location(typename: String) -> Option<&'static str> {
 
 fn object_has_api(typename: String) -> bool {
     let typename_bytes = typename.as_bytes();
-    matches!(typename_bytes, b"Space" | b"Surface" | b"Fenestration" | b"HVAC" | b"Luminaire")
-    
+    matches!(
+        typename_bytes,
+        b"Space" | b"Surface" | b"Fenestration" | b"HVAC" | b"Luminaire"
+    )
 }
 
 mod common_path;
