@@ -28,8 +28,7 @@ jobs:
           name: code-coverage-report
           path: coverage.xml
 
-      - name: 'push coverage'
-      - uses: actions/checkout@v3
+      - name: 'push coverage'      
       - run: |          
           git config user.name github-actions
           git config user.email github-actions@github.com
