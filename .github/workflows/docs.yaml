@@ -1,4 +1,4 @@
-name: IOReference
+name: Docs
 
 on:
   push:
