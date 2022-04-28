@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Substance","A collection of elements that make up constructions"]],"mod":[["normal",""]]});
+initSidebarItems({"enum":[["Substance","A physical substance with physical—i.e., optical, thermal—properties."]],"mod":[["gas",""],["normal",""]]});

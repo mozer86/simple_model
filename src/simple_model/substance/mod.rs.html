@@ -127,6 +127,42 @@
 <span id="88">88</span>
 <span id="89">89</span>
 <span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -148,19 +184,36 @@ SOFTWARE.
 */</span>
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">normal</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">gas</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::normal::Normal</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::gas::Gas</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::SimpleModel</span>;
 <span class="kw">use</span> <span class="ident">derive</span>::{<span class="ident">GroupAPI</span>, <span class="ident">GroupIO</span>};
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
-<span class="doccomment">/// A collection of elements that make up constructions</span>
+<span class="doccomment">/// A physical substance with physical—i.e., optical, thermal—properties.</span>
+<span class="doccomment">/// </span>
+<span class="doccomment">/// Note that, contrary to EnergyPlus&#39; `Materials`, `Substances` do not</span>
+<span class="doccomment">/// contain information about the thickness, which in Simple is given when </span>
+<span class="doccomment">/// creating a `Material`. The idea is to enable multiple materials of different</span>
+<span class="doccomment">/// thicknesses to reference the same material.</span>
+<span class="doccomment">/// </span>
+<span class="doccomment">/// &gt; Note: Glazing substances are `Normal` substances with `solar_transmitance` </span>
+<span class="doccomment">/// and `visible_transmittance`. However, contrary to all other properties, this property </span>
+<span class="doccomment">/// does depend on the thickness of the substance. So, in order</span>
+<span class="doccomment">/// to build a coherent Glazing, you&#39;ll need to match this Substance</span>
+<span class="doccomment">/// with an appropriate Material</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">GroupAPI</span>, <span class="ident">GroupIO</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Substance</span> {
-    <span class="doccomment">/// A normal (i.e., solid) substance such as glass,</span>
+
+    <span class="doccomment">/// A normal (i.e., solid, homogeneous) substance such as glass,</span>
     <span class="doccomment">/// timber or concrete.    </span>
     <span class="ident">Normal</span>(<span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Normal</span><span class="op">&gt;</span>),
+
+    <span class="doccomment">/// A gas</span>
+    <span class="ident">Gas</span>(<span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Gas</span><span class="op">&gt;</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">SimpleModel</span> {
@@ -172,6 +225,11 @@ SOFTWARE.
             <span class="ident">Substance::Normal</span>(<span class="ident">substance</span>) =&gt; {
                 <span class="kw">let</span> <span class="ident">substance</span> <span class="op">=</span>
                     <span class="ident">Rc::get_mut</span>(<span class="ident">substance</span>).<span class="ident">expect</span>(<span class="string">&quot;Could not borrow Substance::Normal as mutable&quot;</span>);
+                <span class="ident">substance</span>.<span class="ident">set_index</span>(<span class="ident">obj_index</span>);
+            },
+            <span class="ident">Substance::Gas</span>(<span class="ident">substance</span>) =&gt; {
+                <span class="kw">let</span> <span class="ident">substance</span> <span class="op">=</span>
+                    <span class="ident">Rc::get_mut</span>(<span class="ident">substance</span>).<span class="ident">expect</span>(<span class="string">&quot;Could not borrow Substance::Gas as mutable&quot;</span>);
                 <span class="ident">substance</span>.<span class="ident">set_index</span>(<span class="ident">obj_index</span>);
             }
         }
@@ -192,7 +250,7 @@ SOFTWARE.
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_substance_from_bytes</span>() {
+    <span class="kw">fn</span> <span class="ident">test_substance_normal_from_bytes</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">model</span> <span class="op">=</span> <span class="ident">SimpleModel::new</span>(<span class="string">&quot;the model&quot;</span>.<span class="ident">to_string</span>());
 
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; ::Normal {
@@ -216,7 +274,21 @@ SOFTWARE.
             <span class="macro">panic!</span>(<span class="string">&quot;Definitely NOT an electric heater....!&quot;</span>)
         }
     }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_substance_gas_from_bytes</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">model</span> <span class="op">=</span> <span class="ident">SimpleModel::new</span>(<span class="string">&quot;the model&quot;</span>.<span class="ident">to_string</span>());
+
+        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot; ::Gas {
+            name : \&quot;Some substance\&quot;,            
+            kind: StandardGas::Air(),
+        }
+        &quot;</span>;
+
+        <span class="kw">let</span> <span class="ident">_substance</span> <span class="op">=</span> <span class="ident">Substance::from_bytes</span>(<span class="number">1</span>, <span class="ident">bytes</span>, <span class="kw-2">&amp;mut</span> <span class="ident">model</span>).<span class="ident">unwrap</span>();
+        
+    }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="simple_model" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (879aff385 2022-04-20)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="simple_model" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (69a5d2481 2022-04-27)" ></div>
 </body></html>

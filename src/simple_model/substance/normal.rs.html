@@ -163,6 +163,19 @@
 <span id="124">124</span>
 <span id="125">125</span>
 <span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -186,16 +199,13 @@ SOFTWARE.
 
 <span class="kw">use</span> <span class="ident">derive::ObjectIO</span>;
 
-<span class="doccomment">/// Represents a Normal; that is to say, a physical</span>
-<span class="doccomment">/// materiality with physical properties. The name Normal</span>
-<span class="doccomment">/// has been chosen instead of Material to respect EnergyPlus&#39;</span>
-<span class="doccomment">/// and other software&#39;s terminology (which does not include</span>
-<span class="doccomment">/// Substace, but it does include Material, which is essentially</span>
-<span class="doccomment">/// a Normal with a thickness).</span>
+<span class="doccomment">/// Represents an opaque physical material</span>
+<span class="doccomment">/// with common physical properties. (e.g., </span>
+<span class="doccomment">/// timber, concrete, brick)</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">ObjectIO</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Normal</span> {
-    <span class="doccomment">/// The name of the Normal. Should be unique for each</span>
-    <span class="doccomment">/// Material in the SimpleModel object    </span>
+    <span class="doccomment">/// The name of the Substance. Should be unique for each</span>
+    <span class="doccomment">/// Substance in the SimpleModel object    </span>
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
 
     <span class="doccomment">/// The position of this object in its contaner Vector</span>
@@ -213,8 +223,24 @@ SOFTWARE.
     <span class="doccomment">/// Solar absorbtance (from 0 to 1)</span>
     <span class="ident">solar_absorbtance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 
-    <span class="doccomment">/// Thermal absorbtance (i.e., emissitivy; from 0 to 1)</span>
+    <span class="doccomment">/// Front thermal absorbtance (i.e., emissitivy; from 0 to 1)</span>
     <span class="ident">thermal_absorbtance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
+
+    <span class="doccomment">/// The solar transmittance at normal incidence (from 0 to 1)</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// Please note that, contrary to all other properties, this property </span>
+    <span class="doccomment">/// does depend on the thickness of the substance. So, in order</span>
+    <span class="doccomment">/// to build a coherent Glazing, you&#39;ll need to match this Substance</span>
+    <span class="doccomment">/// with an appropriate Material</span>
+    <span class="ident">solar_transmittance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
+
+    <span class="doccomment">/// The visible transmittance at normal incidence (from 0 to 1)</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// Please note that, contrary to all other properties, this property </span>
+    <span class="doccomment">/// does depend on the thickness of the substance. So, in order</span>
+    <span class="doccomment">/// to build a coherent Glazing, you&#39;ll need to match this Substance</span>
+    <span class="doccomment">/// with an appropriate Material</span>
+    <span class="ident">visible_transmittance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,    
 }
 
 <span class="kw">impl</span> <span class="ident">Normal</span> {
@@ -290,5 +316,5 @@ SOFTWARE.
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="simple_model" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (879aff385 2022-04-20)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="simple_model" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (69a5d2481 2022-04-27)" ></div>
 </body></html>
