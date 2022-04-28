@@ -21,16 +21,13 @@ use crate::Float;
 
 use derive::ObjectIO;
 
-/// Represents a Normal; that is to say, a physical
-/// materiality with physical properties. The name Normal
-/// has been chosen instead of Material to respect EnergyPlus'
-/// and other software's terminology (which does not include
-/// Substace, but it does include Material, which is essentially
-/// a Normal with a thickness).
+/// Represents an opaque physical material
+/// with common physical properties. (e.g., 
+/// timber, concrete, brick)
 #[derive(Clone, ObjectIO)]
 pub struct Normal {
-    /// The name of the Normal. Should be unique for each
-    /// Material in the SimpleModel object    
+    /// The name of the Substance. Should be unique for each
+    /// Substance in the SimpleModel object    
     pub name: String,
 
     /// The position of this object in its contaner Vector
@@ -48,8 +45,24 @@ pub struct Normal {
     /// Solar absorbtance (from 0 to 1)
     solar_absorbtance: Option<Float>,
 
-    /// Thermal absorbtance (i.e., emissitivy; from 0 to 1)
+    /// Front thermal absorbtance (i.e., emissitivy; from 0 to 1)
     thermal_absorbtance: Option<Float>,
+
+    /// The solar transmittance at normal incidence (from 0 to 1)
+    /// 
+    /// Please note that, contrary to all other properties, this property 
+    /// does depend on the thickness of the substance. So, in order
+    /// to build a coherent Glazing, you'll need to match this Substance
+    /// with an appropriate Material
+    solar_transmittance: Option<Float>,
+
+    /// The visible transmittance at normal incidence (from 0 to 1)
+    /// 
+    /// Please note that, contrary to all other properties, this property 
+    /// does depend on the thickness of the substance. So, in order
+    /// to build a coherent Glazing, you'll need to match this Substance
+    /// with an appropriate Material
+    visible_transmittance: Option<Float>,    
 }
 
 impl Normal {

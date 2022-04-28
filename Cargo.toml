@@ -15,7 +15,7 @@ derive = { path = "derive" }
 calendar = { git = "https://github.com/SIMPLE-BuildingSimulation/calendar.git" }
 geometry3d = {git = "https://github.com/SIMPLE-BuildingSimulation/geometry3d.git"}
 schedule = { git = "https://github.com/SIMPLE-BuildingSimulation/schedule.git" }
-rhai = { version = "1.5" }
+rhai = { version = "1.6.1" }
 
 
 

@@ -19,19 +19,36 @@ SOFTWARE.
 */
 
 pub mod normal;
+pub mod gas;
 
 pub use crate::substance::normal::Normal;
+pub use crate::substance::gas::Gas;
 
 use crate::model::SimpleModel;
 use derive::{GroupAPI, GroupIO};
 use std::rc::Rc;
 
-/// A collection of elements that make up constructions
+/// A physical substance with physical—i.e., optical, thermal—properties.
+/// 
+/// Note that, contrary to EnergyPlus' `Materials`, `Substances` do not
+/// contain information about the thickness, which in Simple is given when 
+/// creating a `Material`. The idea is to enable multiple materials of different
+/// thicknesses to reference the same material.
+/// 
+/// > Note: Glazing substances are `Normal` substances with `solar_transmitance` 
+/// and `visible_transmittance`. However, contrary to all other properties, this property 
+/// does depend on the thickness of the substance. So, in order
+/// to build a coherent Glazing, you'll need to match this Substance
+/// with an appropriate Material
 #[derive(Clone, GroupAPI, GroupIO)]
 pub enum Substance {
-    /// A normal (i.e., solid) substance such as glass,
+
+    /// A normal (i.e., solid, homogeneous) substance such as glass,
     /// timber or concrete.    
     Normal(Rc<Normal>),
+
+    /// A gas
+    Gas(Rc<Gas>),
 }
 
 impl SimpleModel {
@@ -43,6 +60,11 @@ impl SimpleModel {
             Substance::Normal(substance) => {
                 let substance =
                     Rc::get_mut(substance).expect("Could not borrow Substance::Normal as mutable");
+                substance.set_index(obj_index);
+            },
+            Substance::Gas(substance) => {
+                let substance =
+                    Rc::get_mut(substance).expect("Could not borrow Substance::Gas as mutable");
                 substance.set_index(obj_index);
             }
         }
@@ -63,7 +85,7 @@ mod testing {
     use super::*;
 
     #[test]
-    fn test_substance_from_bytes() {
+    fn test_substance_normal_from_bytes() {
         let mut model = SimpleModel::new("the model".to_string());
 
         let bytes = b" ::Normal {
@@ -86,5 +108,19 @@ mod testing {
         } else {
             panic!("Definitely NOT an electric heater....!")
         }
+    }
+
+    #[test]
+    fn test_substance_gas_from_bytes() {
+        let mut model = SimpleModel::new("the model".to_string());
+
+        let bytes = b" ::Gas {
+            name : \"Some substance\",            
+            kind: StandardGas::Air(),
+        }
+        ";
+
+        let _substance = Substance::from_bytes(1, bytes, &mut model).unwrap();
+        
     }
 }

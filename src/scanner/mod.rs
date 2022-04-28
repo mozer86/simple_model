@@ -19,7 +19,6 @@ SOFTWARE.
 */
 
 pub mod simple_scanner;
-// pub mod markdown_scanner;
 mod tokens;
 
 pub use simple_scanner::{make_error_msg, SimpleScanner};
