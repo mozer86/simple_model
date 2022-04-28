@@ -326,7 +326,7 @@ impl EnumObject {
             pub fn print_doc(dir: &str, summary: &mut String)->std::io::Result<()>{
                 let doc = #doc_string.as_bytes() ;
 
-                let filename = format!("{}.md", #object_name_str).to_lowercase();
+                let filename = format!("auto-{}.md", #object_name_str).to_lowercase();
                 let full_filename = format!("{}/{}", dir, filename);
                 summary.push_str(&format!("- [{}](./{})\n",#object_name_str, filename));
 

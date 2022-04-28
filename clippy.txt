@@ -1,1 +1,3 @@
-    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+   Compiling derive v0.1.0 (/Users/germolinal/Documents/simple/simple_model/derive)
+    Checking simple_model v0.1.0 (/Users/germolinal/Documents/simple/simple_model)
+    Finished dev [unoptimized + debuginfo] target(s) in 2.54s

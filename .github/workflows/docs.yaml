@@ -1,7 +1,6 @@
 name: Docs
 
 on:
-  on:
   workflow_run:
     workflows: ["Tests"]
     types:
@@ -23,10 +22,12 @@ jobs:
       run: cargo install mdbook
     - name: Install MDBook Katex
       run: cargo install mdbook-katex
+    - name: Run tests # This creates the IO docs
+      run: cargo test --verbose     
     - name: Build Book
-      run: mdbook build   
+      run: mdbook build       
     - name: Build doc
-      run: RUSTDOCFLAGS="--html-in-header katex.html" cargo doc --document-private-items --no-deps
+      run: RUSTDOCFLAGS="--html-in-header katex.html" cargo doc --document-private-items --no-deps --target-dir 
     - name: Set Index
       run: echo '<meta http-equiv=refresh content=0;url=simple_model/index.html>' > target/doc/index.html
     - name: Deploy

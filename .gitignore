@@ -1,9 +1,7 @@
 /target
 Cargo.lock
-ioreference/book/*
 .DS_Store
 check*
-ioreference/src/doc
-ioreference/src/*.json
-ioreference/src/debug
-book
+docs/ioreference/src/auto-*.md
+docs/ioreference/book
+docs/rustdoc

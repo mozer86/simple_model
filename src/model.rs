@@ -77,16 +77,18 @@ mod testing {
     // use crate::infiltration::Infiltration;
     #[test]
     fn write_io_doc() {
-        let mut summary = "# Input/Output reference guide\n\n".to_string();
+        let dir = "./docs/ioreference/src";
+
+        let summary_template = format!("{}/SUMMARY_TEMPLATE.md", dir);
+        if !std::path::Path::new(&summary_template).exists() {
+            return;
+        }
+
+        let mut summary = std::fs::read_to_string(summary_template).unwrap();
 
         // Add automatic documentation
         // let dir = "../src";
-        let dir = "./book/src";
         let summary_file = format!("{}/SUMMARY.md", dir);
-
-        if !std::path::Path::new(&summary_file).exists() {
-            return;
-        }
 
         // clear summary
         let f = std::fs::File::create(&summary_file).unwrap();

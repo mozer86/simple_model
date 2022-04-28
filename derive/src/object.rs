@@ -74,7 +74,7 @@ impl Object {
             #[cfg(debug_assertions)]
             pub fn print_doc(dir: &str, summary: &mut String)->std::io::Result<()>{
                 let doc = #docs.as_bytes();
-                let filename = format!("{}.md", #name_str).to_lowercase();
+                let filename = format!("auto-{}.md", #name_str).to_lowercase();
                 let full_filename = format!("{}/{}", dir, filename);
                 summary.push_str(&format!("- [{}](./{})\n",#name_str, filename));
                 std::fs::write(&full_filename, doc)?;
