@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Substance","A physical substance with physical—i.e., optical, thermal—properties."]],"mod":[["gas",""],["normal",""]]});

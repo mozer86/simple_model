@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["make_error_msg",""]],"struct":[["SimpleScanner",""]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Normal","Represents an opaque physical material with common physical properties. (e.g., timber, concrete, brick)"]]});
