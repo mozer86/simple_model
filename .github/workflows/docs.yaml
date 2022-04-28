@@ -1,10 +1,11 @@
 name: Docs
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  on:
+  workflow_run:
+    workflows: ["Tests"]
+    types:
+      - completed
 
 env:
   CARGO_TERM_COLOR: always
@@ -17,7 +18,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1    
     - name: Set Toolchain
-      run: rustup default nightly   
+      run: rustup default nightly
+    - name: Install MDBook
+      run: cargo install mdbook
+    - name: Install MDBook Katex
+      run: cargo install mdbook-katex
+    - name: Build Book
+      run: mdbook build   
     - name: Build doc
       run: RUSTDOCFLAGS="--html-in-header katex.html" cargo doc --document-private-items --no-deps
     - name: Set Index
