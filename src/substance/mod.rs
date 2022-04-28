@@ -18,31 +18,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-pub mod normal;
 pub mod gas;
+pub mod normal;
 
-pub use crate::substance::normal::Normal;
 pub use crate::substance::gas::Gas;
+pub use crate::substance::normal::Normal;
 
 use crate::model::SimpleModel;
 use derive::{GroupAPI, GroupIO};
 use std::rc::Rc;
 
 /// A physical substance with physical—i.e., optical, thermal—properties.
-/// 
+///
 /// Note that, contrary to EnergyPlus' `Materials`, `Substances` do not
-/// contain information about the thickness, which in Simple is given when 
+/// contain information about the thickness, which in Simple is given when
 /// creating a `Material`. The idea is to enable multiple materials of different
 /// thicknesses to reference the same material.
-/// 
-/// > Note: Glazing substances are `Normal` substances with `solar_transmitance` 
-/// and `visible_transmittance`. However, contrary to all other properties, this property 
+///
+/// > Note: Glazing substances are `Normal` substances with `solar_transmitance`
+/// and `visible_transmittance`. However, contrary to all other properties, this property
 /// does depend on the thickness of the substance. So, in order
 /// to build a coherent Glazing, you'll need to match this Substance
 /// with an appropriate Material
 #[derive(Clone, GroupAPI, GroupIO)]
 pub enum Substance {
-
     /// A normal (i.e., solid, homogeneous) substance such as glass,
     /// timber or concrete.    
     Normal(Rc<Normal>),
@@ -61,7 +60,7 @@ impl SimpleModel {
                 let substance =
                     Rc::get_mut(substance).expect("Could not borrow Substance::Normal as mutable");
                 substance.set_index(obj_index);
-            },
+            }
             Substance::Gas(substance) => {
                 let substance =
                     Rc::get_mut(substance).expect("Could not borrow Substance::Gas as mutable");
@@ -121,6 +120,5 @@ mod testing {
         ";
 
         let _substance = Substance::from_bytes(1, bytes, &mut model).unwrap();
-        
     }
 }

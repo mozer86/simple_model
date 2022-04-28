@@ -1,0 +1,59 @@
+   Compiling derive v0.1.0 (/Users/germolinal/Documents/simple/simple_model/derive)
+    Checking simple_model v0.1.0 (/Users/germolinal/Documents/simple/simple_model)
+warning: writing `&mut String` instead of `&mut str` involves a new object where a slice will do
+  --> src/fenestration.rs:51:20
+   |
+51 | #[derive(ObjectIO, ObjectAPI, Clone)]
+   |                    ^^^^^^^^^
+   |
+   = note: `#[warn(clippy::ptr_arg)]` on by default
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_arg
+   = note: this warning originates in the derive macro `ObjectAPI` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: writing `&mut String` instead of `&mut str` involves a new object where a slice will do
+  --> src/luminaire.rs:30:20
+   |
+30 | #[derive(ObjectIO, ObjectAPI, Clone)]
+   |                    ^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_arg
+   = note: this warning originates in the derive macro `ObjectAPI` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: writing `&mut String` instead of `&mut str` involves a new object where a slice will do
+  --> src/space.rs:32:20
+   |
+32 | #[derive(ObjectIO, ObjectAPI, Clone)]
+   |                    ^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_arg
+   = note: this warning originates in the derive macro `ObjectAPI` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: writing `&mut String` instead of `&mut str` involves a new object where a slice will do
+  --> src/surface.rs:33:20
+   |
+33 | #[derive(ObjectIO, ObjectAPI, Clone)]
+   |                    ^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_arg
+   = note: this warning originates in the derive macro `ObjectAPI` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: writing `&mut String` instead of `&mut str` involves a new object where a slice will do
+  --> src/hvac/electric_heater.rs:30:27
+   |
+30 | #[derive(Clone, ObjectIO, GroupMemberAPI)]
+   |                           ^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_arg
+   = note: this warning originates in the derive macro `GroupMemberAPI` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: writing `&mut String` instead of `&mut str` involves a new object where a slice will do
+  --> src/hvac/ideal_heater_cooler.rs:32:27
+   |
+32 | #[derive(Clone, ObjectIO, GroupMemberAPI)]
+   |                           ^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_arg
+   = note: this warning originates in the derive macro `GroupMemberAPI` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: `simple_model` (lib) generated 6 warnings
+    Finished dev [unoptimized + debuginfo] target(s) in 3.37s

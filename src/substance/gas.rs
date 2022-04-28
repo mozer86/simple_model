@@ -18,12 +18,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 use derive::ObjectIO;
 
 /// Represent a common gas, with known physical properties
 #[derive(Clone, ObjectIO)]
-pub enum StandardGas{
+pub enum StandardGas {
     /// Air gas
     Air,
 
@@ -35,9 +34,7 @@ pub enum StandardGas{
 
     /// Xenon gas
     Xenon,
-
 }
-
 
 /// Represents a Normal; that is to say, a physical
 /// materiality with physical properties. The name Normal
@@ -50,16 +47,19 @@ pub struct Gas {
     /// The name of the Normal. Should be unique for each
     /// Material in the SimpleModel object    
     pub name: String,
-    
+
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
     /// A predefined gas
     kind: Option<StandardGas>,
-
-    
 }
 
+impl Gas {
+    pub fn wrap(self) -> crate::substance::Substance {
+        crate::substance::Substance::Gas(std::rc::Rc::new(self))
+    }
+}
 
 /***********/
 /* TESTING */
@@ -70,9 +70,6 @@ mod testing {
     use super::*;
     use crate::model::SimpleModel;
 
-    
-
-    
     #[test]
     fn test_gas_from_bytes() {
         let bytes = b" {

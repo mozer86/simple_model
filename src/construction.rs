@@ -54,7 +54,7 @@ impl Construction {
                 Substance::Normal(s) => {
                     let lambda = s.thermal_conductivity()?;
                     r += material.thickness / lambda;
-                },
+                }
                 Substance::Gas(_) => {
                     todo!()
                 }

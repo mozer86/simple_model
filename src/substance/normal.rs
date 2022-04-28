@@ -22,7 +22,7 @@ use crate::Float;
 use derive::ObjectIO;
 
 /// Represents an opaque physical material
-/// with common physical properties. (e.g., 
+/// with common physical properties. (e.g.,
 /// timber, concrete, brick)
 #[derive(Clone, ObjectIO)]
 pub struct Normal {
@@ -49,20 +49,20 @@ pub struct Normal {
     thermal_absorbtance: Option<Float>,
 
     /// The solar transmittance at normal incidence (from 0 to 1)
-    /// 
-    /// Please note that, contrary to all other properties, this property 
+    ///
+    /// Please note that, contrary to all other properties, this property
     /// does depend on the thickness of the substance. So, in order
     /// to build a coherent Glazing, you'll need to match this Substance
     /// with an appropriate Material
     solar_transmittance: Option<Float>,
 
     /// The visible transmittance at normal incidence (from 0 to 1)
-    /// 
-    /// Please note that, contrary to all other properties, this property 
+    ///
+    /// Please note that, contrary to all other properties, this property
     /// does depend on the thickness of the substance. So, in order
     /// to build a coherent Glazing, you'll need to match this Substance
     /// with an appropriate Material
-    visible_transmittance: Option<Float>,    
+    visible_transmittance: Option<Float>,
 }
 
 impl Normal {
