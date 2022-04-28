@@ -570,7 +570,7 @@ impl StructObject {
 
 
                 #[cfg(debug_assertions)]
-                pub fn print_api_doc(dir: &str, summary: &mut String)->std::io::Result<()>{
+                pub fn print_api_doc(dir: &str, summary: &mut str)->std::io::Result<()>{
                     let api_doc = #docs;
                     let filename = format!("{}.md", #name_str).to_lowercase();
                     let full_filename = format!("{}/{}", dir, filename);
