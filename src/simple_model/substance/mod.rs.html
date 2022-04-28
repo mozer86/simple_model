@@ -161,8 +161,6 @@
 <span id="122">122</span>
 <span id="123">123</span>
 <span id="124">124</span>
-<span id="125">125</span>
-<span id="126">126</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -183,31 +181,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */</span>
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">normal</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">gas</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">normal</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::normal::Normal</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::gas::Gas</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::substance::normal::Normal</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::SimpleModel</span>;
 <span class="kw">use</span> <span class="ident">derive</span>::{<span class="ident">GroupAPI</span>, <span class="ident">GroupIO</span>};
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
 <span class="doccomment">/// A physical substance with physical—i.e., optical, thermal—properties.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// Note that, contrary to EnergyPlus&#39; `Materials`, `Substances` do not</span>
-<span class="doccomment">/// contain information about the thickness, which in Simple is given when </span>
+<span class="doccomment">/// contain information about the thickness, which in Simple is given when</span>
 <span class="doccomment">/// creating a `Material`. The idea is to enable multiple materials of different</span>
 <span class="doccomment">/// thicknesses to reference the same material.</span>
-<span class="doccomment">/// </span>
-<span class="doccomment">/// &gt; Note: Glazing substances are `Normal` substances with `solar_transmitance` </span>
-<span class="doccomment">/// and `visible_transmittance`. However, contrary to all other properties, this property </span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// &gt; Note: Glazing substances are `Normal` substances with `solar_transmitance`</span>
+<span class="doccomment">/// and `visible_transmittance`. However, contrary to all other properties, this property</span>
 <span class="doccomment">/// does depend on the thickness of the substance. So, in order</span>
 <span class="doccomment">/// to build a coherent Glazing, you&#39;ll need to match this Substance</span>
 <span class="doccomment">/// with an appropriate Material</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">GroupAPI</span>, <span class="ident">GroupIO</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Substance</span> {
-
     <span class="doccomment">/// A normal (i.e., solid, homogeneous) substance such as glass,</span>
     <span class="doccomment">/// timber or concrete.    </span>
     <span class="ident">Normal</span>(<span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Normal</span><span class="op">&gt;</span>),
@@ -226,7 +223,7 @@ SOFTWARE.
                 <span class="kw">let</span> <span class="ident">substance</span> <span class="op">=</span>
                     <span class="ident">Rc::get_mut</span>(<span class="ident">substance</span>).<span class="ident">expect</span>(<span class="string">&quot;Could not borrow Substance::Normal as mutable&quot;</span>);
                 <span class="ident">substance</span>.<span class="ident">set_index</span>(<span class="ident">obj_index</span>);
-            },
+            }
             <span class="ident">Substance::Gas</span>(<span class="ident">substance</span>) =&gt; {
                 <span class="kw">let</span> <span class="ident">substance</span> <span class="op">=</span>
                     <span class="ident">Rc::get_mut</span>(<span class="ident">substance</span>).<span class="ident">expect</span>(<span class="string">&quot;Could not borrow Substance::Gas as mutable&quot;</span>);
@@ -286,7 +283,6 @@ SOFTWARE.
         &quot;</span>;
 
         <span class="kw">let</span> <span class="ident">_substance</span> <span class="op">=</span> <span class="ident">Substance::from_bytes</span>(<span class="number">1</span>, <span class="ident">bytes</span>, <span class="kw-2">&amp;mut</span> <span class="ident">model</span>).<span class="ident">unwrap</span>();
-        
     }
 }
 </code></pre></div>

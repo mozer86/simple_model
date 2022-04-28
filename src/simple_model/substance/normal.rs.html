@@ -200,7 +200,7 @@ SOFTWARE.
 <span class="kw">use</span> <span class="ident">derive::ObjectIO</span>;
 
 <span class="doccomment">/// Represents an opaque physical material</span>
-<span class="doccomment">/// with common physical properties. (e.g., </span>
+<span class="doccomment">/// with common physical properties. (e.g.,</span>
 <span class="doccomment">/// timber, concrete, brick)</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">ObjectIO</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Normal</span> {
@@ -227,20 +227,20 @@ SOFTWARE.
     <span class="ident">thermal_absorbtance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The solar transmittance at normal incidence (from 0 to 1)</span>
-    <span class="doccomment">/// </span>
-    <span class="doccomment">/// Please note that, contrary to all other properties, this property </span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Please note that, contrary to all other properties, this property</span>
     <span class="doccomment">/// does depend on the thickness of the substance. So, in order</span>
     <span class="doccomment">/// to build a coherent Glazing, you&#39;ll need to match this Substance</span>
     <span class="doccomment">/// with an appropriate Material</span>
     <span class="ident">solar_transmittance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The visible transmittance at normal incidence (from 0 to 1)</span>
-    <span class="doccomment">/// </span>
-    <span class="doccomment">/// Please note that, contrary to all other properties, this property </span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Please note that, contrary to all other properties, this property</span>
     <span class="doccomment">/// does depend on the thickness of the substance. So, in order</span>
     <span class="doccomment">/// to build a coherent Glazing, you&#39;ll need to match this Substance</span>
     <span class="doccomment">/// with an appropriate Material</span>
-    <span class="ident">visible_transmittance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,    
+    <span class="ident">visible_transmittance</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Normal</span> {
