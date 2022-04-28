@@ -3,5 +3,6 @@ Cargo.lock
 .DS_Store
 check*
 docs/ioreference/src/auto-*.md
+docs/ioreference/src/SUMMARY.md
 docs/ioreference/book
 docs/rustdoc
