@@ -375,6 +375,7 @@
 <span id="336">336</span>
 <span id="337">337</span>
 <span id="338">338</span>
+<span id="339">339</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -496,7 +497,7 @@ SOFTWARE.
         <span class="ident">hvac::IdealHeaterCooler::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
 
         <span class="comment">// Infiltration</span>
-        <span class="comment">// Infiltration::print_doc(&amp;dir, &amp;mut summary).unwrap();</span>
+        <span class="ident"><span class="kw">crate</span>::infiltration::Infiltration::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
 
         <span class="comment">// Luminaire</span>
         <span class="ident">Luminaire::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
@@ -514,9 +515,10 @@ SOFTWARE.
 
         <span class="ident">summary</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\t&quot;</span>));
         <span class="ident">substance::Normal::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
-        <span class="comment">// substance::Normal::print_api_doc(&amp;dir, &amp;mut summary).unwrap();</span>
+        <span class="ident">substance::Gas::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
+        
 
-        <span class="comment">// ShelterClass::print_doc(&amp;dir, &amp;mut summary).unwrap();</span>
+        <span class="ident"><span class="kw">crate</span>::building::ShelterClass::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
 
         <span class="ident">Surface::print_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();
         <span class="ident">Surface::print_api_doc</span>(<span class="kw-2">&amp;</span><span class="ident">dir</span>, <span class="kw-2">&amp;mut</span> <span class="ident">summary</span>).<span class="ident">unwrap</span>();

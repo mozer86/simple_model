@@ -24,7 +24,7 @@ Material {
 
 #### substance
 
-  A reference to the [`Substance`] of which this
+  The [`Substance`] of which this
   [`Material`] is made of    
 
 
