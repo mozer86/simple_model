@@ -35,7 +35,7 @@ pub struct Material {
     /// The position of this object in its contaner Vector
     index: Option<usize>,
 
-    /// A reference to the [`Substance`] of which this
+    /// The [`Substance`] of which this
     /// [`Material`] is made of    
     pub substance: Substance,
 

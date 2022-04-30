@@ -119,7 +119,7 @@ mod testing {
         hvac::IdealHeaterCooler::print_api_doc(&dir, &mut summary).unwrap();
 
         // Infiltration
-        // Infiltration::print_doc(&dir, &mut summary).unwrap();
+        crate::infiltration::Infiltration::print_doc(&dir, &mut summary).unwrap();
 
         // Luminaire
         Luminaire::print_doc(&dir, &mut summary).unwrap();
@@ -137,9 +137,10 @@ mod testing {
 
         summary.push_str(&format!("\t"));
         substance::Normal::print_doc(&dir, &mut summary).unwrap();
-        // substance::Normal::print_api_doc(&dir, &mut summary).unwrap();
+        substance::Gas::print_doc(&dir, &mut summary).unwrap();
+        
 
-        // ShelterClass::print_doc(&dir, &mut summary).unwrap();
+        crate::building::ShelterClass::print_doc(&dir, &mut summary).unwrap();
 
         Surface::print_doc(&dir, &mut summary).unwrap();
         Surface::print_api_doc(&dir, &mut summary).unwrap();

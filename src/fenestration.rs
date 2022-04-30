@@ -73,6 +73,7 @@ pub struct Fenestration {
     // The index of the Shading device attached to the Fenestration
     // in the shading property of the SimpleModel object
     //shading: Option<usize>,
+
     /// A reference to the Boundary in front of the Fenestration
     front_boundary: Option<Boundary>,
 
@@ -87,7 +88,6 @@ pub struct Fenestration {
 
     /// Index of the SimulationStateElement representing
     /// the fraction open in the SimulationState
-
     #[operational]
     open_fraction: StateElementField,
 
