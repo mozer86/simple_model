@@ -17,11 +17,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-use crate::Float;
 
 use crate::material::Material;
 use crate::model::SimpleModel;
-use crate::substance::Substance;
 use derive::ObjectIO;
 use std::rc::Rc;
 
@@ -44,26 +42,7 @@ pub struct Construction {
     // back finishing
 }
 
-impl Construction {
-    /// Calculates the R-value of the Construction (not including surface coefficients).
-    pub fn r_value(&self) -> Result<Float, String> {
-        let mut r = 0.0;
 
-        for material in self.materials.iter() {
-            match &material.substance {
-                Substance::Normal(s) => {
-                    let lambda = s.thermal_conductivity()?;
-                    r += material.thickness / lambda;
-                }
-                Substance::Gas(_) => {
-                    todo!()
-                }
-            }
-        }
-
-        Ok(r)
-    }
-}
 
 impl SimpleModel {
     /// Adds a [`Construction`] to the [`SimpleModel`]
